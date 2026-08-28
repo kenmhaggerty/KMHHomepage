@@ -1,0 +1,69 @@
+{
+    "key": "gfm",
+    "title": "GFM",
+    "company": "US Army",
+    "year": "2026",
+    "filters": {
+        "zero_to_one": false,
+        "consumer": false,
+        "gov_dod": true,
+        "mobile": false
+    },
+    "hero": {
+        "desktop": "gfm-1-preview.png",
+        "mobile": "gfm-hero-mobile.png",
+        "alt_text": "Global Freight Management (GFM)"
+    },
+    "gallery": [
+        {
+            "preview": "gfm-1-preview.png",
+            "full_res": "gfm-1.png",
+            "alt_text": "GFM redacted mockup #1"
+        },
+        {
+            "preview": "gfm-2-preview.png",
+            "full_res": "gfm-2.png",
+            "alt_text": "GFM redacted mockup #2"
+        },
+        {
+            "preview": "gfm-3-preview.png",
+            "full_res": "gfm-3.png",
+            "alt_text": "GFM redacted mockup #3"
+        }
+    ],
+    "sections": [
+        {
+            "title": "Overview",
+            "html_content": "<p>Global Freight Management</p>"
+        },
+        {
+            "title": "Role",
+            "html_content": "<p>Team Lead and Lead UX designer managing team of 8 developers and generating all stories, roadmaps, and priorities for software development.</p><p>Generated requirements through collaboration with in-team subject matter experts and DoD-side PMOs and experts.</p>"
+        },
+        {
+            "title": "Initial Objectives",
+            "html_content": "<p>Upgrade technical stack of existing GFM application to utilize cloud-based DevSecOps pipeline with improved logging and observability, performance, automated testing, and QA.</p><p>Remove vulnerabilities and soon-to-be-deprecated dependencies to ensure future operability.</p><p>Rebuild and redesign multiple siloed freight management systems built over 30+ years through multiple contracts to improve usability and maintainability and fix errors.</p>"
+        },
+        {
+            "title": "Solution",
+            "html_content": "<p>Use rebuilding effort as opportunity to improve UX of existing GFM applications via monolithic React front-end utilizing Spring Boot Java microservices to facilitate scalability, reliability, and novel inter-application functionality.</p><p>Implement modern and consistent user interfaces and experience using Material UI (MUI) framework.</p><p>Engage in \"diplomacy-through-design\" with government stakeholders to evangelize iterative Agile software development practices with rapid value turnaround and weekly client syncs.</p>"
+        },
+        {
+            "title": "Impact",
+            "html_content": "<p>GFM 1.0 was released in early 2026 on-time and with zero critical defects to unanimous praise from Army-side leadership and application users.</p><p>Over 5000 searches are performed every month using the new system for apps that were previously abandoned due to bugs and lack of functionality.</p>"
+        },
+        {
+            "title": "Links",
+            "links": [
+                {
+                    "title": "DecisionPoint Corporation",
+                    "url": "https://decisionpointcorp.com"
+                },
+                {
+                    "title": "ARTRANS • US Army",
+                    "url": "https://www.army.mil/artrans"
+                }
+            ]
+        }
+    ]
+}
