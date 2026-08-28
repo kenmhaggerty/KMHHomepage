@@ -88,7 +88,25 @@ function renderLinksSection(section) {
   return wrap;
 }
 
+function setDevice(device) {
+  document.getElementById('card').dataset.device = device;
+  document.querySelectorAll('[data-device-btn]').forEach((btn) => {
+    btn.setAttribute('aria-pressed', String(btn.dataset.deviceBtn === device));
+  });
+}
+
+function initDeviceToggle() {
+  const isNarrowViewport = window.matchMedia('(max-width: 640px)').matches;
+  setDevice(isNarrowViewport ? 'mobile' : 'desktop');
+
+  document.querySelectorAll('[data-device-btn]').forEach((btn) => {
+    btn.addEventListener('click', () => setDevice(btn.dataset.deviceBtn));
+  });
+}
+
 async function init() {
+  initDeviceToggle();
+
   const params = new URLSearchParams(window.location.search);
   const key = params.get('key') || 'gfm';
 
