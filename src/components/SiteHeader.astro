@@ -1,0 +1,37 @@
+---
+import { siteInfo } from '../data/site';
+import { segmentTitle } from '../utils/title';
+
+const segments = segmentTitle(siteInfo.title);
+
+const navLinks = [
+  { label: 'Work', href: '/' },
+  { label: 'Résumé', href: '/resume' },
+  { label: 'Blog', href: '/blog' },
+];
+---
+
+<header class="site-header">
+  <h1 class="site-title">
+    <a href="/">
+      {
+        segments.map((segment) =>
+          segment.small ? <span class="small-caps">{segment.text}</span> : segment.text,
+        )
+      }
+    </a>
+  </h1>
+  <div class="separator" role="presentation"></div>
+  <nav class="site-nav" aria-label="Site">
+    {
+      navLinks.map((link, index) => (
+        <>
+          {index > 0 && <p class="bullet">•</p>}
+          <a class="nav-link" href={link.href}>
+            {link.label}
+          </a>
+        </>
+      ))
+    }
+  </nav>
+</header>

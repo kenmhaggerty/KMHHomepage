@@ -1,0 +1,66 @@
+---
+import '@fontsource/public-sans/400.css';
+import '@fontsource/public-sans/500.css';
+import '@fontsource/public-sans/600.css';
+import '../styles/global.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import ViewportToggle from '../components/ViewportToggle.astro';
+import { siteInfo } from '../data/site';
+
+interface Props {
+  pageTitle?: string;
+  description?: string;
+}
+
+const { pageTitle, description = 'Portfolio of Ken M. Haggerty' } = Astro.props;
+const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
+---
+
+<!doctype html>
+<html lang="en" data-viewport="desktop">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <link rel="icon" href={`/${siteInfo.favicon}`} />
+    <title>{title}</title>
+    <script is:inline>
+      /* Set the viewport mode before first paint to avoid layout flashes. */
+      (() => {
+        let stored = null;
+        try {
+          stored = localStorage.getItem('viewport-mode');
+        } catch {
+          /* storage unavailable */
+        }
+        document.documentElement.dataset.viewport =
+          window.innerWidth < 768 ? 'mobile' : stored === 'mobile' ? 'mobile' : 'desktop';
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="viewport">
+      <div class="toolbar">
+        <ViewportToggle />
+      </div>
+      <main class="card">
+        <SiteHeader />
+        <div class="scrollable">
+          <slot />
+        </div>
+      </main>
+      <SiteFooter />
+    </div>
+    <script>
+      import { initViewportMode } from '../scripts/viewportMode';
+      import { initGalleryScrollbars } from '../scripts/galleryScrollbar';
+      import { initCaseStudyFilters } from '../scripts/caseStudyFilters';
+
+      initViewportMode(document, window);
+      initCaseStudyFilters(document);
+      initGalleryScrollbars(document, window);
+    </script>
+  </body>
+</html>

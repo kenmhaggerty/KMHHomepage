@@ -1,0 +1,9 @@
+dist/
+.astro/
+node_modules/
+coverage/
+public/
+package-lock.json
+# Site content files are managed by hand; leave their formatting alone.
+site-info.json
+case-studies/

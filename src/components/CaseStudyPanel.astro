@@ -1,0 +1,28 @@
+---
+import type { CaseStudy } from '../types';
+import { imageUrl } from '../data/site';
+
+interface Props {
+  caseStudy: CaseStudy;
+}
+
+const { caseStudy } = Astro.props;
+const { key, title, company, year, filters, hero } = caseStudy;
+---
+
+<a
+  class="panel panel-hoverable"
+  href={`/work/${key}/`}
+  data-case-study={key}
+  data-filter-zero-to-one={String(filters.zero_to_one)}
+  data-filter-consumer={String(filters.consumer)}
+  data-filter-gov-dod={String(filters.gov_dod)}
+  data-filter-mobile={String(filters.mobile)}
+>
+  <img class="hero-desktop" src={imageUrl(hero.desktop)} alt={hero.alt_text} loading="lazy" />
+  <img class="hero-mobile" src={imageUrl(hero.mobile)} alt={hero.alt_text} loading="lazy" />
+  <span class="panel-overlay">
+    <span class="panel-title">{title}</span>
+    <span class="panel-subtitle">{company} • {year}</span>
+  </span>
+</a>

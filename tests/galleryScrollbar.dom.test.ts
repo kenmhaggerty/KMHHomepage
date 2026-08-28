@@ -1,0 +1,122 @@
+import { beforeEach, describe, expect, it } from 'vitest';
+import { initGalleryScrollbars } from '../src/scripts/galleryScrollbar';
+
+interface Sizes {
+  trackWidth?: number;
+  viewportWidth?: number;
+  contentWidth?: number;
+}
+
+function renderGallery({
+  trackWidth = 1000,
+  viewportWidth = 500,
+  contentWidth = 2000,
+}: Sizes = {}) {
+  document.body.innerHTML = `
+    <div data-gallery>
+      <div data-gallery-scroll></div>
+      <div data-gallery-track><div data-gallery-scrubber></div></div>
+    </div>
+  `;
+  const viewport = document.querySelector<HTMLElement>('[data-gallery-scroll]')!;
+  const track = document.querySelector<HTMLElement>('[data-gallery-track]')!;
+  const scrubber = document.querySelector<HTMLElement>('[data-gallery-scrubber]')!;
+
+  Object.defineProperty(viewport, 'clientWidth', { value: viewportWidth, configurable: true });
+  Object.defineProperty(viewport, 'scrollWidth', { value: contentWidth, configurable: true });
+  let scrollLeft = 0;
+  Object.defineProperty(viewport, 'scrollLeft', {
+    configurable: true,
+    get: () => scrollLeft,
+    set: (value: number) => {
+      scrollLeft = value;
+      viewport.dispatchEvent(new Event('scroll'));
+    },
+  });
+  Object.defineProperty(track, 'clientWidth', { value: trackWidth, configurable: true });
+  Object.defineProperty(scrubber, 'clientWidth', {
+    configurable: true,
+    get: () => parseFloat(scrubber.style.width) || 0,
+  });
+  scrubber.setPointerCapture = () => {};
+  track.getBoundingClientRect = () =>
+    ({ left: 0, right: 1000, top: 0, bottom: 6, width: 1000, height: 6, x: 0, y: 0 }) as DOMRect;
+
+  return { viewport, track, scrubber };
+}
+
+function pointerEvent(type: string, init: { pointerId?: number; clientX?: number } = {}): Event {
+  const event = new Event(type, { bubbles: true, cancelable: true });
+  Object.assign(event, { pointerId: init.pointerId ?? 1, clientX: init.clientX ?? 0 });
+  return event;
+}
+
+beforeEach(() => {
+  document.body.innerHTML = '';
+});
+
+describe('initGalleryScrollbars', () => {
+  it('sizes the scrubber from the scroll metrics', () => {
+    const { scrubber } = renderGallery();
+    initGalleryScrollbars(document, window);
+    expect(scrubber.style.width).toBe('250px');
+    expect(scrubber.style.transform).toBe('translateX(0px)');
+  });
+
+  it('moves the scrubber when the container scrolls', () => {
+    const { viewport, scrubber } = renderGallery();
+    initGalleryScrollbars(document, window);
+    viewport.scrollLeft = 750;
+    expect(scrubber.style.transform).toBe('translateX(375px)');
+  });
+
+  it('fills the track when the content fits', () => {
+    const { scrubber } = renderGallery({ contentWidth: 400 });
+    initGalleryScrollbars(document, window);
+    expect(scrubber.style.width).toBe('1000px');
+  });
+
+  it('updates on window resize and filter changes', () => {
+    const { viewport, scrubber } = renderGallery();
+    initGalleryScrollbars(document, window);
+    viewport.scrollLeft = 1500;
+    Object.defineProperty(viewport, 'scrollWidth', { value: 3000, configurable: true });
+    window.dispatchEvent(new Event('resize'));
+    expect(scrubber.style.transform).toBe('translateX(500px)');
+    Object.defineProperty(viewport, 'scrollWidth', { value: 2000, configurable: true });
+    document.dispatchEvent(new Event('casestudyfilterschange'));
+    expect(scrubber.style.transform).toBe('translateX(750px)');
+  });
+
+  it('scrolls the container when the scrubber is dragged', () => {
+    const { viewport, scrubber } = renderGallery();
+    initGalleryScrollbars(document, window);
+    scrubber.dispatchEvent(pointerEvent('pointerdown', { pointerId: 7, clientX: 100 }));
+    scrubber.dispatchEvent(pointerEvent('pointermove', { pointerId: 7, clientX: 475 }));
+    expect(viewport.scrollLeft).toBeCloseTo(750);
+    scrubber.dispatchEvent(pointerEvent('pointerup', { pointerId: 7 }));
+    // After the drag ends, moves are ignored.
+    scrubber.dispatchEvent(pointerEvent('pointermove', { pointerId: 7, clientX: 999 }));
+    expect(viewport.scrollLeft).toBeCloseTo(750);
+  });
+
+  it('ignores pointer moves from other pointers during a drag', () => {
+    const { viewport, scrubber } = renderGallery();
+    initGalleryScrollbars(document, window);
+    scrubber.dispatchEvent(pointerEvent('pointerdown', { pointerId: 7, clientX: 100 }));
+    scrubber.dispatchEvent(pointerEvent('pointermove', { pointerId: 8, clientX: 475 }));
+    expect(viewport.scrollLeft).toBe(0);
+  });
+
+  it('jumps the scroll position when the track is clicked', () => {
+    const { viewport, track } = renderGallery();
+    initGalleryScrollbars(document, window);
+    track.dispatchEvent(pointerEvent('pointerdown', { clientX: 500 }));
+    expect(viewport.scrollLeft).toBeCloseTo(750);
+  });
+
+  it('ignores galleries with missing pieces', () => {
+    document.body.innerHTML = '<div data-gallery><div data-gallery-scroll></div></div>';
+    expect(() => initGalleryScrollbars(document, window)).not.toThrow();
+  });
+});

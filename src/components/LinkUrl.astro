@@ -1,0 +1,15 @@
+---
+import type { CaseStudyLink } from '../types';
+import Icon from './Icon.astro';
+
+interface Props {
+  link: CaseStudyLink;
+}
+
+const { link } = Astro.props;
+---
+
+<a class="link-url" href={link.url} target="_blank" rel="noopener noreferrer">
+  <Icon name="link" size={15} />
+  <p class="link-title">{link.title}</p>
+</a>

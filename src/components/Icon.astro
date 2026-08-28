@@ -1,0 +1,38 @@
+---
+/**
+ * Inline SVG icons. The design uses Apple SF Symbols glyphs (text layers),
+ * which cannot be embedded on the web; these are hand-drawn equivalents.
+ */
+export type IconName = 'chevron-back' | 'link' | 'iphone' | 'macbook';
+
+interface Props {
+  name: IconName;
+  size?: number;
+  class?: string;
+}
+
+const { name, size = 16, class: className } = Astro.props;
+
+const paths: Record<IconName, string> = {
+  'chevron-back': 'M15 18 L9 12 L15 6',
+  link: 'M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71',
+  iphone: 'M9 2.5h6a2 2 0 0 1 2 2v15a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-15a2 2 0 0 1 2-2ZM10.8 5h2.4',
+  macbook:
+    'M5.2 6h13.6a1.2 1.2 0 0 1 1.2 1.2v8.3H4v-8.3A1.2 1.2 0 0 1 5.2 6ZM2 17.8h20a2 2 0 0 1-2 1.2H4a2 2 0 0 1-2-1.2Z',
+};
+---
+
+<svg
+  class:list={['icon', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+>
+  <path d={paths[name]}></path>
+</svg>

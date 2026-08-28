@@ -1,0 +1,47 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import CaseStudyPanel from '../components/CaseStudyPanel.astro';
+import { about, caseStudies, imageUrl } from '../data/site';
+import { FILTERS } from '../utils/filters';
+---
+
+<SiteLayout>
+  <div class="page-work">
+    <section class="section about">
+      <h2 class="section-title">{about.title}</h2>
+      <div class="about-content">
+        <img
+          class="avatar"
+          src={imageUrl(about.avatar)}
+          alt={about.avatar_alt}
+          width="64"
+          height="64"
+        />
+        {about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+    </section>
+    <section class="case-studies">
+      <div class="cs-header">
+        <h2 class="section-title">Case Studies</h2>
+        <span class="filter-label">Filter by</span>
+        <div class="chips">
+          {
+            FILTERS.map((filter) => (
+              <button type="button" class="chip" data-filter-chip={filter.key} aria-pressed="false">
+                {filter.label}
+              </button>
+            ))
+          }
+        </div>
+      </div>
+      <div class="hscroll" data-gallery>
+        <div class="hscroll-viewport" data-gallery-scroll>
+          {caseStudies.map((caseStudy) => <CaseStudyPanel caseStudy={caseStudy} />)}
+        </div>
+        <div class="hscroll-track" data-gallery-track>
+          <div class="hscroll-scrubber" data-gallery-scrubber></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</SiteLayout>

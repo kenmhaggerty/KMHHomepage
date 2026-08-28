@@ -1,0 +1,12 @@
+---
+import Icon from './Icon.astro';
+---
+
+<div class="viewport-toggle" role="group" aria-label="Preview layout">
+  <button type="button" data-mode-button="mobile" aria-pressed="false" title="Mobile layout">
+    <Icon name="iphone" size={12} />
+  </button>
+  <button type="button" data-mode-button="desktop" aria-pressed="false" title="Desktop layout">
+    <Icon name="macbook" size={14} />
+  </button>
+</div>

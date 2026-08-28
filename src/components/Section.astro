@@ -1,0 +1,16 @@
+---
+import type { CaseStudySection } from '../types';
+import LinkUrl from './LinkUrl.astro';
+
+interface Props {
+  section: CaseStudySection;
+}
+
+const { section } = Astro.props;
+---
+
+<section class="section">
+  <h2 class="section-title">{section.title}</h2>
+  {section.html_content && <div class="section-body" set:html={section.html_content} />}
+  {section.links?.map((link) => <LinkUrl link={link} />)}
+</section>

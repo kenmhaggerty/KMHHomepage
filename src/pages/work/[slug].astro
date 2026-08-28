@@ -1,0 +1,58 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Icon from '../../components/Icon.astro';
+import Section from '../../components/Section.astro';
+import { caseStudies, imageUrl } from '../../data/site';
+import type { CaseStudy } from '../../types';
+
+export function getStaticPaths() {
+  return caseStudies.map((caseStudy) => ({
+    params: { slug: caseStudy.key },
+    props: { caseStudy },
+  }));
+}
+
+interface Props {
+  caseStudy: CaseStudy;
+}
+
+const { caseStudy } = Astro.props;
+---
+
+<SiteLayout pageTitle={caseStudy.title}>
+  <div class="page-project">
+    <header class="project-header">
+      <a class="back-button" href="/">
+        <Icon name="chevron-back" size={12} />
+        Back
+      </a>
+      <h2 class="project-title">{caseStudy.title}</h2>
+      <p class="project-meta">
+        <span>{caseStudy.company}</span>
+        <span>•</span>
+        <span>{caseStudy.year}</span>
+      </p>
+    </header>
+    <div class="hscroll" data-gallery>
+      <div class="hscroll-viewport" data-gallery-scroll>
+        {
+          caseStudy.gallery.map((item) => (
+            <a
+              class="panel"
+              href={imageUrl(item.full_res)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img src={imageUrl(item.preview)} alt={item.alt_text} loading="lazy" />
+            </a>
+          ))
+        }
+      </div>
+      <div class="hscroll-track" data-gallery-track>
+        <div class="hscroll-scrubber" data-gallery-scrubber></div>
+      </div>
+    </div>
+    {caseStudy.sections.map((section) => <Section section={section} />)}
+    <div class="spacer"></div>
+  </div>
+</SiteLayout>
