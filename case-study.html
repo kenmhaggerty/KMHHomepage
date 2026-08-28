@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ken M. Haggerty</title>
+  <link rel="icon" href="images/favicon.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="site-title" id="site-title"></h1>
+    <div class="site-separator"></div>
+    <nav class="site-nav">
+      <a href="index.html">Work</a>
+      <span class="dot">&bull;</span>
+      <a href="resume.html">R&eacute;sum&eacute;</a>
+      <span class="dot">&bull;</span>
+      <a href="blog.html">Blog</a>
+    </nav>
+  </header>
+
+  <main class="card">
+    <div class="scrollable">
+      <div class="project-header">
+        <a class="back-link" href="index.html">
+          <svg viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 1L1.5 6L7 11" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span>Back</span>
+        </a>
+        <p class="project-title" id="project-title"></p>
+        <div class="project-meta">
+          <span id="project-company"></span>
+          <span>&bull;</span>
+          <span id="project-year"></span>
+        </div>
+      </div>
+
+      <div class="gallery">
+        <div class="gallery-scroll" id="gallery-scroll"></div>
+      </div>
+
+      <div id="sections"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p id="site-footer"></p>
+  </footer>
+
+  <script src="js/case-study.js"></script>
+</body>
+</html>

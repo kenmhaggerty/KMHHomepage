@@ -1,0 +1,281 @@
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  background: #f8f8f8;
+  font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 8px;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---- Site header ---- */
+
+.site-header {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0 16px;
+  width: 100%;
+}
+
+.site-title {
+  padding-left: 16px;
+  text-transform: uppercase;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.site-title .cap {
+  font-size: 32px;
+}
+
+.site-title .rest {
+  font-size: 28px;
+}
+
+.site-separator {
+  height: 1px;
+  width: 100%;
+  background: #000;
+  margin: 9px 0;
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 13px 0;
+}
+
+.site-nav a,
+.site-nav .dot {
+  font-weight: 600;
+  font-size: 16px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.site-nav a {
+  padding: 0 3px;
+}
+
+/* ---- Card ---- */
+
+.card {
+  background: #fff;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 0;
+  max-width: 1024px;
+  width: 100%;
+}
+
+.scrollable {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 16px;
+  width: 100%;
+}
+
+#sections {
+  display: contents;
+}
+
+/* ---- Project header ---- */
+
+.project-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.back-link {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  color: #888;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.back-link svg {
+  width: 8px;
+  height: 12px;
+}
+
+.project-title {
+  font-size: 24px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.project-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* ---- Gallery ---- */
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.gallery-scroll {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-color: #aaa #f0f0f0;
+  scrollbar-width: thin;
+}
+
+.gallery-scroll::-webkit-scrollbar {
+  height: 6px;
+}
+
+.gallery-scroll::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 3px;
+}
+
+.gallery-scroll::-webkit-scrollbar-thumb {
+  background: #aaa;
+  border-radius: 3px;
+}
+
+.gallery-panel {
+  flex-shrink: 0;
+  width: 480px;
+  height: 288px;
+  box-shadow: 0px 0px 12px 0px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  display: block;
+}
+
+.gallery-panel img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ---- Sections ---- */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.section-body {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.section-body p {
+  margin: 0 0 12px;
+}
+
+.section-body p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- Links ---- */
+
+.link-pill {
+  background: #f4f4f4;
+  border-radius: 8px;
+  height: 29px;
+  width: 100%;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.link-pill svg {
+  flex-shrink: 0;
+  width: 13px;
+  height: 13px;
+  color: #777;
+}
+
+.link-pill span {
+  flex: 1 0 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 500;
+  color: #777;
+}
+
+/* ---- Footer ---- */
+
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0;
+  width: 100%;
+}
+
+.site-footer p {
+  margin: 0;
+  color: #888;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .gallery-panel {
+    width: 85vw;
+    max-width: 420px;
+    height: auto;
+    aspect-ratio: 480 / 288;
+  }
+}
