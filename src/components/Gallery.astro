@@ -1,0 +1,25 @@
+---
+interface GalleryItem {
+  preview: string;
+  full_res: string;
+  alt_text?: string;
+}
+
+interface Props {
+  items: GalleryItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="gallery">
+  <div class="gallery-scroll">
+    {
+      items.map((item) => (
+        <a class="gallery-panel" href={`/images/${item.full_res}`} target="_blank" rel="noopener">
+          <img src={`/images/${item.preview}`} alt={item.alt_text || ''} />
+        </a>
+      ))
+    }
+  </div>
+</div>

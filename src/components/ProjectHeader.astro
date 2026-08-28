@@ -1,0 +1,24 @@
+---
+interface Props {
+  title: string;
+  company: string;
+  year: string;
+}
+
+const { title, company, year } = Astro.props;
+---
+
+<div class="project-header">
+  <a class="back-link" href="/">
+    <svg viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M7 1L1.5 6L7 11" stroke="#888" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    <span>Back</span>
+  </a>
+  <p class="project-title">{title}</p>
+  <div class="project-meta">
+    <span>{company}</span>
+    <span>&bull;</span>
+    <span>{year}</span>
+  </div>
+</div>

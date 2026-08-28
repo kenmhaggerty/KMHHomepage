@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import DeviceToggle from '../../components/DeviceToggle';
+import ProjectHeader from '../../components/ProjectHeader.astro';
+import Gallery from '../../components/Gallery.astro';
+import Section from '../../components/Section.astro';
+import LinksSection from '../../components/LinksSection.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import siteInfo from '../../data/site-info.json';
+
+interface TextSection {
+  title: string;
+  html_content: string;
+}
+
+interface LinksSectionData {
+  title: string;
+  links: { title: string; url: string }[];
+}
+
+interface Project {
+  key: string;
+  title: string;
+  company: string;
+  year: string;
+  gallery: { preview: string; full_res: string; alt_text?: string }[];
+  sections: (TextSection | LinksSectionData)[];
+}
+
+export async function getStaticPaths() {
+  const modules = import.meta.glob<{ default: Project }>('../../data/case-studies/*.json', {
+    eager: true,
+  });
+
+  return Object.entries(modules).map(([path, mod]) => {
+    const key = path.split('/').pop()!.replace('.json', '');
+    return { params: { key }, props: { project: mod.default } };
+  });
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const isLinksSection = (section: TextSection | LinksSectionData): section is LinksSectionData =>
+  'links' in section;
+---
+
+<BaseLayout title={`${project.title} — ${siteInfo.title}`}>
+  <div class="toolbar">
+    <DeviceToggle client:load />
+  </div>
+  <main class="card" id="card" data-device="desktop">
+    <SiteHeader title={siteInfo.title} />
+    <div class="scrollable">
+      <ProjectHeader title={project.title} company={project.company} year={project.year} />
+      <Gallery items={project.gallery} />
+      {
+        project.sections.map((section) =>
+          isLinksSection(section) ? (
+            <LinksSection title={section.title} links={section.links} />
+          ) : (
+            <Section title={section.title} html_content={section.html_content} />
+          )
+        )
+      }
+    </div>
+  </main>
+  <SiteFooter text={siteInfo.footer} />
+</BaseLayout>

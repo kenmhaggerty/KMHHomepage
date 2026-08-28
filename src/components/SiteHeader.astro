@@ -1,0 +1,34 @@
+---
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+
+type Run = { cls: 'cap' | 'rest'; text: string };
+
+const runs: Run[] = [];
+for (const ch of title) {
+  const cls: Run['cls'] = /[a-z]/.test(ch) ? 'rest' : 'cap';
+  const last = runs[runs.length - 1];
+  if (last && last.cls === cls) {
+    last.text += ch;
+  } else {
+    runs.push({ cls, text: ch });
+  }
+}
+---
+
+<header class="site-header">
+  <h1 class="site-title">
+    {runs.map((run) => <span class={run.cls}>{run.text}</span>)}
+  </h1>
+  <div class="site-separator"></div>
+  <nav class="site-nav">
+    <a href="/">Work</a>
+    <span class="dot">&bull;</span>
+    <a href="/resume">Résumé</a>
+    <span class="dot">&bull;</span>
+    <a href="/blog">Blog</a>
+  </nav>
+</header>

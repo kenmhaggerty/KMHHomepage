@@ -1,0 +1,23 @@
+---
+import siteInfo from '../data/site-info.json';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <link rel="icon" href={`/${siteInfo.favicon}`} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
