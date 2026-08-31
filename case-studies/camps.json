@@ -1,0 +1,64 @@
+{
+    "key": "camps",
+    "title": "CAMPS",
+    "company": "US Air Force",
+    "year": "2020",
+    "filters": {
+        "zero_to_one": false,
+        "consumer": false,
+        "gov_dod": true,
+        "mobile": false
+    },
+    "hero": {
+        "desktop": "camps-1-preview.png",
+        "mobile": "camps-hero-mobile.png",
+        "alt_text": "CAMPS"
+    },
+    "gallery": [
+        {
+            "preview": "camps-1-preview.png",
+            "full_res": "camps-1.png",
+            "alt_text": "CAMPS redacted mockup #1"
+        },
+        {
+            "preview": "camps-2-preview.png",
+            "full_res": "camps-2.png",
+            "alt_text": "CAMPS redacted mockup #2"
+        }
+    ],
+    "sections": [
+        {
+            "title": "Overview",
+            "html_content": "<p>Consolidated Air Mobility Planning System</p>"
+        },
+        {
+            "title": "Role",
+            "html_content": "<p>Lead (and solo) UX designer working with multiple engineering teams, project leadership, government partners, and end-users within USTRANSCOM to design ground-up application using Material UI and custom components to ensure usability, testability, iterability, and performance.</p><p>Gathered end-user input and built trust & confidence via regular on-site observational visits and weekly feedback sessions for ongoing and upcoming work.</p><p>Engaged in significant requirements gathering, management, refinement, and prioritization, including change request management and defects triage.</p>"
+        },
+        {
+            "title": "Initial Objectives",
+            "html_content": "<p>Upgrade technical stack of existing CAMPS application to cloud-based application built on React with improved performance, automated testing & QA.</p><p>Rebuild multiple siloed requests management systems built by multiple contractors as a single code base to facilitate cross-platform coordination and data access.</p>"
+        },
+        {
+            "title": "Solution",
+            "html_content": "<p>Use rebuilding effort as opportunity to fix errors and improve UX of existing application.</p><p>Consolidate duplicative application interfaces into single coherent user interface that serves all product lines.</p><p>Build architectural foundation (both technical and design-wise) for ambitious future efforts like consolidated planning and ML-based recommendations.</p><p>Engage in \"diplomacy-through-design\" with government stakeholders to evangelize iterative Agile software development practices with rapid value turnaround.</p>"
+        },
+        {
+            "title": "Impact",
+            "html_content": "<p>The program was discontinued in 2025 before reaching production, which is not uncommon for DoD modernization efforts as funding and priorities shift. Nevertheless, the architectural and UX groundwork I established sustained the program for five years after I left.</p>"
+        },
+        {
+            "title": "Links",
+            "links": [
+                {
+                    "title": "USTRANSCOM • US Air Force",
+                    "url": "https://www.ustranscom.mil"
+                },
+                {
+                    "title": "SuprTEK",
+                    "url": "https://www.suprtek.com"
+                }
+            ]
+        }
+    ]
+}

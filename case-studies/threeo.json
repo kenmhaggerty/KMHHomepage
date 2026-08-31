@@ -1,0 +1,56 @@
+{
+    "key": "threeo",
+    "title": "Threeo",
+    "company": "iPhone App",
+    "year": "2013",
+    "filters": {
+        "zero_to_one": true,
+        "consumer": true,
+        "gov_dod": false,
+        "mobile": true
+    },
+    "hero": {
+        "desktop": "threeo-1-preview.png",
+        "mobile": "threeo-hero-mobile.png",
+        "alt_text": "Threeo"
+    },
+    "gallery": [
+        {
+            "preview": "threeo-1-preview.png",
+            "full_res": "Threeo (wordmark).png",
+            "alt_text": "Threeo (wordmark)"
+        },
+        {
+            "preview": "threeo-2-preview.png",
+            "full_res": "Threeo (screenshots).png",
+            "alt_text": "Threeo (screenshots)"
+        },
+        {
+            "preview": "threeo-3-preview.png",
+            "full_res": "Threeo (sketches).png",
+            "alt_text": "Threeo (sketches)"
+        }
+    ],
+    "sections": [
+        {
+            "title": "Overview",
+            "html_content": "<p>A beautiful card game for iPhone.</p>"
+        },
+        {
+            "title": "Role",
+            "html_content": "<p>I did all software development, graphic design, audio design, and marketing for Threeo and built it within approximately 9 months. This was my first time ever building a publicly-released software application on the App Store.</p>"
+        },
+        {
+            "title": "Initial Objectives",
+            "html_content": "<p>Teach myself iOS application development by moving rectangles around a screen in a delightful way.</p>"
+        },
+        {
+            "title": "Solution",
+            "html_content": "<p>I had come up with the idea for Threeo as a two-person card game the same time I was looking to teach myself software application development (and not just scripting).</p><p>Through many iterations while learning how to code, I refined the Threeo concept into a one-person card game that can be played in roughly 1–3 minute intervals.</p>"
+        },
+        {
+            "title": "Impact",
+            "html_content": "<p>Threeo launched for free on the App Store in 2013 with support for iPhone 4 and iPhone 5 devices and was within days one of the top-downloaded new card games with hundreds of downloads.</p>"
+        }
+    ]
+}

@@ -1,0 +1,51 @@
+{
+    "key": "musubi",
+    "title": "Musubi",
+    "company": "iPhone App",
+    "year": "(In Progress)",
+    "filters": {
+        "zero_to_one": true,
+        "consumer": true,
+        "gov_dod": false,
+        "mobile": true
+    },
+    "hero": {
+        "desktop": "musubi-1-preview.png",
+        "mobile": "musubi-hero-mobile.png",
+        "alt_text": "Musubi"
+    },
+    "gallery": [
+        {
+            "preview": "musubi-1-preview.png",
+            "full_res": "Musubi (hero).png",
+            "alt_text": "Musubi (app icon)"
+        },
+        {
+            "preview": "musubi-2-preview.png",
+            "full_res": "Musubi (screenshots).png",
+            "alt_text": "Musubi (screenshots)"
+        }
+    ],
+    "sections": [
+        {
+            "title": "Overview",
+            "html_content": "<p>Send hassle-free push notifications—no mailing lists or phone numbers required.</p>"
+        },
+        {
+            "title": "Role",
+            "html_content": "<p>Concept, design & coding.</p>"
+        },
+        {
+            "title": "Initial Objectives",
+            "html_content": "<p>Email inboxes are overwhelmed, and managing text message threads can be a nightmare—what if there were an easier way to keep everyone up-to-date and not miss important updates?</p>"
+        },
+        {
+            "title": "Solution",
+            "html_content": "<p>Musubi is a dedicated push notifications app that gives you back control of what, when, and how you receive notifications, while making sending a notification as easy as hitting \"send.\"</p><p>Scan a QR code or tap a link to subscribe and self-manage your subscriptions.</p>"
+        },
+        {
+            "title": "Impact",
+            "html_content": "<p>(currently in development)</p>"
+        }
+    ]
+}

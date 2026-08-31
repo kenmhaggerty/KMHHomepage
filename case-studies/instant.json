@@ -1,0 +1,55 @@
+{
+    "key": "instant",
+    "title": "INSTANT!",
+    "company": "treXis",
+    "year": "2022",
+    "filters": {
+        "zero_to_one": false,
+        "consumer": true,
+        "gov_dod": false,
+        "mobile": false
+    },
+    "hero": {
+        "desktop": "instant-1-preview.png",
+        "mobile": "instant-hero-mobile.png",
+        "alt_text": "INSTANT!"
+    },
+    "gallery": [
+        {
+            "preview": "instant-1-preview.png",
+            "full_res": "INSTANT (screenshot).png",
+            "alt_text": "INSTANT! (screenshot)"
+        }
+    ],
+    "sections": [
+        {
+            "title": "Overview",
+            "html_content": "<p>One-click lending platform initially built for a single client but intended to become a standalone product developed by treXis for financial institutions.</p>"
+        },
+        {
+            "title": "Role",
+            "html_content": "<p>Performed intake and generated initial static and interactive mockups via Figma.</p><p>Presented to customer, solicited feedback, and adjusted designs.</p>"
+        },
+        {
+            "title": "Initial Objectives",
+            "html_content": "<p>Design dashboard-like interface for displaying pre-qualified offers to candidates \"behind-the-PIN\" (i.e., after sign-in).</p><p>Use already-known customer information to facilitate one-click agreement for unsecured lending products.</p>"
+        },
+        {
+            "title": "Solution",
+            "html_content": "<p>Establish standard interface inspired by Apple Home app UI that works for multiple lending products at multiple interface sizes to convey key information in a clean and trustworthy way.</p><p>Present additional relevant data and evaluative metrics to emphasize that candidate is prequalified and offers are specially selected to ensure that they are financially capable of agreeing to them.</p>"
+        },
+        {
+            "title": "Impact",
+            "html_content": "<p>Design work expanded the client's understanding of the potential of their own concept and helped articulate an iterative approach towards building out a proof-of-concept. The design worked helped to refine requirements and build excitement towards an end-vision of what the product could be.</p>"
+        },
+        {
+            "title": "Links",
+            "links": [
+                {
+                    "title": "treXis",
+                    "url": "https://trexis.net"
+                }
+            ]
+        }
+    ]
+}

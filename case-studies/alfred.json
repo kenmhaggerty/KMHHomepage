@@ -1,0 +1,59 @@
+{
+    "key": "alfred",
+    "title": "Alfred",
+    "company": "Made by Many",
+    "year": "2015",
+    "filters": {
+        "zero_to_one": false,
+        "consumer": true,
+        "gov_dod": false,
+        "mobile": true
+    },
+    "hero": {
+        "desktop": "alfred-1-preview.png",
+        "mobile": "alfred-hero-mobile.png",
+        "alt_text": "Alfred"
+    },
+    "gallery": [
+        {
+            "preview": "alfred-1-preview.png",
+            "full_res": "Alfred.png",
+            "alt_text": "Alfred (screenshot)"
+        }
+    ],
+    "sections": [
+        {
+            "title": "Overview",
+            "html_content": "<p>High-growth, early-stage startup focused on providing personalized home concierge service for NYC and Boston residents. (Previous names: Hello Alfred, Alfred Club)</p>"
+        },
+        {
+            "title": "Role",
+            "html_content": "<p>Product Manager in charge of research studies using both paper prototypes via in-person qualitative feedback sessions and digital prototypes via in-person usability and validation sessions.</p><p>I also designed the \"remote control\" concept for the customer-facing mobile application that ended up being used.</p>"
+        },
+        {
+            "title": "Initial Objectives",
+            "html_content": "<p>Improve performance and reliability of software tools by shifting from commercial off-the-shelf products (e.g., Wunderlist, Google Forms, Google Sheets) to a custom-built three-part suite of tightly-integrated applications for receiving and fulfilling customer service requests.</p><p>Integrate corporate branding by 72andSunny into digital products and experiences.</p>"
+        },
+        {
+            "title": "Solution",
+            "html_content": "<p>Made by Many designed and built three software applications for Alfred: a mobile app for customers to submit concierge requests; a mobile app for Alfreds to fulfill concierge requests; and a web-based desktop application for planning and executing fulfillment routes and making real-time adjustments.</p>"
+        },
+        {
+            "title": "Impact",
+            "html_content": "<p>Alfred now operates in 52 markets across North America and supports over 300,000 residents. Made by Many's application suite significantly improved accuracy of request fulfillment, planning of fulfillment routes, and usability for customers, Alfreds, and HQ alike.</p><p>In 2017 Alfred signed a key partnership deal with the Related Companies to provide Alfred's services as a building amenity for all Related residents—no key handover required.</p>"
+        },
+        {
+            "title": "Links",
+            "links": [
+                {
+                    "title": "Alfred",
+                    "url": "https://www.helloalfred.com"
+                },
+                {
+                    "title": "Made by Many",
+                    "url": "https://www.madebymany.com"
+                }
+            ]
+        }
+    ]
+}

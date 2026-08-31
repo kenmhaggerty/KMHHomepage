@@ -1,0 +1,51 @@
+{
+    "key": "intrusive-thoughts",
+    "title": "Intrusive Thoughts",
+    "company": "App Design",
+    "year": "2020",
+    "filters": {
+        "zero_to_one": true,
+        "consumer": true,
+        "gov_dod": false,
+        "mobile": true
+    },
+    "hero": {
+        "desktop": "intrusive-thoughts-1-preview.png",
+        "mobile": "intrusive-thoughts-hero-mobile.png",
+        "alt_text": "Intrusive Thoughts"
+    },
+    "gallery": [
+        {
+            "preview": "intrusive-thoughts-1-preview.png",
+            "full_res": "Intrusive Thoughts (screenshots).png",
+            "alt_text": "Intrusive Thoughts (screenshots)"
+        },
+        {
+            "preview": "intrusive-thoughts-2-preview.png",
+            "full_res": "Intrusive Thoughts (roadmap).png",
+            "alt_text": "Intrusive Thoughts (roadmap)"
+        }
+    ],
+    "sections": [
+        {
+            "title": "Overview",
+            "html_content": "<p>An iPhone application aimed at treating obsessive-compulsive behavior through exposure therapy. Patients would receive push notifications with curated \"triggers\" to help mitigate negative impact.</p>"
+        },
+        {
+            "title": "Role",
+            "html_content": "<p>I did UX design work and product roadmapping for the client which could then be used in hiring a developer to build out the application.</p>"
+        },
+        {
+            "title": "Initial Objectives",
+            "html_content": "<p>Client in St. Louis, MO, reached out for help taking existing low-quality, low-fidelity mockups and figuring out roadmap and budget for building a functional application.</p>"
+        },
+        {
+            "title": "Solution",
+            "html_content": "<p>I took the existing mockups and redid them using standard SwiftUI / UIKit elements to support easier development and better usability.</p><p>I broke down key functional requirements into epics and features and developed an iterative roadmap with key milestones and effort estimates.</p>"
+        },
+        {
+            "title": "Impact",
+            "html_content": "<p>Client was extremely impressed and satisfied by both design work and roadmap clarity and used generated artifacts to hire an independent developer to build the app.</p>"
+        }
+    ]
+}

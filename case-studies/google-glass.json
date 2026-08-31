@@ -1,0 +1,77 @@
+{
+    "key": "google-glass",
+    "title": "Google Glass",
+    "company": "Google [x]",
+    "year": "2011",
+    "filters": {
+        "zero_to_one": false,
+        "consumer": true,
+        "gov_dod": false,
+        "mobile": false
+    },
+    "hero": {
+        "desktop": "google-glass-1-preview.png",
+        "mobile": "google-glass-hero-mobile.png",
+        "alt_text": "Google Glass"
+    },
+    "gallery": [
+        {
+            "preview": "google-glass-1-preview.png",
+            "full_res": "Google Glass.png",
+            "alt_text": "Google Glass (render)"
+        },
+        {
+            "preview": "google-glass-2-preview.png",
+            "full_res": "Google Glass (concept) (1).png",
+            "alt_text": "Google Glass (concept illustration #1)"
+        },
+        {
+            "preview": "google-glass-3-preview.png",
+            "full_res": "Google Glass (concept) (2).png",
+            "alt_text": "Google Glass (concept illustration #2)"
+        }
+    ],
+    "sections": [
+        {
+            "title": "Overview",
+            "html_content": "<p>Google's first foray into wearable computing.</p>"
+        },
+        {
+            "title": "Role",
+            "html_content": "<p>I participated in our internal Google [x] competition to come up with novel use cases for Google Glass.</p>"
+        },
+        {
+            "title": "Initial Objectives",
+            "html_content": "<p>Create an app to showcase the capabilities and value proposition of Google Glass.</p>"
+        },
+        {
+            "title": "Solution",
+            "html_content": "<p>I came up with a \"Dance Dance Revolution\"-style game for Google Glass in which arrows shown on the head-mounted display went along with music played through the device's bone-conducting speaker.</p><p>Players would score points for bobbing their heads along with the music in the right direction and on-tempo.</p>"
+        },
+        {
+            "title": "Impact",
+            "html_content": "<p>I won first place in the internal Google [x] ideation competition judged by Google [x] leadership including Sergey Brin and Sebastian Thrun and received a Nintendo 3DS as a prize.</p><p>I worked with Thad Starner and Nirmal Patel to expand the concept into a Python prototype and applied for a patent covering the concept.</p><p>While fun, the concept helped us realize that a head-bobbing interface was not ideal, leading to the addition of a touchpad on the side of the device.</p>"
+        },
+        {
+            "title": "Links",
+            "links": [
+                {
+                    "title": "Google Glass • X, the Moonshot Factory • Google [x]",
+                    "url": "https://x.company/projects/glass/"
+                },
+                {
+                    "title": "YouTube • Project Glass: Live Demo at Google I/O",
+                    "url": "https://youtu.be/D7TB8b2t3QE"
+                },
+                {
+                    "title": "YouTube • Google Design Minutes — Glass: Make it simple",
+                    "url": "https://youtu.be/L-lMnhiAzEw"
+                },
+                {
+                    "title": "Fast Company • Google's Project Glass: Inside The Problem Solving And Prototyping",
+                    "url": "https://www.fastcompany.com/1669937/googles-project-glass-inside-the-problem-solving-and-prototyping"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,51 @@
+{
+    "key": "akay",
+    "title": "Akay",
+    "company": "iPhone App",
+    "year": "(In Progress)",
+    "filters": {
+        "zero_to_one": true,
+        "consumer": true,
+        "gov_dod": false,
+        "mobile": true
+    },
+    "hero": {
+        "desktop": "akay-1-preview.png",
+        "mobile": "akay-hero-mobile.png",
+        "alt_text": "Akay"
+    },
+    "gallery": [
+        {
+            "preview": "akay-1-preview.png",
+            "full_res": "Akay (1).png",
+            "alt_text": "Akay (screenshots #1)"
+        },
+        {
+            "preview": "akay-2-preview.png",
+            "full_res": "Akay (2).png",
+            "alt_text": "Akay (screenshots #2)"
+        }
+    ],
+    "sections": [
+        {
+            "title": "Overview",
+            "html_content": "<p>Find, make, and share lists effortlessly.</p>"
+        },
+        {
+            "title": "Role",
+            "html_content": "<p>Concept, design & coding.</p>"
+        },
+        {
+            "title": "Initial Objectives",
+            "html_content": "<p>Create an app to encourage the creation of parseable and recursive structured data.</p>"
+        },
+        {
+            "title": "Solution",
+            "html_content": "<p>A user-friendly list app that goes beyond checklists.</p><p>By combining fundamental data types like text, images, videos, and links, users can create rich multimedia content that can be kept privately, shared with others, or published for all to see and use.</p><p>By allowing lists to be embedded in other lists, complex data types and relations can emerge while maintaining simplicity in use.</p><p>Metadata like checklist booleans or poll responses can be layered on top of lists without becoming tightly coupled to the content underneath.</p>"
+        },
+        {
+            "title": "Impact",
+            "html_content": "<p>While incomplete, the work and design that went into Akay helped me land my first official software development job with SuprTEK in St. Louis, MO.</p>"
+        }
+    ]
+}
