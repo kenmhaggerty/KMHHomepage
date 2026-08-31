@@ -44,6 +44,7 @@
 
   --content-max-width: 1024px;
   --mobile-card-width: 420px;
+  --mobile-card-height: 848px;
 }
 
 * {
@@ -116,6 +117,7 @@ button {
 
 html[data-viewport='mobile'] .card {
   max-width: var(--mobile-card-width);
+  max-height: var(--mobile-card-height);
   border-radius: 8px;
   overflow: hidden;
 }
