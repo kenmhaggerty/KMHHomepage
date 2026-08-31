@@ -378,6 +378,34 @@ html[data-viewport='mobile'] .hscroll-viewport {
   width: calc(100% + 26px);
 }
 
+/* Both carousels bleed through .scrollable's 16px padding so panels that
+   overflow stay visible out to the card's edges instead of being sliced early.
+   The scroll box has to land exactly on those edges, so the side gutter
+   matches the 16px inset (rather than the 13px above) and the margin is twice
+   that -- which keeps the panels themselves resting at the same 16px inset,
+   in line with the headings and body text. */
+html[data-viewport='desktop'] .hscroll-viewport {
+  width: calc(100% + 64px);
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-left: -32px;
+  margin-right: -32px;
+}
+
+/* 16px of breathing room either side of the panels. Scoped to desktop so the
+   mobile grid keeps spanning its parent in full. */
+html[data-viewport='desktop'] .hscroll {
+  padding: 0 16px;
+}
+
+/* ...which the track opts back out of, so it still spans the full width of
+   .hscroll rather than being inset a second time. */
+html[data-viewport='desktop'] .hscroll-track {
+  width: calc(100% + 32px);
+  margin-left: -16px;
+  margin-right: -16px;
+}
+
 .hscroll-viewport::-webkit-scrollbar {
   display: none;
 }
