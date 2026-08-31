@@ -106,7 +106,9 @@ button {
   flex-direction: column;
   width: 100%;
   max-width: var(--content-max-width);
-  flex: 1 0 0;
+  /* Hug the content vertically; shrink only when the viewport is too short,
+     at which point .scrollable takes over with an internal scrollbar. */
+  flex: 0 1 auto;
   min-height: 0;
   background: var(--color-card-bg);
   filter: drop-shadow(var(--shadow-card));
@@ -232,7 +234,9 @@ html[data-viewport='mobile'] .card {
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
-  flex: 1 0 0;
+  /* Sized by its content so the card can hug it, but shrinkable (and then
+     scrollable) when the card is squeezed to fit the viewport. */
+  flex: 0 1 auto;
   min-height: 0;
   width: 100%;
   overflow-y: auto;
