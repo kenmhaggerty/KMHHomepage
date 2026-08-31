@@ -312,6 +312,8 @@ html[data-viewport='mobile'] .viewport-toggle button[data-mode-button='mobile'] 
   align-items: center;
   justify-content: center;
   gap: 6px;
+  /* Keeps wrapped lines off the panel edges on narrow mobile panels. */
+  padding: 0 12px;
   text-align: center;
   text-transform: uppercase;
   font-weight: 600;
@@ -327,15 +329,20 @@ html[data-viewport='mobile'] .viewport-toggle button[data-mode-button='mobile'] 
   text-shadow: 0px 2px 8px rgba(187, 187, 187, 0.5);
 }
 
-.panel .panel-overlay .panel-title {
+/* Both lines wrap rather than overflow the panel; balance evens out the line
+   lengths, which reads better centred. */
+.panel .panel-overlay .panel-title,
+.panel .panel-overlay .panel-subtitle {
   margin: 0;
+  text-wrap: balance;
+}
+
+.panel .panel-overlay .panel-title {
   font-size: 20px;
 }
 
 .panel .panel-overlay .panel-subtitle {
-  margin: 0;
   font-size: 14px;
-  white-space: nowrap;
 }
 
 .panel.panel-hoverable:hover .panel-overlay,
