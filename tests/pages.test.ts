@@ -65,7 +65,10 @@ describe('Placeholder pages', () => {
   it('renders the résumé page', async () => {
     const html = await render(Resume);
     expect(html).toContain('<title>Résumé · Ken M. Haggerty</title>');
-    expect(html).toContain('Coming soon.');
+    expect(html).toContain('2026 August');
+    expect(html).toContain('Ken M Haggerty (2026 AUG).pdf');
+    // The PDF fills the window instead of the card hugging it.
+    expect(html).toContain('fill-height');
   });
 
   it('renders the blog page', async () => {

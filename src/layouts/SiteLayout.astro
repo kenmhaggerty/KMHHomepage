@@ -11,9 +11,12 @@ import { siteInfo } from '../data/site';
 interface Props {
   pageTitle?: string;
   description?: string;
+  /* Opt out of the card hugging its content, for pages whose content is meant
+     to fill the window instead (the résumé PDF). */
+  fillHeight?: boolean;
 }
 
-const { pageTitle, description = 'Portfolio of Ken M. Haggerty' } = Astro.props;
+const { pageTitle, description = 'Portfolio of Ken M. Haggerty', fillHeight = false } = Astro.props;
 const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
 ---
 
@@ -45,7 +48,7 @@ const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
       <div class="toolbar">
         <ViewportToggle />
       </div>
-      <main class="card">
+      <main class:list={['card', { 'fill-height': fillHeight }]}>
         <SiteHeader />
         <div class="scrollable">
           <slot />

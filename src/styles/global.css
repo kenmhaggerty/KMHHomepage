@@ -712,6 +712,34 @@ html[data-viewport='mobile'] .page-project .hscroll {
   gap: 8px;
 }
 
+/* ------------------------------------------------------------ résumé page */
+
+/* The résumé is a PDF that should fill the window rather than scroll inside
+   it, so the card opts out of hugging and every element between it and the
+   <embed> passes that height down (and stays shrinkable, so .scrollable never
+   needs a scrollbar of its own). */
+.card.fill-height,
+.card.fill-height .scrollable,
+.page-resume,
+.page-resume .section,
+.page-resume .section-body {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.page-resume,
+.page-resume .section-body {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.page-resume embed {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+}
+
 .spacer {
   width: 100%;
   height: 0;
