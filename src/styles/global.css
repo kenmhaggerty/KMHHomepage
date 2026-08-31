@@ -364,6 +364,13 @@ html[data-viewport='mobile'] .viewport-toggle button[data-mode-button='mobile'] 
   scrollbar-width: none;
 }
 
+/* The 13px shadow gutter above eats into the content box, leaving the panels
+   26px short of the parent. On mobile they span the full card width, so grow
+   the box by both gutters to put the content edges back on the parent's. */
+html[data-viewport='mobile'] .hscroll-viewport {
+  width: calc(100% + 26px);
+}
+
 .hscroll-viewport::-webkit-scrollbar {
   display: none;
 }
