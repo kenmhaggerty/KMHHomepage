@@ -43,6 +43,6 @@ export function parseCaseStudy(data: unknown, source = 'case study'): CaseStudy 
  */
 export function loadCaseStudies(modules: Record<string, unknown>): CaseStudy[] {
   return Object.entries(modules)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([path, data]) => parseCaseStudy(data, path));
+    .map(([path, data]) => parseCaseStudy(data, path))
+    .sort((a, b) => a.index - b.index);
 }

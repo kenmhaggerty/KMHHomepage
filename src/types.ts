@@ -39,6 +39,7 @@ export interface CaseStudySection {
 
 export interface CaseStudy {
   key: string;
+  index: number;
   title: string;
   company: string;
   year: string;
