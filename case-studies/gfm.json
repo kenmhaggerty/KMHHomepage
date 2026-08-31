@@ -56,12 +56,12 @@
             "title": "Links",
             "links": [
                 {
-                    "title": "DecisionPoint Corporation",
-                    "url": "https://decisionpointcorp.com"
-                },
-                {
                     "title": "ARTRANS • US Army",
                     "url": "https://www.army.mil/artrans"
+                },
+                {
+                    "title": "DecisionPoint Corporation",
+                    "url": "https://decisionpointcorp.com"
                 }
             ]
         }
