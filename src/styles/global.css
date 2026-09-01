@@ -997,6 +997,13 @@ html[data-viewport='mobile'] .page-project .hscroll {
   width: 100%;
 }
 
+/* Case study pages sit the back link above a title and meta, which the
+   header's own gap spaces; here it is alone above the PDF, so the room under
+   it is added on this page only rather than on the shared header. */
+.page-resume .back-button {
+  margin-bottom: 12px;
+}
+
 .page-resume embed {
   flex: 1 1 auto;
   min-height: 0;
