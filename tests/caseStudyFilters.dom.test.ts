@@ -69,12 +69,42 @@ describe('initCaseStudyFilters', () => {
     expect(panel('app').hidden).toBe(false);
   });
 
-  it('requires every selected filter to match (AND semantics)', () => {
+  it('selecting a chip replaces the one already selected', () => {
     initCaseStudyFilters(document);
     chip('gov_dod').click();
     chip('mobile').click();
+    expect(chip('gov_dod').getAttribute('aria-pressed')).toBe('false');
+    expect(chip('mobile').getAttribute('aria-pressed')).toBe('true');
+    // Only the mobile filter is left, so the mobile study is back on show.
     expect(panel('gfm').hidden).toBe(true);
-    expect(panel('app').hidden).toBe(true);
+    expect(panel('app').hidden).toBe(false);
+  });
+
+  it('never leaves more than one chip selected', () => {
+    initCaseStudyFilters(document);
+    chip('gov_dod').click();
+    chip('mobile').click();
+    chip('gov_dod').click();
+    expect(document.querySelectorAll('[data-filter-chip][aria-pressed="true"]')).toHaveLength(1);
+  });
+
+  it('clears the filter when the selected chip is clicked again', () => {
+    initCaseStudyFilters(document);
+    chip('mobile').click();
+    chip('mobile').click();
+    expect(document.querySelectorAll('[data-filter-chip][aria-pressed="true"]')).toHaveLength(0);
+    expect(panel('gfm').hidden).toBe(false);
+    expect(panel('app').hidden).toBe(false);
+  });
+
+  it('re-selects a chip that was cleared', () => {
+    initCaseStudyFilters(document);
+    chip('mobile').click();
+    chip('mobile').click();
+    chip('mobile').click();
+    expect(chip('mobile').getAttribute('aria-pressed')).toBe('true');
+    expect(panel('gfm').hidden).toBe(true);
+    expect(panel('app').hidden).toBe(false);
   });
 
   it('notifies listeners when the filter changes', () => {

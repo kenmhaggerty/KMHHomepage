@@ -11,8 +11,9 @@ export function flagsFromDataset(dataset: DOMStringMap): CaseStudyFilterFlags {
 }
 
 /**
- * Wires up the Work-page filter chips: clicking a chip toggles it, and case
- * study panels that don't match every selected filter are hidden.
+ * Wires up the Work-page filter chips. One filter applies at a time: picking a
+ * chip replaces whatever was selected, and picking the selected chip again
+ * clears it. Case study panels that don't match the selected filter are hidden.
  */
 export function initCaseStudyFilters(doc: Document): void {
   const chips = [...doc.querySelectorAll<HTMLButtonElement>('[data-filter-chip]')];
@@ -21,28 +22,27 @@ export function initCaseStudyFilters(doc: Document): void {
     return;
   }
 
-  const selected = new Set<FilterKey>();
+  const filterChips = chips.flatMap((chip) => {
+    const key = chip.dataset.filterChip;
+    return key && isFilterKey(key) ? [{ chip, key }] : [];
+  });
+
+  let selected: FilterKey | null = null;
 
   const apply = () => {
-    const keys = [...selected];
+    const keys = selected ? [selected] : [];
     for (const panel of panels) {
       panel.hidden = !matchesFilters(flagsFromDataset(panel.dataset), keys);
+    }
+    for (const { chip, key } of filterChips) {
+      chip.setAttribute('aria-pressed', String(key === selected));
     }
     doc.dispatchEvent(new CustomEvent('casestudyfilterschange'));
   };
 
-  for (const chip of chips) {
-    const key = chip.dataset.filterChip;
-    if (!key || !isFilterKey(key)) {
-      continue;
-    }
+  for (const { chip, key } of filterChips) {
     chip.addEventListener('click', () => {
-      if (selected.has(key)) {
-        selected.delete(key);
-      } else {
-        selected.add(key);
-      }
-      chip.setAttribute('aria-pressed', String(selected.has(key)));
+      selected = selected === key ? null : key;
       apply();
     });
   }
