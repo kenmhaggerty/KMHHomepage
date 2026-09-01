@@ -8,11 +8,15 @@
  *   - "mobile":  420px card layout (Figma "Mobile" / "Mobile on Desktop")
  * Small screens are always forced into "mobile"; on large screens the
  * toolbar toggle lets visitors preview the mobile layout.
+ *
+ * Colours are variables, declared light here and re-pointed by dark.css.
  */
 
-/* Light is the design's own palette, and the default. Dark is derived from it
-   further down; every colour lives here as a variable so the two themes stay
-   in step. */
+@import './dark.css';
+
+/* Light is the design's own palette, and the default. Every colour lives here
+   as a variable; dark.css re-points them for the dark theme, so a new colour
+   needs adding in both places. */
 :root {
   color-scheme: light;
 
@@ -61,53 +65,6 @@
   --content-max-width: 1024px;
   --mobile-card-width: 420px;
   --mobile-card-height: 848px;
-}
-
-/*
- * Dark theme. Built to the usual guidance rather than by inverting the light
- * values: a very dark grey ground instead of black (#000 exaggerates the glare
- * of light text and hides elevation), a lighter surface for the card so depth
- * reads without leaning on shadow, and off-white text rather than #fff, which
- * halates against a dark ground. Shadows go deeper because a faint black
- * shadow is invisible here. Muted text keeps ~5:1 against its own background
- * and body text ~13:1, so both clear WCAG AA.
- */
-html[data-theme='dark'] {
-  color-scheme: dark;
-
-  --color-page-bg: #121212;
-  --color-card-bg: #1e1e1e;
-  --color-text: #ededed;
-  --color-text-muted: #9a9a9a;
-  --color-text-soft: #a8a8a8;
-
-  --color-chip-bg: #2a2a2a;
-  --color-chip-bg-hover: #333333;
-  --color-chip-border: #3a3a3a;
-  /* Selected chips stay inverted against their neighbours, as in light. */
-  --color-chip-selected-bg: #ededed;
-  --color-chip-selected-bg-hover: #ffffff;
-  --color-chip-selected-border: #ededed;
-  --color-chip-selected-text: #121212;
-
-  --color-nav-hover-bg: #2a2a2a;
-  --color-url-bg: #262626;
-  --color-url-bg-hover: #303030;
-
-  --color-track: #2f2f2f;
-  --color-scrubber: #6f6f6f;
-  --color-toggle-accent: #ededed;
-  --color-toggle-accent-text: #121212;
-
-  --color-overlay-inner: rgba(38, 38, 38, 0.85);
-  --color-overlay-mid: rgba(34, 34, 34, 0.7);
-  --color-overlay-outer: rgba(34, 34, 34, 0.6);
-  --color-overlay-base: rgba(18, 18, 18, 0.9);
-
-  --shadow-card: 0px 2px 8px rgba(0, 0, 0, 0.55);
-  --shadow-panel: 0px 0px 12px rgba(0, 0, 0, 0.6);
-  --shadow-toggle: 0px 1px 3px rgba(0, 0, 0, 0.6);
-  --shadow-overlay-text: 0px 2px 8px rgba(0, 0, 0, 0.66);
 }
 
 * {
