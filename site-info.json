@@ -1,6 +1,10 @@
 {
     "title": "Ken M. Haggerty",
-    "favicon": "favicon.png",
+    "icons": {
+        "svg": "favicon.svg",
+        "png": "favicon.png",
+        "appleTouch": "apple-touch-icon.png"
+    },
     "footer": "Ken M. Haggerty © 2026",
     "version": "3.0.0"
 }

@@ -1,6 +1,16 @@
+/** The site's icons, all served as-is from public/. */
+export interface SiteIcons {
+  /** Scalable icon, preferred by browsers that support it. */
+  svg: string;
+  /** 32px raster, for browsers that do not take an SVG icon. */
+  png: string;
+  /** 180px icon iOS uses when the site is saved to the home screen. */
+  appleTouch: string;
+}
+
 export interface SiteInfo {
   title: string;
-  favicon: string;
+  icons: SiteIcons;
   footer: string;
   version: string;
 }

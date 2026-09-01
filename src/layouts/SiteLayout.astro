@@ -39,7 +39,11 @@ const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <link rel="icon" href={`/${siteInfo.favicon}`} />
+    <!-- Raster first, then SVG: browsers that take an SVG icon prefer it and
+         scale it to any size; the rest fall back to the 32px PNG. -->
+    <link rel="icon" href={`/${siteInfo.icons.png}`} sizes="32x32" type="image/png" />
+    <link rel="icon" href={`/${siteInfo.icons.svg}`} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={`/${siteInfo.icons.appleTouch}`} />
     {
       [publicSans400, publicSans500, publicSans600].map((href) => (
         <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />
