@@ -1,11 +1,18 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import Icon from '../components/Icon.astro';
 
 const resumePdf = '/Ken M Haggerty (Resume).pdf';
 ---
 
 <SiteLayout pageTitle="Résumé" fillHeight>
   <div class="page-resume">
+    <header class="project-header">
+      <a class="back-button" href="/">
+        <Icon name="chevron-back" size={12} />
+        Back
+      </a>
+    </header>
     <section class="section">
       <div class="section-body">
         <embed class="resume-viewport" src={resumePdf} type="application/pdf" />
