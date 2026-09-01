@@ -421,6 +421,14 @@ html[data-viewport='mobile'] .viewport-toggle button[data-mode-button='mobile'] 
   text-shadow: 0px 2px 8px rgba(200, 200, 200, 0.66);
 }
 
+/* Revealing the overlay is the whole of the hover effect, so it carries the
+   transition -- which covers the pointer leaving again, and focus-visible. */
+@media (prefers-reduced-motion: no-preference) {
+  .panel .panel-overlay {
+    transition: opacity 220ms ease-out;
+  }
+}
+
 /* Both lines wrap rather than overflow the panel; balance evens out the line
    lengths, which reads better centred. */
 .panel .panel-overlay .panel-title,
