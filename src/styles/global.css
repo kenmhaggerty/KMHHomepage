@@ -450,6 +450,20 @@ html[data-viewport='mobile'] .viewport-toggle button[data-mode-button='mobile'] 
   opacity: 0.8;
 }
 
+/* Browsers freeze `:hover` while a scroll is in flight, so a panel sliding
+   under a still pointer only lights up once the carousel stops. Once the
+   script is tracking the pointer it becomes the source of truth: `:hover` is
+   ignored, because mid-scroll it is stale and would leave the panel the
+   pointer has already left lit up as well. */
+html[data-panel-hover] .panel.panel-hoverable:hover .panel-overlay {
+  opacity: 0;
+}
+
+html[data-panel-hover] .panel.panel-hoverable.is-hovered .panel-overlay,
+html[data-panel-hover] .panel.panel-hoverable:focus-visible .panel-overlay {
+  opacity: 0.8;
+}
+
 /* --------------------------------------------------------------- hscroll */
 
 .hscroll {

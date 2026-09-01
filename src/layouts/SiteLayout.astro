@@ -60,10 +60,12 @@ const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
       import { initViewportMode } from '../scripts/viewportMode';
       import { initGalleryScrollbars } from '../scripts/galleryScrollbar';
       import { initCaseStudyFilters } from '../scripts/caseStudyFilters';
+      import { initPanelHover } from '../scripts/panelHover';
 
       initViewportMode(document, window);
       initCaseStudyFilters(document);
       initGalleryScrollbars(document, window);
+      initPanelHover(document);
     </script>
   </body>
 </html>
