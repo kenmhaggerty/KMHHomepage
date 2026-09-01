@@ -2,6 +2,17 @@
 import '@fontsource/public-sans/400.css';
 import '@fontsource/public-sans/500.css';
 import '@fontsource/public-sans/600.css';
+/*
+ * The @font-face rules above live in the stylesheet, so the browser only
+ * learns the font URLs once it has fetched and parsed the CSS -- by which
+ * point it has already painted the text in a fallback face and has to swap,
+ * which is the jitter on load. Preloading from the HTML starts these fetches
+ * alongside the CSS instead. Only the latin subset is listed: it covers
+ * U+0000-00FF, which is every character the site renders.
+ */
+import publicSans400 from '@fontsource/public-sans/files/public-sans-latin-400-normal.woff2?url';
+import publicSans500 from '@fontsource/public-sans/files/public-sans-latin-500-normal.woff2?url';
+import publicSans600 from '@fontsource/public-sans/files/public-sans-latin-600-normal.woff2?url';
 import '../styles/global.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
@@ -29,6 +40,11 @@ const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     <link rel="icon" href={`/${siteInfo.favicon}`} />
+    {
+      [publicSans400, publicSans500, publicSans600].map((href) => (
+        <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />
+      ))
+    }
     <title>{title}</title>
     <script is:inline>
       /* Set the viewport mode and theme before first paint, to avoid a layout
