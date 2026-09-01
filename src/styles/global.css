@@ -122,6 +122,16 @@ html[data-viewport='mobile'] .card {
   overflow: hidden;
 }
 
+/* Toggling modes swaps max-width between two lengths, so the card eases
+   between the two widths; everything else about the switch stays instant.
+   Crossing the mobile breakpoint on resize swaps a length for `none`, which
+   is not interpolable, so only the toggle animates. */
+@media (prefers-reduced-motion: no-preference) {
+  .card {
+    transition: max-width 220ms ease-in-out;
+  }
+}
+
 .site-footer {
   display: flex;
   justify-content: center;
