@@ -24,7 +24,7 @@
   --color-card-bg: #ffffff;
   --color-text: #000000;
   --color-text-muted: #888888;
-  --color-text-muted-2: #B4B4B4;
+  --color-text-muted-2: #b4b4b4;
   --color-text-soft: #777777;
 
   --color-chip-bg: #f0f0f0;
@@ -187,8 +187,8 @@ html[data-viewport='mobile'] .card {
   font-weight: 300;
 }
 
-/* Small screens always render the mobile layout, full-bleed and without
-   the viewport toggle or footer (per the Figma mobile frames). */
+/* Small screens always render the mobile layout, full-bleed and without the
+   viewport toggle (there is nothing to preview on a phone). */
 @media (max-width: 767px) {
   /* The card is full-bleed here, so the page matches it: any page background
      on show -- below short content, or behind a panel while its image loads --
@@ -198,13 +198,27 @@ html[data-viewport='mobile'] .card {
     --color-page-bg: #ffffff;
   }
 
+  /* Elsewhere the layout is a fixed-height column with the card scrolling
+     inside it. Here the page itself scrolls instead, so the footer can sit
+     after the content and be scrolled to: the column grows past the screen,
+     the card grows with its content, and the card's own scroller stands down.
+     Without this the footer could only ever be pinned in view, because
+     nothing outside the card would ever overflow. The card's own scroller
+     needs no change: unconstrained, it never has anything to scroll. */
+  html,
+  body {
+    height: auto;
+    min-height: 100%;
+  }
+
   .viewport {
+    height: auto;
+    min-height: 100dvh;
     padding: 0;
     gap: 0;
   }
 
-  .toolbar,
-  .site-footer {
+  .toolbar {
     display: none;
   }
 
@@ -216,6 +230,8 @@ html[data-viewport='mobile'] .card {
      shadow with it. */
   html[data-viewport='mobile'] .card {
     max-width: none;
+    /* Uncapped so it grows with its content and the page scrolls past it. */
+    max-height: none;
     border-radius: 0;
     filter: none;
   }
@@ -428,8 +444,7 @@ html[data-theme='dark'] .theme-toggle button[data-theme-button='dark'] .icon pat
      its own delays, taken from the state it is transitioning *to*.
      The mode toggle still reshapes these panels through aspect-ratio. */
   .case-studies .panel {
-    transition:
-      opacity 330ms ease-out 110ms;
+    transition: opacity 330ms ease-out 110ms;
   }
 
   .case-studies .panel[hidden] {
@@ -447,8 +462,7 @@ html[data-theme='dark'] .theme-toggle button[data-theme-button='dark'] .icon pat
   }
 
   html[data-viewport='desktop'] .case-studies .panel[hidden] {
-    transition:
-      width 220ms ease-out;
+    transition: width 220ms ease-out;
   }
 }
 
