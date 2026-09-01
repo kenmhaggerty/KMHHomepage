@@ -354,6 +354,15 @@ html[data-theme='dark'] .theme-toggle button[data-theme-button='dark'] {
   cursor: default;
 }
 
+/* The selected theme's glyph fills in, so the choice reads at a glance even
+   at 12px. The sun's rays are open subpaths enclosing no area, so filling the
+   path solidifies its disc and leaves them as strokes; the moon is one closed
+   crescent and fills completely. The unselected glyph stays an outline. */
+html[data-theme='light'] .theme-toggle button[data-theme-button='light'] .icon path,
+html[data-theme='dark'] .theme-toggle button[data-theme-button='dark'] .icon path {
+  fill: currentColor;
+}
+
 /* ---------------------------------------------------------------- panels */
 
 .panel[hidden] {
