@@ -468,23 +468,34 @@ html[data-theme='dark'] .theme-toggle button[data-theme-button='dark'] {
   font-size: 14px;
 }
 
-.panel.panel-hoverable:hover .panel-overlay,
+/* Focus reveals the overlay on any device: it is how a keyboard reaches the
+   title, so it is deliberately outside the hover query below. */
 .panel.panel-hoverable:focus-visible .panel-overlay {
   opacity: 0.8;
 }
 
-/* Browsers freeze `:hover` while a scroll is in flight, so a panel sliding
-   under a still pointer only lights up once the carousel stops. Once the
-   script is tracking the pointer it becomes the source of truth: `:hover` is
-   ignored, because mid-scroll it is stale and would leave the panel the
-   pointer has already left lit up as well. */
-html[data-panel-hover] .panel.panel-hoverable:hover .panel-overlay {
-  opacity: 0;
-}
+/* Hovering is only offered where the pointer can actually hover. On a phone
+   there is no hover to speak of, and a tap would otherwise stick the overlay
+   on until something else is tapped. This keys off what the device can do
+   rather than the layout, so previewing the mobile layout on a desktop keeps
+   its hover -- the mouse is still a mouse. */
+@media (hover: hover) {
+  .panel.panel-hoverable:hover .panel-overlay {
+    opacity: 0.8;
+  }
 
-html[data-panel-hover] .panel.panel-hoverable.is-hovered .panel-overlay,
-html[data-panel-hover] .panel.panel-hoverable:focus-visible .panel-overlay {
-  opacity: 0.8;
+  /* Browsers freeze `:hover` while a scroll is in flight, so a panel sliding
+     under a still pointer only lights up once the carousel stops. Once the
+     script is tracking the pointer it becomes the source of truth: `:hover` is
+     ignored, because mid-scroll it is stale and would leave the panel the
+     pointer has already left lit up as well. */
+  html[data-panel-hover] .panel.panel-hoverable:hover .panel-overlay {
+    opacity: 0;
+  }
+
+  html[data-panel-hover] .panel.panel-hoverable.is-hovered .panel-overlay {
+    opacity: 0.8;
+  }
 }
 
 /* --------------------------------------------------------------- hscroll */
