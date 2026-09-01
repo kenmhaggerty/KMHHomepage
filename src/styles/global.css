@@ -303,9 +303,25 @@ html[data-viewport='mobile'] .viewport-toggle button[data-mode-button='mobile'] 
   position: relative;
   flex-shrink: 0;
   width: 480px;
-  height: 288px;
+  /* Height comes from the ratio rather than a length so it can be animated:
+     the mode switch moves the panels between 480x288 and a square, and a
+     ratio interpolates where `height: 288px` -> `height: auto` cannot. */
+  aspect-ratio: 480 / 288;
   box-shadow: var(--shadow-panel);
   background: var(--color-page-bg);
+}
+
+/* Panels resize with the card when the toggle switches modes. On the work
+   page the grid sizes them, so width follows the card's own animation and
+   the ratio carries the height; the case study galleries animate width
+   directly, with the height again following the ratio. */
+@media (prefers-reduced-motion: no-preference) {
+  .panel {
+    transition:
+      width 220ms ease-in-out,
+      height 220ms ease-in-out,
+      aspect-ratio 220ms ease-in-out;
+  }
 }
 
 .panel img {
@@ -696,7 +712,6 @@ html[data-viewport='mobile'] .case-studies .hscroll-viewport {
 
 html[data-viewport='mobile'] .case-studies .panel {
   width: auto;
-  height: auto;
   aspect-ratio: 1;
 }
 
@@ -762,9 +777,10 @@ html[data-viewport='mobile'] .case-studies .hscroll-track {
   white-space: nowrap;
 }
 
+/* 250x150 is the same 5:3 as the desktop size, so the height is left to the
+   ratio; pinning it as a length would make it jump instead of animating. */
 html[data-viewport='mobile'] .page-project .panel {
   width: 250px;
-  height: 150px;
 }
 
 html[data-viewport='mobile'] .page-project .hscroll {
