@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { about, caseStudies, getCaseStudy, imageUrl, siteInfo } from '../src/data/site';
+import { about, caseStudies, getCaseStudy, imageAsset, siteInfo } from '../src/data/site';
 
 describe('siteInfo', () => {
   it('exposes the site-info.json contents', () => {
@@ -29,8 +29,27 @@ describe('caseStudies', () => {
   });
 });
 
-describe('imageUrl', () => {
-  it('maps data filenames to public image URLs', () => {
-    expect(imageUrl('gfm-1.png')).toBe('/images/gfm-1.png');
+describe('imageAsset', () => {
+  it('resolves a data filename to the imported asset', () => {
+    const image = imageAsset('gfm-1.png');
+    expect(image.src).toContain('gfm-1');
+    // Intrinsic dimensions are what let <Image> reserve space and resize.
+    expect(image.width).toBeGreaterThan(0);
+    expect(image.height).toBeGreaterThan(0);
+  });
+
+  it('throws on a filename with no matching file, rather than emitting a dead URL', () => {
+    expect(() => imageAsset('not-a-real-image.png')).toThrow(/not-a-real-image\.png/);
+  });
+
+  it('resolves every image the case study data references', () => {
+    for (const caseStudy of caseStudies) {
+      expect(() => imageAsset(caseStudy.hero.desktop)).not.toThrow();
+      expect(() => imageAsset(caseStudy.hero.mobile)).not.toThrow();
+      for (const item of caseStudy.gallery) {
+        expect(() => imageAsset(item.preview)).not.toThrow();
+        expect(() => imageAsset(item.full_res)).not.toThrow();
+      }
+    }
   });
 });

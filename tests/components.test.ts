@@ -120,8 +120,12 @@ describe('CaseStudyPanel', () => {
     expect(gfm).toBeDefined();
     const html = await render(CaseStudyPanel, { props: { caseStudy: gfm } });
     expect(html).toContain('href="/work/gfm/"');
-    expect(html).toContain('/images/gfm-1-preview.png');
-    expect(html).toContain('/images/gfm-hero-mobile.png');
+    // <Image> emits processed assets, so match the stem rather than the path.
+    expect(html).toMatch(/src="[^"]*gfm-1-preview[^"]*"/);
+    expect(html).toMatch(/src="[^"]*gfm-hero-mobile[^"]*"/);
+    // Intrinsic dimensions come along, which is what stops the layout shifting.
+    expect(html).toMatch(/width="\d+"/);
+    expect(html).toMatch(/height="\d+"/);
     expect(html).toContain('data-filter-gov-dod="true"');
     expect(html).toContain('data-filter-consumer="false"');
     expect(html).toContain('GFM');

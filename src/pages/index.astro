@@ -1,7 +1,8 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import CaseStudyPanel from '../components/CaseStudyPanel.astro';
-import { about, caseStudies, imageUrl } from '../data/site';
+import { Image } from 'astro:assets';
+import { about, caseStudies, imageAsset } from '../data/site';
 import { FILTERS } from '../utils/filters';
 ---
 
@@ -10,12 +11,12 @@ import { FILTERS } from '../utils/filters';
     <section class="section about">
       <h2 class="section-title">{about.title}</h2>
       <div class="about-content">
-        <img
+        <Image
           class="avatar"
-          src={imageUrl(about.avatar)}
+          src={imageAsset(about.avatar)}
           alt={about.avatar_alt}
-          width="64"
-          height="64"
+          width={64}
+          height={64}
         />
         {about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
       </div>
