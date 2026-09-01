@@ -26,6 +26,10 @@ const EAGER_PANELS = 3;
           alt={about.avatar_alt}
           width={64}
           height={64}
+          {/* The avatar is laid out at 64px but the source is 192px, so ask for
+              2x and 3x variants too -- without these Astro resizes it down to a
+              flat 64px and it blurs on any Retina screen. */}
+          densities={[1, 2, 3]}
           loading="eager"
         />
         {about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
