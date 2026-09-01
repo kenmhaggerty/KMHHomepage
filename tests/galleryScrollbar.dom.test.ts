@@ -5,17 +5,21 @@ interface Sizes {
   trackWidth?: number;
   viewportWidth?: number;
   contentWidth?: number;
+  persistent?: boolean;
 }
 
 function renderGallery({
   trackWidth = 1000,
   viewportWidth = 500,
   contentWidth = 2000,
+  persistent = false,
 }: Sizes = {}) {
   document.body.innerHTML = `
     <div data-gallery>
       <div data-gallery-scroll></div>
-      <div data-gallery-track><div data-gallery-scrubber></div></div>
+      <div data-gallery-track${persistent ? '="persistent"' : ''}>
+        <div data-gallery-scrubber></div>
+      </div>
     </div>
   `;
   const viewport = document.querySelector<HTMLElement>('[data-gallery-scroll]')!;
@@ -68,6 +72,35 @@ describe('initGalleryScrollbars', () => {
     initGalleryScrollbars(document, window);
     viewport.scrollLeft = 750;
     expect(scrubber.style.transform).toBe('translateX(375px)');
+  });
+
+  it('keeps a persistent track when the content fits, filling it', () => {
+    const { track, scrubber } = renderGallery({ contentWidth: 400, persistent: true });
+    initGalleryScrollbars(document, window);
+    expect(track.hidden).toBe(false);
+    // Nothing to scroll, so the scrubber spans the whole track.
+    expect(scrubber.style.width).toBe('1000px');
+  });
+
+  it('still sizes a persistent track normally when the content overflows', () => {
+    const { track, scrubber } = renderGallery({ persistent: true });
+    initGalleryScrollbars(document, window);
+    expect(track.hidden).toBe(false);
+    expect(scrubber.style.width).toBe('250px');
+  });
+
+  it('leaves a persistent track alone as filtering changes the content width', () => {
+    const { viewport, track } = renderGallery({ contentWidth: 400, persistent: true });
+    initGalleryScrollbars(document, window);
+    expect(track.hidden).toBe(false);
+
+    Object.defineProperty(viewport, 'scrollWidth', { value: 2000, configurable: true });
+    document.dispatchEvent(new Event('casestudyfilterschange'));
+    expect(track.hidden).toBe(false);
+
+    Object.defineProperty(viewport, 'scrollWidth', { value: 400, configurable: true });
+    document.dispatchEvent(new Event('casestudyfilterschange'));
+    expect(track.hidden).toBe(false);
   });
 
   it('hides the track when the content fits', () => {

@@ -17,10 +17,13 @@ function findGalleryElements(gallery: HTMLElement): GalleryElements | null {
 }
 
 export function updateScrubber({ viewport, track, scrubber }: GalleryElements): void {
-  // A track with nothing to scroll is just a decorative bar, so hide it. This
-  // runs before the measurements below so the track has its width back by the
-  // time we read it.
-  track.hidden = !hasHorizontalOverflow(viewport.clientWidth, viewport.scrollWidth);
+  // A track with nothing to scroll is just a decorative bar, so it hides --
+  // unless the markup asks it to stay, in which case it sits there full width
+  // the way a scrollbar does when everything already fits. This runs before
+  // the measurements below so the track has its width back by the time we
+  // read it.
+  const persistent = track.dataset.galleryTrack === 'persistent';
+  track.hidden = !persistent && !hasHorizontalOverflow(viewport.clientWidth, viewport.scrollWidth);
   if (track.hidden) {
     return;
   }

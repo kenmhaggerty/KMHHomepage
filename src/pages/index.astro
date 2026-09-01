@@ -38,7 +38,7 @@ import { FILTERS } from '../utils/filters';
         <div class="hscroll-viewport" data-gallery-scroll>
           {caseStudies.map((caseStudy) => <CaseStudyPanel caseStudy={caseStudy} />)}
         </div>
-        <div class="hscroll-track" data-gallery-track>
+        <div class="hscroll-track" data-gallery-track="persistent">
           <div class="hscroll-scrubber" data-gallery-scrubber></div>
         </div>
       </div>
