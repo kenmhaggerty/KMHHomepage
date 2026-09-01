@@ -410,6 +410,11 @@ html[data-viewport='desktop'] .hscroll-track {
   display: none;
 }
 
+/* Set by the gallery script when its scroller has nothing to scroll. */
+.hscroll-track[hidden] {
+  display: none;
+}
+
 .hscroll-track {
   width: 100%;
   height: 6px;

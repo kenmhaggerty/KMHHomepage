@@ -70,10 +70,36 @@ describe('initGalleryScrollbars', () => {
     expect(scrubber.style.transform).toBe('translateX(375px)');
   });
 
-  it('fills the track when the content fits', () => {
-    const { scrubber } = renderGallery({ contentWidth: 400 });
+  it('hides the track when the content fits', () => {
+    const { track } = renderGallery({ contentWidth: 400 });
     initGalleryScrollbars(document, window);
-    expect(scrubber.style.width).toBe('1000px');
+    expect(track.hidden).toBe(true);
+  });
+
+  it('hides the track when the content overflows by less than a pixel', () => {
+    const { track } = renderGallery({ viewportWidth: 500, contentWidth: 500.5 });
+    initGalleryScrollbars(document, window);
+    expect(track.hidden).toBe(true);
+  });
+
+  it('shows the track when the content overflows', () => {
+    const { track } = renderGallery();
+    initGalleryScrollbars(document, window);
+    expect(track.hidden).toBe(false);
+  });
+
+  it('reveals and re-hides the track as filtering changes the content width', () => {
+    const { viewport, track } = renderGallery({ contentWidth: 400 });
+    initGalleryScrollbars(document, window);
+    expect(track.hidden).toBe(true);
+
+    Object.defineProperty(viewport, 'scrollWidth', { value: 2000, configurable: true });
+    document.dispatchEvent(new Event('casestudyfilterschange'));
+    expect(track.hidden).toBe(false);
+
+    Object.defineProperty(viewport, 'scrollWidth', { value: 400, configurable: true });
+    document.dispatchEvent(new Event('casestudyfilterschange'));
+    expect(track.hidden).toBe(true);
   });
 
   it('updates on window resize and filter changes', () => {

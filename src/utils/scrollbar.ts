@@ -7,6 +7,14 @@ export interface ScrubberGeometry {
 
 export const MIN_SCRUBBER_WIDTH = 24;
 
+/** Sub-pixel layout rounding can report a hair of overflow that cannot scroll. */
+export const OVERFLOW_EPSILON = 1;
+
+/** Whether a scroll container's content actually overflows it horizontally. */
+export function hasHorizontalOverflow(viewportWidth: number, contentWidth: number): boolean {
+  return contentWidth - viewportWidth > OVERFLOW_EPSILON;
+}
+
 /**
  * Computes the size and position of a custom horizontal scrollbar scrubber
  * for a scroll container.

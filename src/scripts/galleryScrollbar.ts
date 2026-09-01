@@ -1,4 +1,4 @@
-import { computeScrubber, scrollLeftForOffset } from '../utils/scrollbar';
+import { computeScrubber, hasHorizontalOverflow, scrollLeftForOffset } from '../utils/scrollbar';
 
 interface GalleryElements {
   viewport: HTMLElement;
@@ -17,6 +17,13 @@ function findGalleryElements(gallery: HTMLElement): GalleryElements | null {
 }
 
 export function updateScrubber({ viewport, track, scrubber }: GalleryElements): void {
+  // A track with nothing to scroll is just a decorative bar, so hide it. This
+  // runs before the measurements below so the track has its width back by the
+  // time we read it.
+  track.hidden = !hasHorizontalOverflow(viewport.clientWidth, viewport.scrollWidth);
+  if (track.hidden) {
+    return;
+  }
   const { width, offset } = computeScrubber(
     track.clientWidth,
     viewport.clientWidth,

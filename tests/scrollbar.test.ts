@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { MIN_SCRUBBER_WIDTH, computeScrubber, scrollLeftForOffset } from '../src/utils/scrollbar';
+import {
+  MIN_SCRUBBER_WIDTH,
+  computeScrubber,
+  hasHorizontalOverflow,
+  scrollLeftForOffset,
+} from '../src/utils/scrollbar';
 
 describe('computeScrubber', () => {
   it('fills the track when the content fits', () => {
@@ -35,6 +40,20 @@ describe('computeScrubber', () => {
     expect(computeScrubber(-5, 500, 2000, 0)).toEqual({ width: 0, offset: 0 });
     expect(computeScrubber(1000, 0, 2000, 0)).toEqual({ width: 1000, offset: 0 });
     expect(computeScrubber(1000, 500, 0, 0)).toEqual({ width: 1000, offset: 0 });
+  });
+});
+
+describe('hasHorizontalOverflow', () => {
+  it('is true only when the content is wider than the viewport', () => {
+    expect(hasHorizontalOverflow(500, 2000)).toBe(true);
+    expect(hasHorizontalOverflow(500, 500)).toBe(false);
+    expect(hasHorizontalOverflow(500, 400)).toBe(false);
+  });
+
+  it('ignores sub-pixel overflow that cannot actually be scrolled', () => {
+    expect(hasHorizontalOverflow(500, 500.5)).toBe(false);
+    expect(hasHorizontalOverflow(500, 501)).toBe(false);
+    expect(hasHorizontalOverflow(500, 502)).toBe(true);
   });
 });
 
