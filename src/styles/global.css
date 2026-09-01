@@ -10,7 +10,12 @@
  * toolbar toggle lets visitors preview the mobile layout.
  */
 
+/* Light is the design's own palette, and the default. Dark is derived from it
+   further down; every colour lives here as a variable so the two themes stay
+   in step. */
 :root {
+  color-scheme: light;
+
   --color-page-bg: #f8f8f8;
   --color-card-bg: #ffffff;
   --color-text: #000000;
@@ -23,6 +28,7 @@
   --color-chip-selected-bg: #3b3b3b;
   --color-chip-selected-bg-hover: #000000;
   --color-chip-selected-border: #3b3b3b;
+  --color-chip-selected-text: #ffffff;
 
   --color-nav-hover-bg: #eeeeee;
   --color-url-bg: #f4f4f4;
@@ -30,10 +36,20 @@
 
   --color-track: #f0f0f0;
   --color-scrubber: #aaaaaa;
-  --color-toggle-dark: #3b3b3b;
+  /* The filled half of a toggle, and the text sitting on it. */
+  --color-toggle-accent: #3b3b3b;
+  --color-toggle-accent-text: #ffffff;
+
+  /* The scrim a case study panel fades up on hover. */
+  --color-overlay-inner: rgba(240, 240, 240, 0.8);
+  --color-overlay-mid: rgba(238, 238, 238, 0.6);
+  --color-overlay-outer: rgba(238, 238, 238, 0.5);
+  --color-overlay-base: rgba(255, 255, 255, 0.9);
 
   --shadow-card: 0px 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-panel: 0px 0px 12px rgba(0, 0, 0, 0.12);
+  --shadow-toggle: 0px 1px 3px rgba(0, 0, 0, 0.25);
+  --shadow-overlay-text: 0px 2px 8px rgba(200, 200, 200, 0.66);
 
   --font-sans:
     'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
@@ -45,6 +61,53 @@
   --content-max-width: 1024px;
   --mobile-card-width: 420px;
   --mobile-card-height: 848px;
+}
+
+/*
+ * Dark theme. Built to the usual guidance rather than by inverting the light
+ * values: a very dark grey ground instead of black (#000 exaggerates the glare
+ * of light text and hides elevation), a lighter surface for the card so depth
+ * reads without leaning on shadow, and off-white text rather than #fff, which
+ * halates against a dark ground. Shadows go deeper because a faint black
+ * shadow is invisible here. Muted text keeps ~5:1 against its own background
+ * and body text ~13:1, so both clear WCAG AA.
+ */
+html[data-theme='dark'] {
+  color-scheme: dark;
+
+  --color-page-bg: #121212;
+  --color-card-bg: #1e1e1e;
+  --color-text: #ededed;
+  --color-text-muted: #9a9a9a;
+  --color-text-soft: #a8a8a8;
+
+  --color-chip-bg: #2a2a2a;
+  --color-chip-bg-hover: #333333;
+  --color-chip-border: #3a3a3a;
+  /* Selected chips stay inverted against their neighbours, as in light. */
+  --color-chip-selected-bg: #ededed;
+  --color-chip-selected-bg-hover: #ffffff;
+  --color-chip-selected-border: #ededed;
+  --color-chip-selected-text: #121212;
+
+  --color-nav-hover-bg: #2a2a2a;
+  --color-url-bg: #262626;
+  --color-url-bg-hover: #303030;
+
+  --color-track: #2f2f2f;
+  --color-scrubber: #6f6f6f;
+  --color-toggle-accent: #ededed;
+  --color-toggle-accent-text: #121212;
+
+  --color-overlay-inner: rgba(38, 38, 38, 0.85);
+  --color-overlay-mid: rgba(34, 34, 34, 0.7);
+  --color-overlay-outer: rgba(34, 34, 34, 0.6);
+  --color-overlay-base: rgba(18, 18, 18, 0.9);
+
+  --shadow-card: 0px 2px 8px rgba(0, 0, 0, 0.55);
+  --shadow-panel: 0px 0px 12px rgba(0, 0, 0, 0.6);
+  --shadow-toggle: 0px 1px 3px rgba(0, 0, 0, 0.6);
+  --shadow-overlay-text: 0px 2px 8px rgba(0, 0, 0, 0.66);
 }
 
 * {
@@ -97,6 +160,7 @@ button {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  gap: 8px;
   width: 100%;
   max-width: var(--content-max-width);
   flex-shrink: 0;
@@ -262,7 +326,7 @@ html[data-viewport='mobile'] .scrollable {
 
 /* ---------------------------------------------------------------- toggle */
 
-.viewport-toggle {
+.icon-toggle {
   position: relative;
   display: flex;
   gap: 0.5px;
@@ -270,7 +334,7 @@ html[data-viewport='mobile'] .scrollable {
   height: 18px;
   border-radius: 9px;
   overflow: hidden;
-  filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.25));
+  filter: drop-shadow(var(--shadow-toggle));
 }
 
 /* The two halves meet on a slant, as in the Figma toggle, where the divider
@@ -279,36 +343,38 @@ html[data-viewport='mobile'] .scrollable {
    The outer halves are widened by the slant's reach so it cannot pull them
    off the rounded corners, with matching padding to keep the icons centred
    on the visible half; the container clips whatever hangs over. */
-.viewport-toggle button {
+.icon-toggle button {
   flex: 1 0 0;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--color-card-bg);
-  color: var(--color-toggle-dark);
+  color: var(--color-toggle-accent);
   transform: skewX(-16.4deg);
 }
 
-.viewport-toggle button:first-child {
+.icon-toggle button:first-child {
   margin-left: -4px;
   padding-left: 4px;
 }
 
-.viewport-toggle button:last-child {
+.icon-toggle button:last-child {
   margin-right: -4px;
   padding-right: 4px;
 }
 
-.viewport-toggle .icon {
+.icon-toggle .icon {
   display: block;
   /* Undo the half's skew so the glyph stays upright. */
   transform: skewX(16.4deg);
 }
 
 html[data-viewport='desktop'] .viewport-toggle button[data-mode-button='desktop'],
-html[data-viewport='mobile'] .viewport-toggle button[data-mode-button='mobile'] {
-  background: var(--color-toggle-dark);
-  color: #ffffff;
+html[data-viewport='mobile'] .viewport-toggle button[data-mode-button='mobile'],
+html[data-theme='light'] .theme-toggle button[data-theme-button='light'],
+html[data-theme='dark'] .theme-toggle button[data-theme-button='dark'] {
+  background: var(--color-toggle-accent);
+  color: var(--color-toggle-accent-text);
   cursor: default;
 }
 
@@ -413,12 +479,12 @@ html[data-viewport='mobile'] .viewport-toggle button[data-mode-button='mobile'] 
   background:
     radial-gradient(
       120% 120% at 50% 50%,
-      rgba(240, 240, 240, 0.8) 33%,
-      rgba(238, 238, 238, 0.6) 66%,
-      rgba(238, 238, 238, 0.5) 80%
+      var(--color-overlay-inner) 33%,
+      var(--color-overlay-mid) 66%,
+      var(--color-overlay-outer) 80%
     ),
-    rgba(255, 255, 255, 0.9);
-  text-shadow: 0px 2px 8px rgba(200, 200, 200, 0.66);
+    var(--color-overlay-base);
+  text-shadow: var(--shadow-overlay-text);
 }
 
 /* Revealing the overlay is the whole of the hover effect, so it carries the
@@ -665,7 +731,7 @@ html[data-viewport='mobile'] .page-work .section-title {
 .chip[aria-pressed='true'] {
   background: var(--color-chip-selected-bg);
   border-color: var(--color-chip-selected-border);
-  color: #ffffff;
+  color: var(--color-chip-selected-text);
 }
 
 .chip[aria-pressed='true']:hover {
@@ -682,7 +748,7 @@ html[data-viewport='mobile'] .chip {
 }
 
 html[data-viewport='mobile'] .chip[aria-pressed='true'] {
-  color: #ffffff;
+  color: var(--color-chip-selected-text);
 }
 
 html[data-viewport='mobile'] .filter-label {

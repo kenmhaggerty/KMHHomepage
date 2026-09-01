@@ -6,6 +6,7 @@ import '../styles/global.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import ViewportToggle from '../components/ViewportToggle.astro';
+import DarkModeToggle from '../components/DarkModeToggle.astro';
 import { siteInfo } from '../data/site';
 
 interface Props {
@@ -30,22 +31,36 @@ const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
     <link rel="icon" href={`/${siteInfo.favicon}`} />
     <title>{title}</title>
     <script is:inline>
-      /* Set the viewport mode before first paint to avoid layout flashes. */
+      /* Set the viewport mode and theme before first paint, to avoid a layout
+         flash and a flash of the wrong theme. */
       (() => {
-        let stored = null;
-        try {
-          stored = localStorage.getItem('viewport-mode');
-        } catch {
-          /* storage unavailable */
-        }
-        document.documentElement.dataset.viewport =
-          window.innerWidth < 768 ? 'mobile' : stored === 'mobile' ? 'mobile' : 'desktop';
+        const read = (key) => {
+          try {
+            return localStorage.getItem(key);
+          } catch {
+            /* storage unavailable */
+            return null;
+          }
+        };
+        const root = document.documentElement;
+        const viewport = read('viewport-mode');
+        root.dataset.viewport =
+          window.innerWidth < 768 ? 'mobile' : viewport === 'mobile' ? 'mobile' : 'desktop';
+
+        const theme = read('theme-mode');
+        root.dataset.theme =
+          theme === 'light' || theme === 'dark'
+            ? theme
+            : window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark'
+              : 'light';
       })();
     </script>
   </head>
   <body>
     <div class="viewport">
       <div class="toolbar">
+        <DarkModeToggle />
         <ViewportToggle />
       </div>
       <main class:list={['card', { 'fill-height': fillHeight }]}>
@@ -61,7 +76,9 @@ const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
       import { initGalleryScrollbars } from '../scripts/galleryScrollbar';
       import { initCaseStudyFilters } from '../scripts/caseStudyFilters';
       import { initPanelHover } from '../scripts/panelHover';
+      import { initThemeMode } from '../scripts/themeMode';
 
+      initThemeMode(document, window);
       initViewportMode(document, window);
       initCaseStudyFilters(document);
       initGalleryScrollbars(document, window);

@@ -1,0 +1,12 @@
+---
+import Icon from './Icon.astro';
+---
+
+<div class="icon-toggle theme-toggle" role="group" aria-label="Colour theme">
+  <button type="button" data-theme-button="light" aria-pressed="false" title="Light mode">
+    <Icon name="sun" size={12} />
+  </button>
+  <button type="button" data-theme-button="dark" aria-pressed="false" title="Dark mode">
+    <Icon name="moon" size={12} />
+  </button>
+</div>

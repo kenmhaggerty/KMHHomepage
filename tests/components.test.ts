@@ -4,6 +4,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import SiteHeader from '../src/components/SiteHeader.astro';
 import SiteFooter from '../src/components/SiteFooter.astro';
 import ViewportToggle from '../src/components/ViewportToggle.astro';
+import DarkModeToggle from '../src/components/DarkModeToggle.astro';
 import Icon from '../src/components/Icon.astro';
 import LinkUrl from '../src/components/LinkUrl.astro';
 import Section from '../src/components/Section.astro';
@@ -14,6 +15,25 @@ async function render(component: Parameters<AstroContainer['renderToString']>[0]
   const container = await AstroContainer.create();
   return container.renderToString(component, options);
 }
+
+describe('DarkModeToggle', () => {
+  it('renders a sun button then a moon button', async () => {
+    const html = await render(DarkModeToggle);
+    expect(html).toContain('data-theme-button="light"');
+    expect(html).toContain('data-theme-button="dark"');
+    // The sun sits to the left of the moon.
+    expect(html.indexOf('data-theme-button="light"')).toBeLessThan(
+      html.indexOf('data-theme-button="dark"'),
+    );
+  });
+
+  it('shares the toggle styling with the viewport toggle', async () => {
+    const html = await render(DarkModeToggle);
+    const viewport = await render(ViewportToggle);
+    expect(html).toContain('class="icon-toggle theme-toggle"');
+    expect(viewport).toContain('class="icon-toggle viewport-toggle"');
+  });
+});
 
 describe('SiteHeader', () => {
   it('renders the faux-small-caps site title', async () => {
