@@ -51,3 +51,15 @@ html[data-theme='dark'] {
   --shadow-toggle: 0px 1px 3px rgba(0, 0, 0, 0.6);
   --shadow-overlay-text: 0px 2px 8px rgba(0, 0, 0, 0.66);
 }
+
+/* The card goes full-bleed on small screens, so it drops to the page's own
+   colour and the two stop showing a seam where the page is visible -- below
+   short content, or behind a panel while its image loads. Light closes the
+   same gap at this breakpoint from the other side, lifting the page to the
+   card. It has to sit after the block above, which it ties with on
+   specificity. */
+@media (max-width: 767px) {
+  html[data-theme='dark'] {
+    --color-card-bg: #121212;
+  }
+}

@@ -175,6 +175,14 @@ html[data-viewport='mobile'] .card {
 /* Small screens always render the mobile layout, full-bleed and without
    the viewport toggle or footer (per the Figma mobile frames). */
 @media (max-width: 767px) {
+  /* The card is full-bleed here, so the page matches it: any page background
+     on show -- below short content, or behind a panel while its image loads --
+     would otherwise read as a seam against the card. Dark keeps its own pair,
+     which already outranks this on specificity. */
+  :root {
+    --color-page-bg: #ffffff;
+  }
+
   .viewport {
     padding: 0;
     gap: 0;
@@ -185,9 +193,16 @@ html[data-viewport='mobile'] .card {
     display: none;
   }
 
+  /* Full-bleed, so the card has no edges to cast from: the shadow would only
+     show below short content, where it reads as a stray line. Keyed off the
+     screen rather than the pointer (unlike the panel hover rules) because the
+     reason is the full-bleed layout, which is what this breakpoint sets --
+     previewing the mobile layout on a desktop keeps its inset card, and its
+     shadow with it. */
   html[data-viewport='mobile'] .card {
     max-width: none;
     border-radius: 0;
+    filter: none;
   }
 }
 
