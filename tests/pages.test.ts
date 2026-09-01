@@ -4,7 +4,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import Index from '../src/pages/index.astro';
 import Resume from '../src/pages/resume.astro';
 import ProjectPage, { getStaticPaths } from '../src/pages/work/[slug].astro';
-import { getCaseStudy } from '../src/data/site';
+import { getCaseStudy, siteInfo } from '../src/data/site';
 
 async function render(component: Parameters<AstroContainer['renderToString']>[0], options = {}) {
   const container = await AstroContainer.create();
@@ -76,5 +76,44 @@ describe('Résumé page', () => {
     const html = await render(Resume);
     expect(html).toMatch(/<a[^>]*class="resume-download"[^>]*download[^>]*>/);
     expect(html).toContain('Download PDF');
+  });
+});
+
+describe('Share card metadata', () => {
+  it('gives the work page the card copy from site-info', async () => {
+    const html = await render(Index);
+    expect(html).toContain(`property="og:title" content="${siteInfo.openGraph.title}"`);
+    expect(html).toContain(`property="og:description" content="${siteInfo.openGraph.description}"`);
+    // Twitter reads its own tags, so the same copy has to reach both.
+    expect(html).toContain(`name="twitter:title" content="${siteInfo.openGraph.title}"`);
+  });
+
+  it('makes the card image and canonical URL absolute', async () => {
+    const html = await render(Index);
+    // A scraper reads the built HTML from anywhere, so a relative path here
+    // would resolve against the wrong origin, or not at all.
+    expect(html).toContain(
+      'property="og:image" content="https://www.kenmhaggerty.com/og-image.png"',
+    );
+    expect(html).toContain('rel="canonical" href="https://www.kenmhaggerty.com/"');
+    expect(html).toContain('property="og:url" content="https://www.kenmhaggerty.com/"');
+  });
+
+  it('declares the image size and asks for a large-image card', async () => {
+    const html = await render(Index);
+    expect(html).toContain('property="og:image:width" content="1200"');
+    expect(html).toContain('property="og:image:height" content="630"');
+    expect(html).toContain('name="twitter:card" content="summary_large_image"');
+    expect(html).toContain(
+      'name="twitter:image" content="https://www.kenmhaggerty.com/og-image.png"',
+    );
+  });
+
+  it('falls back to the page title on pages with no card copy of their own', async () => {
+    const html = await render(Resume);
+    expect(html).toContain('property="og:title" content="Résumé · Ken M. Haggerty"');
+    expect(html).toContain('property="og:description" content="Portfolio of Ken M. Haggerty"');
+    // The per-page canonical path is not asserted here: the container renders
+    // every page at "/" rather than at its route, so only the build shows it.
   });
 });

@@ -23,13 +23,33 @@ import { siteInfo } from '../data/site';
 interface Props {
   pageTitle?: string;
   description?: string;
+  /** Headline on the share card, when it should differ from the page title. */
+  shareTitle?: string;
+  /** Blurb on the share card, when it should differ from the description. */
+  shareDescription?: string;
   /* Opt out of the card hugging its content, for pages whose content is meant
      to fill the window instead (the résumé PDF). */
   fillHeight?: boolean;
 }
 
-const { pageTitle, description = 'Portfolio of Ken M. Haggerty', fillHeight = false } = Astro.props;
+const {
+  pageTitle,
+  description = 'Portfolio of Ken M. Haggerty',
+  shareTitle,
+  shareDescription,
+  fillHeight = false,
+} = Astro.props;
 const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
+
+/*
+ * Share cards and canonical links have to be absolute, and a scraper reads the
+ * built HTML rather than running in a browser, so these are resolved against
+ * the production origin rather than against wherever the page is being served.
+ */
+const canonicalUrl = new URL(Astro.url.pathname, siteInfo.url).href;
+const shareImageUrl = new URL(siteInfo.openGraph.image, siteInfo.url).href;
+const cardTitle = shareTitle ?? title;
+const cardDescription = shareDescription ?? description;
 ---
 
 <!doctype html>
@@ -44,6 +64,20 @@ const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
     <link rel="icon" href={`/${siteInfo.icons.png}`} sizes="32x32" type="image/png" />
     <link rel="icon" href={`/${siteInfo.icons.svg}`} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={`/${siteInfo.icons.appleTouch}`} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteInfo.title} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={cardTitle} />
+    <meta property="og:description" content={cardDescription} />
+    <meta property="og:image" content={shareImageUrl} />
+    <meta property="og:image:width" content={String(siteInfo.openGraph.imageWidth)} />
+    <meta property="og:image:height" content={String(siteInfo.openGraph.imageHeight)} />
+    <meta property="og:image:alt" content={cardTitle} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={cardTitle} />
+    <meta name="twitter:description" content={cardDescription} />
+    <meta name="twitter:image" content={shareImageUrl} />
     {
       [publicSans400, publicSans500, publicSans600].map((href) => (
         <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />

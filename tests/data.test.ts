@@ -24,12 +24,25 @@ describe('siteInfo', () => {
     });
   });
 
-  it('points every icon at a file that is actually in public/', () => {
+  it('points every icon and the share image at files that are in public/', () => {
     // These are served untouched from public/, so nothing at build time
-    // notices if one is renamed -- the icon just quietly stops loading.
-    for (const file of Object.values(siteInfo.icons)) {
+    // notices if one is renamed -- it just quietly stops loading, and for the
+    // share image that means a blank card wherever the site is posted.
+    for (const file of [...Object.values(siteInfo.icons), siteInfo.openGraph.image]) {
       expect(publicFileNames.has(file), `missing public/${file}`).toBe(true);
     }
+  });
+
+  it('carries the share card copy', () => {
+    expect(siteInfo.openGraph.title).toBe('Case Studies • Ken M. Haggerty');
+    expect(siteInfo.openGraph.description).toMatch(/multi-disciplinary product lead/);
+    // Cards get truncated well before this; the limit is a rough guard.
+    expect(siteInfo.openGraph.description.length).toBeLessThanOrEqual(300);
+  });
+
+  it('gives an absolute production origin for share and canonical URLs', () => {
+    expect(siteInfo.url).toMatch(/^https:\/\//);
+    expect(siteInfo.url).not.toMatch(/\/$/);
   });
 });
 
