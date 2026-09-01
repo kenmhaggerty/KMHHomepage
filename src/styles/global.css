@@ -262,10 +262,6 @@ html[data-viewport='mobile'] .card {
   font-size: 28px;
 }
 
-.site-title a:hover {
-  background: var(--color-nav-hover-bg);
-}
-
 .separator {
   height: 18px;
   margin: 0 16px;
