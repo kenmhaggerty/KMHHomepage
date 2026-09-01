@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { applyViewportMode, initViewportMode } from '../src/scripts/viewportMode';
 import { VIEWPORT_STORAGE_KEY } from '../src/utils/viewport';
 
@@ -85,17 +85,28 @@ describe('initViewportMode', () => {
   });
 
   it('still works when localStorage throws', () => {
-    const getItem = vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
-      throw new Error('blocked');
-    });
-    const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
-      throw new Error('blocked');
-    });
-    initViewportMode(document, window);
+    /*
+     * Stubbing the window's own storage rather than Storage.prototype: the
+     * test environment installs a stand-in Storage that does not inherit from
+     * that prototype, so a prototype spy would silently never fire and this
+     * would assert nothing.
+     */
+    const blocked = {
+      innerWidth: 1024,
+      localStorage: {
+        getItem() {
+          throw new Error('blocked');
+        },
+        setItem() {
+          throw new Error('blocked');
+        },
+      },
+      addEventListener() {},
+    } as unknown as Window;
+
+    initViewportMode(document, blocked);
     expect(document.documentElement.dataset.viewport).toBe('desktop');
     button('mobile').click();
     expect(document.documentElement.dataset.viewport).toBe('mobile');
-    getItem.mockRestore();
-    setItem.mockRestore();
   });
 });

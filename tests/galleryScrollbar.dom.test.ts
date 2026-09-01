@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { initGalleryScrollbars } from '../src/scripts/galleryScrollbar';
 
 interface Sizes {
@@ -172,6 +172,33 @@ describe('initGalleryScrollbars', () => {
     initGalleryScrollbars(document, window);
     track.dispatchEvent(pointerEvent('pointerdown', { clientX: 500 }));
     expect(viewport.scrollLeft).toBeCloseTo(750);
+  });
+
+  it('re-measures when a ResizeObserver reports the viewport changing size', () => {
+    // jsdom has no ResizeObserver, so the branch that uses one is only reached
+    // with a stand-in; this captures the callback and fires it by hand.
+    const callbacks: Array<() => void> = [];
+    class StubResizeObserver {
+      constructor(cb: () => void) {
+        callbacks.push(cb);
+      }
+      observe() {}
+      disconnect() {}
+    }
+    vi.stubGlobal('ResizeObserver', StubResizeObserver);
+    try {
+      const { viewport, scrubber } = renderGallery();
+      initGalleryScrollbars(document, window);
+      expect(callbacks).toHaveLength(1);
+      expect(scrubber.style.width).toBe('250px');
+
+      Object.defineProperty(viewport, 'scrollWidth', { value: 4000, configurable: true });
+      callbacks[0]();
+
+      expect(scrubber.style.width).toBe('125px');
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it('ignores galleries with missing pieces', () => {

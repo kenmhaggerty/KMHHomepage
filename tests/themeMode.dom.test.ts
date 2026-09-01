@@ -118,6 +118,32 @@ describe('initThemeMode', () => {
     expect(document.documentElement.dataset.theme).toBe('light');
   });
 
+  it('settles on light where the window cannot report a colour preference', () => {
+    // matchMedia is absent in some embedded webviews; the optional calls in
+    // themeMode are what keep this from throwing.
+    const win = {
+      localStorage: { getItem: () => null, setItem: () => {} },
+    } as unknown as Window;
+
+    expect(() => initThemeMode(document, win)).not.toThrow();
+    expect(document.documentElement.dataset.theme).toBe('light');
+  });
+
+  it('ignores a toggle button whose value is not a theme', () => {
+    const { win, written } = makeWindow({ dark: false });
+    document.body.insertAdjacentHTML(
+      'beforeend',
+      '<button data-theme-button="sepia" aria-pressed="false"></button>',
+    );
+    initThemeMode(document, win);
+    expect(document.documentElement.dataset.theme).toBe('light');
+
+    document.querySelector<HTMLButtonElement>('[data-theme-button="sepia"]')!.click();
+
+    expect(document.documentElement.dataset.theme).toBe('light');
+    expect(written).toEqual([]);
+  });
+
   it('still applies a theme when storage is blocked', () => {
     const { win } = makeWindow({ dark: true, throws: true });
     expect(() => initThemeMode(document, win)).not.toThrow();

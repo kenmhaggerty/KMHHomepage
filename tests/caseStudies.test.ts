@@ -50,12 +50,31 @@ describe('parseCaseStudy', () => {
 });
 
 describe('loadCaseStudies', () => {
-  it('orders case studies by module path', () => {
+  it('orders case studies by their index, not by file name', () => {
     const result = loadCaseStudies({
-      'b.json': { ...valid, key: 'b' },
-      'a.json': { ...valid, key: 'a' },
+      'a.json': { ...valid, key: 'a', index: 2 },
+      'b.json': { ...valid, key: 'b', index: 0 },
+      'c.json': { ...valid, key: 'c', index: 1 },
     });
-    expect(result.map((cs) => cs.key)).toEqual(['a', 'b']);
+    expect(result.map((cs) => cs.key)).toEqual(['b', 'c', 'a']);
+  });
+
+  it('keeps the glob order when indexes tie', () => {
+    const result = loadCaseStudies({
+      'b.json': { ...valid, key: 'b', index: 0 },
+      'a.json': { ...valid, key: 'a', index: 0 },
+    });
+    expect(result.map((cs) => cs.key)).toEqual(['b', 'a']);
+  });
+
+  it('validates every entry, not just the first', () => {
+    expect(() =>
+      loadCaseStudies({ 'ok.json': { ...valid, index: 0 }, 'bad.json': { ...valid, key: '' } }),
+    ).toThrow(/bad\.json/);
+  });
+
+  it('returns an empty list for an empty glob', () => {
+    expect(loadCaseStudies({})).toEqual([]);
   });
 
   it('propagates validation errors with the file path', () => {

@@ -3,7 +3,6 @@ import { describe, expect, it } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import Index from '../src/pages/index.astro';
 import Resume from '../src/pages/resume.astro';
-import Blog from '../src/pages/blog.astro';
 import ProjectPage, { getStaticPaths } from '../src/pages/work/[slug].astro';
 import { getCaseStudy } from '../src/data/site';
 
@@ -50,9 +49,13 @@ describe('Project page', () => {
     expect(html).toContain('Back');
     expect(html).toContain('US Army');
     expect(html).toContain('2026');
-    // Gallery: preview images link to the full-resolution versions.
-    expect(html).toContain('/images/gfm-1-preview.png');
-    expect(html).toContain('href="/images/gfm-1.png"');
+    // Images go through Astro's pipeline, so the URL is a processed one whose
+    // shape differs between dev and build -- match the file stem, which does
+    // not. The link still points at the untouched full-resolution original.
+    expect(html).toMatch(/src="[^"]*gfm-1-preview[^"]*"/);
+    expect(html).toMatch(/href="[^"]*gfm-1\.png[^"]*"/);
+    // Intrinsic dimensions come with it, which is what reserves the space.
+    expect(html).toMatch(/width="\d+" height="\d+"/);
     // Sections come straight from the JSON.
     for (const title of ['Overview', 'Role', 'Initial Objectives', 'Solution', 'Impact', 'Links']) {
       expect(html).toContain(title);
@@ -61,19 +64,17 @@ describe('Project page', () => {
   });
 });
 
-describe('Placeholder pages', () => {
-  it('renders the résumé page', async () => {
+describe('Résumé page', () => {
+  it('embeds the PDF and fills the window rather than hugging it', async () => {
     const html = await render(Resume);
     expect(html).toContain('<title>Résumé · Ken M. Haggerty</title>');
-    expect(html).toContain('2026 August');
-    expect(html).toContain('Ken M Haggerty (2026 AUG).pdf');
-    // The PDF fills the window instead of the card hugging it.
+    expect(html).toContain('Ken M Haggerty (Resume).pdf');
     expect(html).toContain('fill-height');
   });
 
-  it('renders the blog page', async () => {
-    const html = await render(Blog);
-    expect(html).toContain('<title>Blog · Ken M. Haggerty</title>');
-    expect(html).toContain('Coming soon.');
+  it('offers the PDF as a download, for phones where the viewer is awkward', async () => {
+    const html = await render(Resume);
+    expect(html).toMatch(/<a[^>]*class="resume-download"[^>]*download[^>]*>/);
+    expect(html).toContain('Download PDF');
   });
 });

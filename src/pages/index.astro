@@ -20,15 +20,17 @@ const EAGER_PANELS = 3;
     <section class="section about">
       <h2 class="section-title">{about.title}</h2>
       <div class="about-content">
+        {
+          /* The avatar is laid out at 64px but the source is 192px, so it asks
+            for 2x and 3x variants below: without those Astro resizes it down to
+            a flat 64px and it blurs on any Retina screen. */
+        }
         <Image
           class="avatar"
           src={imageAsset(about.avatar)}
           alt={about.avatar_alt}
           width={64}
           height={64}
-          {/* The avatar is laid out at 64px but the source is 192px, so ask for
-              2x and 3x variants too -- without these Astro resizes it down to a
-              flat 64px and it blurs on any Retina screen. */}
           densities={[1, 2, 3]}
           loading="eager"
         />
