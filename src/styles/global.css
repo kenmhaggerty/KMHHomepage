@@ -273,6 +273,12 @@ html[data-viewport='mobile'] .scrollable {
   filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.25));
 }
 
+/* The two halves meet on a slant, as in the Figma toggle, where the divider
+   runs 5.2963px across the 18px height -- atan(5.2963 / 18) = 16.4deg.
+   Skewing each half angles both the halves and the hairline between them.
+   The outer halves are widened by the slant's reach so it cannot pull them
+   off the rounded corners, with matching padding to keep the icons centred
+   on the visible half; the container clips whatever hangs over. */
 .viewport-toggle button {
   flex: 1 0 0;
   display: flex;
@@ -280,10 +286,23 @@ html[data-viewport='mobile'] .scrollable {
   justify-content: center;
   background: var(--color-card-bg);
   color: var(--color-toggle-dark);
+  transform: skewX(-16.4deg);
+}
+
+.viewport-toggle button:first-child {
+  margin-left: -4px;
+  padding-left: 4px;
+}
+
+.viewport-toggle button:last-child {
+  margin-right: -4px;
+  padding-right: 4px;
 }
 
 .viewport-toggle .icon {
   display: block;
+  /* Undo the half's skew so the glyph stays upright. */
+  transform: skewX(16.4deg);
 }
 
 html[data-viewport='desktop'] .viewport-toggle button[data-mode-button='desktop'],
@@ -383,6 +402,7 @@ html[data-viewport='mobile'] .viewport-toggle button[data-mode-button='mobile'] 
   flex-direction: column;
   gap: 12px;
   width: 100%;
+  min-height: 310px;
 }
 
 .hscroll-viewport {
