@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { flagsFromDataset, initCaseStudyFilters } from '../src/scripts/caseStudyFilters';
+import {
+  PANEL_COLLAPSE_MS,
+  flagsFromDataset,
+  initCaseStudyFilters,
+} from '../src/scripts/caseStudyFilters';
 
 function renderWorkPage() {
   document.body.innerHTML = `
@@ -105,6 +109,21 @@ describe('initCaseStudyFilters', () => {
     expect(chip('mobile').getAttribute('aria-pressed')).toBe('true');
     expect(panel('gfm').hidden).toBe(true);
     expect(panel('app').hidden).toBe(false);
+  });
+
+  it('notifies again once the panels have finished collapsing', () => {
+    vi.useFakeTimers();
+    try {
+      initCaseStudyFilters(document);
+      const listener = vi.fn();
+      document.addEventListener('casestudyfilterschange', listener);
+      chip('mobile').click();
+      expect(listener).toHaveBeenCalledTimes(1);
+      vi.advanceTimersByTime(PANEL_COLLAPSE_MS);
+      expect(listener).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('notifies listeners when the filter changes', () => {

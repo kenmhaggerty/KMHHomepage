@@ -318,6 +318,23 @@ html[data-viewport='mobile'] .viewport-toggle button[data-mode-button='mobile'] 
   display: none;
 }
 
+/* A filtered-out panel collapses instead of vanishing, so the change can be
+   animated: it keeps its place in the flow at zero width (the ratio takes the
+   height to zero with it) and pulls back its own gap, so the panels either
+   side close up to a single gap rather than two. `visibility` keeps it out of
+   the tab order and the accessibility tree once it has finished collapsing. */
+.case-studies .panel[hidden] {
+  display: block;
+  width: 0;
+  opacity: 0;
+  visibility: hidden;
+  margin-right: calc(-1 * var(--panel-gap));
+  /* The overlay is absolutely positioned and its title has to go somewhere, so
+     without clipping it would keep widening the gallery's scrollable area even
+     at zero width. */
+  overflow: hidden;
+}
+
 .panel {
   position: relative;
   flex-shrink: 0;
@@ -340,6 +357,36 @@ html[data-viewport='mobile'] .viewport-toggle button[data-mode-button='mobile'] 
       width 220ms ease-in-out,
       height 220ms ease-in-out,
       aspect-ratio 220ms ease-in-out;
+  }
+
+  /* Filtering runs in two steps so the artwork is never seen squashing: the
+     panel fades out at full size, and only once it is invisible does it give
+     up its width and its gap. Reappearing plays that back in reverse -- the
+     space opens first, then the panel fades in -- so each direction declares
+     its own delays, taken from the state it is transitioning *to*.
+     The mode toggle still reshapes these panels through aspect-ratio. */
+  .case-studies .panel {
+    transition:
+      opacity 330ms ease-out 110ms;
+  }
+
+  .case-studies .panel[hidden] {
+    transition:
+      margin-right 0ms ease-out 220ms,
+      opacity 220ms ease-out,
+      visibility 220ms ease-out,
+      width 0ms ease-out 220ms;
+  }
+
+  html[data-viewport='desktop'] .case-studies .panel {
+    transition:
+      width 220ms ease-out,
+      opacity 330ms ease-out 220ms;
+  }
+
+  html[data-viewport='desktop'] .case-studies .panel[hidden] {
+    transition:
+      width 220ms ease-out;
   }
 }
 
@@ -407,7 +454,9 @@ html[data-viewport='mobile'] .viewport-toggle button[data-mode-button='mobile'] 
 
 .hscroll-viewport {
   display: flex;
-  gap: 16px;
+  /* Named so a collapsing panel can cancel its own gap; see .panel[hidden]. */
+  --panel-gap: 16px;
+  gap: var(--panel-gap);
   align-items: flex-start;
   width: 100%;
   overflow-x: auto;
@@ -723,20 +772,24 @@ html[data-viewport='mobile'] .panel .hero-desktop {
   display: none;
 }
 
+/* Two across, wrapping. A wrapping flex row rather than a grid because a
+   filtered-out panel collapses to zero width and the rest have to flow up into
+   the space it leaves -- fixed grid cells stay put and leave a hole. */
 html[data-viewport='mobile'] .case-studies .hscroll-viewport {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  --panel-gap: 10px;
+  flex-wrap: wrap;
   overflow-x: visible;
 }
 
 html[data-viewport='mobile'] .case-studies .panel {
-  width: auto;
+  width: calc(50% - var(--panel-gap) / 2);
   aspect-ratio: 1;
 }
 
+/* The width above outranks the collapsed width in the panels section, so the
+   collapse needs restating at this specificity to take hold here. */
 html[data-viewport='mobile'] .case-studies .panel[hidden] {
-  display: none;
+  width: 0;
 }
 
 html[data-viewport='mobile'] .case-studies .hscroll-track {

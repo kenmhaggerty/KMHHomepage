@@ -1,6 +1,12 @@
 import { isFilterKey, matchesFilters } from '../utils/filters';
 import type { CaseStudyFilterFlags, FilterKey } from '../types';
 
+/**
+ * How long a panel takes to collapse or reappear: it fades for 220ms and only
+ * then spends another 220ms giving up its width. Matches `.panel` in global.css.
+ */
+export const PANEL_COLLAPSE_MS = 440;
+
 export function flagsFromDataset(dataset: DOMStringMap): CaseStudyFilterFlags {
   return {
     zero_to_one: dataset.filterZeroToOne === 'true',
@@ -29,6 +35,8 @@ export function initCaseStudyFilters(doc: Document): void {
 
   let selected: FilterKey | null = null;
 
+  const notifyChange = () => doc.dispatchEvent(new CustomEvent('casestudyfilterschange'));
+
   const apply = () => {
     const keys = selected ? [selected] : [];
     for (const panel of panels) {
@@ -37,7 +45,11 @@ export function initCaseStudyFilters(doc: Document): void {
     for (const { chip, key } of filterChips) {
       chip.setAttribute('aria-pressed', String(key === selected));
     }
-    doc.dispatchEvent(new CustomEvent('casestudyfilterschange'));
+    notifyChange();
+    // A collapsing panel keeps its place while it shrinks, so the gallery's
+    // scroll metrics above are still the old ones. Announce the change again
+    // once the panels have finished collapsing and the width is final.
+    doc.defaultView?.setTimeout(notifyChange, PANEL_COLLAPSE_MS);
   };
 
   for (const { chip, key } of filterChips) {
