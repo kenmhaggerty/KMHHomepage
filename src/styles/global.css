@@ -24,6 +24,7 @@
   --color-card-bg: #ffffff;
   --color-text: #000000;
   --color-text-muted: #888888;
+  --color-text-muted-2: #B4B4B4;
   --color-text-soft: #777777;
 
   --color-chip-bg: #f0f0f0;
@@ -159,21 +160,31 @@ html[data-viewport='mobile'] .card {
 
 .site-footer {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
   max-width: var(--content-max-width);
-  padding: 12px 0;
+  padding: 8px 0;
   flex-shrink: 0;
 }
 
 .site-footer p {
   margin: 0;
   font-size: 13px;
-  font-weight: 500;
-  color: var(--color-text-muted);
-  text-transform: uppercase;
+  line-height: 1.5;
   white-space: nowrap;
+}
+
+.site-copyright {
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.site-version {
+  color: var(--color-text-muted-2);
+  font-weight: 300;
 }
 
 /* Small screens always render the mobile layout, full-bleed and without
