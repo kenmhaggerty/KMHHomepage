@@ -4,6 +4,7 @@
     "footer": "Ken M. Haggerty © 2026",
     "version": "3.0.0",
     "icons": {
+        "ico": "favicon.ico",
         "svg": "favicon.svg",
         "png": "favicon.png",
         "appleTouch": "apple-touch-icon.png"

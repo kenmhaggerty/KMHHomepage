@@ -1,5 +1,7 @@
 /** The site's icons, all served as-is from public/. */
 export interface SiteIcons {
+  /** Multi-size raster. Safari on macOS looks for one of these first. */
+  ico: string;
   /** Scalable icon, preferred by browsers that support it. */
   svg: string;
   /** 32px raster, for browsers that do not take an SVG icon. */

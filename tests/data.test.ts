@@ -16,8 +16,9 @@ describe('siteInfo', () => {
     expect(siteInfo.footer).toMatch(/Ken M\. Haggerty/);
   });
 
-  it('names all three icons', () => {
+  it('names every icon the head links to', () => {
     expect(siteInfo.icons).toEqual({
+      ico: 'favicon.ico',
       svg: 'favicon.svg',
       png: 'favicon.png',
       appleTouch: 'apple-touch-icon.png',
