@@ -1004,6 +1004,17 @@ html[data-viewport='mobile'] .page-project .hscroll {
   margin-bottom: 12px;
 }
 
+/* Safari alone drops that gap. `-webkit-hyphens` is the guard because Safari
+   supports it on both macOS and iOS and no other engine does -- verified by
+   feature-probing the real browsers rather than by reputation.
+   `-webkit-touch-callout` would have looked equivalent but matches iOS only,
+   leaving macOS with the gap still in place. */
+@supports (-webkit-hyphens: none) {
+  .page-resume .back-button {
+    margin-bottom: 0;
+  }
+}
+
 .page-resume embed {
   flex: 1 1 auto;
   min-height: 0;
