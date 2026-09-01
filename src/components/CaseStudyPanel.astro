@@ -5,9 +5,12 @@ import { imageAsset } from '../data/site';
 
 interface Props {
   caseStudy: CaseStudy;
+  /** Set for the panels that start on screen, so they are not deprioritised. */
+  eager?: boolean;
 }
 
-const { caseStudy } = Astro.props;
+const { caseStudy, eager = false } = Astro.props;
+const loading = eager ? 'eager' : 'lazy';
 const { key, title, company, year, filters, hero } = caseStudy;
 ---
 
@@ -20,8 +23,13 @@ const { key, title, company, year, filters, hero } = caseStudy;
   data-filter-gov-dod={String(filters.gov_dod)}
   data-filter-mobile={String(filters.mobile)}
 >
-  <Image class="hero-desktop" src={imageAsset(hero.desktop)} alt={hero.alt_text} loading="lazy" />
-  <Image class="hero-mobile" src={imageAsset(hero.mobile)} alt={hero.alt_text} loading="lazy" />
+  <Image
+    class="hero-desktop"
+    src={imageAsset(hero.desktop)}
+    alt={hero.alt_text}
+    loading={loading}
+  />
+  <Image class="hero-mobile" src={imageAsset(hero.mobile)} alt={hero.alt_text} loading={loading} />
   <span class="panel-overlay">
     <span class="panel-title">{title}</span>
     <span class="panel-subtitle">{company} • {year}</span>

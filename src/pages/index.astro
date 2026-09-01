@@ -4,6 +4,15 @@ import CaseStudyPanel from '../components/CaseStudyPanel.astro';
 import { Image } from 'astro:assets';
 import { about, caseStudies, imageAsset } from '../data/site';
 import { FILTERS } from '../utils/filters';
+
+/*
+ * Panels that are on screen before any scrolling: three across on desktop
+ * (the third half-shown), the first row and a half of the mobile grid. Only
+ * these load eagerly -- lazy-loading an image the visitor is already looking
+ * at just delays it, which is what an audit means by an unoptimized loading
+ * attribute.
+ */
+const EAGER_PANELS = 3;
 ---
 
 <SiteLayout>
@@ -17,6 +26,7 @@ import { FILTERS } from '../utils/filters';
           alt={about.avatar_alt}
           width={64}
           height={64}
+          loading="eager"
         />
         {about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
       </div>
@@ -37,7 +47,11 @@ import { FILTERS } from '../utils/filters';
       </div>
       <div class="hscroll" data-gallery>
         <div class="hscroll-viewport" data-gallery-scroll>
-          {caseStudies.map((caseStudy) => <CaseStudyPanel caseStudy={caseStudy} />)}
+          {
+            caseStudies.map((caseStudy, index) => (
+              <CaseStudyPanel caseStudy={caseStudy} eager={index < EAGER_PANELS} />
+            ))
+          }
         </div>
         <div class="hscroll-track" data-gallery-track="persistent">
           <div class="hscroll-scrubber" data-gallery-scrubber></div>

@@ -6,6 +6,9 @@ import { Image } from 'astro:assets';
 import { caseStudies, imageAsset } from '../../data/site';
 import type { CaseStudy } from '../../types';
 
+/** Gallery images on screen before any scrolling; see index.astro. */
+const EAGER_GALLERY_IMAGES = 3;
+
 export function getStaticPaths() {
   return caseStudies.map((caseStudy) => ({
     params: { slug: caseStudy.key },
@@ -37,14 +40,18 @@ const { caseStudy } = Astro.props;
     <div class="hscroll" data-gallery>
       <div class="hscroll-viewport" data-gallery-scroll>
         {
-          caseStudy.gallery.map((item) => (
+          caseStudy.gallery.map((item, index) => (
             <a
               class="panel"
               href={imageAsset(item.full_res).src}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Image src={imageAsset(item.preview)} alt={item.alt_text} loading="lazy" />
+              <Image
+                src={imageAsset(item.preview)}
+                alt={item.alt_text}
+                loading={index < EAGER_GALLERY_IMAGES ? 'eager' : 'lazy'}
+              />
             </a>
           ))
         }
