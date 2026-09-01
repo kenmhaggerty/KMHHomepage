@@ -1,13 +1,16 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+
+const resumePdf = '/Ken M Haggerty (Resume).pdf';
 ---
 
 <SiteLayout pageTitle="Résumé" fillHeight>
   <div class="page-resume">
     <section class="section">
       <div class="section-body">
-        <embed src="/Ken M Haggerty (Resume).pdf" type="application/pdf" />
+        <embed class="resume-viewport" src={resumePdf} type="application/pdf" />
       </div>
     </section>
+    <a class="resume-download" href={resumePdf} download>Download PDF</a>
   </div>
 </SiteLayout>

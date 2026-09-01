@@ -44,6 +44,10 @@
   --color-toggle-accent: #3b3b3b;
   --color-toggle-accent-text: #ffffff;
 
+  /* A solid call-to-action, inverted against the page. */
+  --color-button-bg: #222222;
+  --color-button-text: #ffffff;
+
   /* The scrim a case study panel fades up on hover. */
   --color-overlay-inner: rgba(240, 240, 240, 0.8);
   --color-overlay-mid: rgba(238, 238, 238, 0.6);
@@ -967,6 +971,46 @@ html[data-viewport='mobile'] .page-project .hscroll {
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
+}
+
+.resume-viewport {
+  border-bottom: 1px solid var(--color-chip-border);
+}
+
+/* Offered on phones only, where an inline PDF is awkward to read and often
+   will not scroll at all. Desktop and the mobile-on-desktop preview both have
+   a working viewer, so they keep the page as it was -- which is why this is
+   keyed to the screen rather than to the mobile layout the preview shares. */
+.resume-download {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  /* Only meaningful once the button below is showing. */
+  .page-resume {
+    gap: 12px;
+  }
+
+  .resume-viewport {
+    border-bottom: 1px solid var(--color-chip-border);
+  }
+
+  .resume-download {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 100%;
+    /* Lands a little over the 44px a thumb wants. */
+    padding: 14px;
+    border-radius: 8px;
+    background: var(--color-button-bg);
+    color: var(--color-button-text);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: normal;
+    text-transform: uppercase;
+  }
 }
 
 .spacer {
