@@ -520,7 +520,6 @@ html[data-theme='dark'] .theme-toggle button[data-theme-button='dark'] {
   flex-direction: column;
   gap: 12px;
   width: 100%;
-  min-height: 310px;
 }
 
 .hscroll-viewport {
@@ -556,6 +555,17 @@ html[data-viewport='desktop'] .hscroll-viewport {
   padding-right: 16px;
   margin-left: -32px;
   margin-right: -32px;
+}
+
+/* Filtering animates every panel's width, and the ratio carries their heights
+   down with it, so this row would follow them. Usually some panel survives the
+   change at full height and holds the row up -- but Consumer and Gov / DoD
+   share no case studies, so all ten are mid-size at the crossover and the
+   scroll area collapses to a little over half before springing back. Holding
+   one panel's height keeps it still: 288px (480px wide at 480 / 288) plus the
+   13px shadow gutter above and below. */
+html[data-viewport='desktop'] .hscroll-viewport {
+  min-height: calc(288px + 2 * 13px);
 }
 
 /* 16px of breathing room either side of the panels. Scoped to desktop so the
