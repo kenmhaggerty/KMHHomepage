@@ -65,6 +65,54 @@ describe('caseStudies', () => {
   });
 });
 
+describe('case study footnotes', () => {
+  const sections = caseStudies.flatMap((caseStudy) =>
+    caseStudy.sections.map((section) => ({ caseStudy: caseStudy.key, section })),
+  );
+
+  it('has at least one section carrying footnotes, so the rendering is exercised', () => {
+    expect(sections.some(({ section }) => section.footnotes?.length)).toBe(true);
+  });
+
+  it('gives every footnote a distinct marker and some content', () => {
+    for (const { caseStudy, section } of sections) {
+      const footnotes = section.footnotes ?? [];
+      const ids = footnotes.map((footnote) => footnote.id);
+      expect(new Set(ids).size, `duplicate marker in ${caseStudy}/${section.title}`).toBe(
+        ids.length,
+      );
+      for (const footnote of footnotes) {
+        expect(footnote.html_content.trim().length).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  it('leaves the footnote block to the component rather than hand-writing it in prose', () => {
+    // Both at once would render the notes twice, and only the generated copy
+    // stays in step with the footnotes data.
+    for (const { caseStudy, section } of sections) {
+      expect(
+        section.html_content ?? '',
+        `${caseStudy}/${section.title} still writes its own footnote block`,
+      ).not.toContain('section-footnotes');
+    }
+  });
+
+  it('backs every <sup> marker in prose with a footnote of the same number', () => {
+    for (const { caseStudy, section } of sections) {
+      const markers = [...(section.html_content ?? '').matchAll(/<sup>(\d+)<\/sup>/g)].map(
+        (match) => Number(match[1]),
+      );
+      const ids = new Set((section.footnotes ?? []).map((footnote) => footnote.id));
+      for (const marker of markers) {
+        expect(ids.has(marker), `${caseStudy}/${section.title} cites ${marker} with no note`).toBe(
+          true,
+        );
+      }
+    }
+  });
+});
+
 describe('imageAsset', () => {
   it('resolves a data filename to the imported asset', () => {
     const image = imageAsset('gfm-1.png');

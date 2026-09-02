@@ -679,6 +679,48 @@ html[data-viewport='mobile'] .page-work .section-title {
   margin-top: 13px;
 }
 
+.section a {
+  color: var(--color-text-muted);
+}
+
+.section a:hover {
+  color: var(--color-text-soft);
+  background: var(--color-url-bg-hover);
+}
+
+.section sup {
+  color: var(--color-text-muted-2);
+  font-size: 9px;
+  font-weight: bolder;
+  margin-right: 1px;
+}
+
+.section-footnotes {
+  color: var(--color-text-muted);
+  font-size: 11.5px;
+  border-top: 1px solid var(--color-text-muted-2);
+  margin-top: 26px !important;
+  padding-top: 6px;
+}
+
+.footnote:not(:last-child)::after {
+  content: '•';
+  margin: 0 4px;
+}
+
+.section-footnotes .footnote + .footnote {
+  margin-top: 4px;
+}
+
+.section-footnotes sup {
+  color: var(--color-text-muted);
+  margin-right: 4px;
+}
+
+.section-footnotes a {
+  color: var(--color-text-muted-2);
+}
+
 .link-url {
   display: flex;
   align-items: center;

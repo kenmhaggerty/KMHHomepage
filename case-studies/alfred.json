@@ -33,7 +33,7 @@
         },
         {
             "title": "Initial Objectives",
-            "html_content": "<p>Improve performance and reliability of software tools by shifting from commercial off-the-shelf products (e.g., Wunderlist, Google Forms, Google Sheets) to a custom-built three-part suite of tightly-integrated applications for receiving and fulfilling customer service requests.</p><p>Integrate corporate branding by 72andSunny into digital products and experiences.</p>"
+            "html_content": "<p>Improve performance and reliability of software tools by shifting from commercial off-the-shelf products (e.g., Wunderlist, Google Forms, Google Sheets) to a custom-built three-part suite of tightly-integrated applications for receiving and fulfilling customer service requests.</p><p>Integrate corporate branding by <a href='https://www.72andsunny.com'>72andSunny</a> into digital products and experiences.</p>"
         },
         {
             "title": "Solution",
@@ -41,7 +41,13 @@
         },
         {
             "title": "Impact",
-            "html_content": "<p>Alfred now operates in 52 markets across North America and supports over 300,000 residents. Made by Many's application suite significantly improved accuracy of request fulfillment, planning of fulfillment routes, and usability for customers, Alfreds, and HQ alike.</p><p>In 2017 Alfred signed a key partnership deal with the Related Companies to provide Alfred's services as a building amenity for all Related residents—no key handover required.</p>"
+            "html_content": "<p>Alfred now operates in 52 markets across North America and supports over 300,000 residents.<sup>1</sup> Made by Many's application suite significantly improved accuracy of request fulfillment, planning of fulfillment routes, and usability for customers, Alfreds, and HQ alike.</p><p>In 2017 Alfred signed a key partnership deal with the <a href='https://www.related.com/press-releases/2017-11-30/related-companies-and-hello-alfred-announce-strategic-partnership-enhance'>Related Companies</a> to provide Alfred's services as a building amenity for all Related residents—no key handover required.</p>",
+            "footnotes": [
+                {
+                    "id": 1,
+                    "html_content": "As of Sep 2026 (via <a href='https://www.linkedin.com/company/hello-alfred'>LinkedIn</a>)"
+                }
+            ]
         },
         {
             "title": "Links",

@@ -54,9 +54,17 @@ export interface CaseStudyLink {
   url: string;
 }
 
+/** A numbered note rendered beneath a section, keyed to a <sup> in its prose. */
+export interface CaseStudyFootnote {
+  /** The marker shown before the note, matching the <sup> in html_content. */
+  id: number;
+  html_content: string;
+}
+
 export interface CaseStudySection {
   title: string;
   html_content?: string;
+  footnotes?: CaseStudyFootnote[];
   links?: CaseStudyLink[];
 }
 

@@ -7,10 +7,38 @@ interface Props {
 }
 
 const { section } = Astro.props;
+const footnotes = section.footnotes ?? [];
+/*
+ * The notes go inside .section-body rather than after it because their styling
+ * is built out of that context: the 11.5px and the grey link colour override
+ * .section-body's 13px and .section a, and the 26px top margin overrides the
+ * 13px that .section-body p + p would otherwise give them.
+ */
+const hasBody = Boolean(section.html_content) || footnotes.length > 0;
 ---
 
 <section class="section">
   <h2 class="section-title">{section.title}</h2>
-  {section.html_content && <div class="section-body" set:html={section.html_content} />}
+  {
+    hasBody && (
+      <div class="section-body">
+        {section.html_content && <Fragment set:html={section.html_content} />}
+        {footnotes.length > 0 && (
+          <p class="section-footnotes">
+            {footnotes.map((footnote) => (
+              /* Marker and note are set together as one string because Astro
+                 keeps template whitespace as HTML does: writing them as two
+                 elements leaves a text node between them, which would render
+                 as a space on top of the 4px the <sup> already carries. */
+              <span
+                class="footnote"
+                set:html={`<sup>${footnote.id}</sup>${footnote.html_content}`}
+              />
+            ))}
+          </p>
+        )}
+      </div>
+    )
+  }
   {section.links?.map((link) => <LinkUrl link={link} />)}
 </section>

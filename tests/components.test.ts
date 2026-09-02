@@ -98,6 +98,86 @@ describe('Section', () => {
     expect(html).toContain('<p>Global Freight Management</p>');
   });
 
+  it('renders footnotes from the section data, styled as one bordered block', async () => {
+    const html = await render(Section, {
+      props: {
+        section: {
+          title: 'Impact',
+          html_content: '<p>Supports over 300,000 residents.<sup>1</sup></p>',
+          footnotes: [{ id: 1, html_content: 'As of Sep 2026' }],
+        },
+      },
+    });
+    // One paragraph carries the rule and spacing; each note is a line in it.
+    expect(html.match(/class="section-footnotes"/g)).toHaveLength(1);
+    // Matched loosely: the container adds data-astro-source-* attributes in
+    // dev that the built output does not carry.
+    expect(html).toMatch(/<span class="footnote"[^>]*><sup>1<\/sup>As of Sep 2026<\/span>/);
+    // The notes sit inside .section-body, which is where their styling is
+    // resolved against -- the prose font size, spacing, and link colour.
+    expect(html.indexOf('class="section-body"')).toBeLessThan(
+      html.indexOf('class="section-footnotes"'),
+    );
+    expect(html.indexOf('300,000 residents')).toBeLessThan(html.indexOf('As of Sep 2026'));
+  });
+
+  it('leaves no gap between the marker and the note', async () => {
+    // The <sup> carries a 4px right margin; a whitespace text node between the
+    // two would widen that, so the marker and note are emitted as one string.
+    const html = await render(Section, {
+      props: { section: { title: 'Impact', footnotes: [{ id: 2, html_content: 'Note' }] } },
+    });
+    expect(html).toContain('<sup>2</sup>Note');
+  });
+
+  it('keeps markup inside a footnote, so notes can cite a source', async () => {
+    const html = await render(Section, {
+      props: {
+        section: {
+          title: 'Impact',
+          footnotes: [{ id: 1, html_content: "Via <a href='https://example.com'>a source</a>" }],
+        },
+      },
+    });
+    expect(html).toContain("<a href='https://example.com'>a source</a>");
+  });
+
+  it('stacks several footnotes as lines under a single rule', async () => {
+    const html = await render(Section, {
+      props: {
+        section: {
+          title: 'Impact',
+          footnotes: [
+            { id: 1, html_content: 'First' },
+            { id: 2, html_content: 'Second' },
+          ],
+        },
+      },
+    });
+    expect(html.match(/class="section-footnotes"/g)).toHaveLength(1);
+    expect(html.match(/class="footnote"/g)).toHaveLength(2);
+    expect(html.indexOf('<sup>1</sup>')).toBeLessThan(html.indexOf('<sup>2</sup>'));
+  });
+
+  it('renders footnotes for a section that has no prose of its own', async () => {
+    const html = await render(Section, {
+      props: { section: { title: 'Impact', footnotes: [{ id: 1, html_content: 'Standalone' }] } },
+    });
+    expect(html).toContain('class="section-body"');
+    expect(html).toContain('Standalone');
+  });
+
+  it('adds nothing when a section has no footnotes', async () => {
+    const withoutKey = await render(Section, {
+      props: { section: { title: 'Overview', html_content: '<p>Prose</p>' } },
+    });
+    const withEmptyArray = await render(Section, {
+      props: { section: { title: 'Overview', html_content: '<p>Prose</p>', footnotes: [] } },
+    });
+    expect(withoutKey).not.toContain('section-footnotes');
+    expect(withEmptyArray).not.toContain('section-footnotes');
+  });
+
   it('renders link sections as LinkUrl rows', async () => {
     const html = await render(Section, {
       props: {

@@ -51,7 +51,17 @@
         },
         {
             "title": "Impact",
-            "html_content": "<p>Based on the results of our research, the difficult but necessary decision was made to focus on \"end-to-end\" self driving capabilities in order to mitigate the dangers presented during autonomous-to-manual driving handoff.</p><p>The self-driving cars project within Google [x] has since spun out into its own company within Google called Waymo. My former colleague Dmitri Dolgov now serves as co-CEO of Waymo alongside Tekedra Mawakana.</p><p>In 2017, Waymo launched Waymo One, the world’s first self-driving ride-hailing service, in Chandler, AZ.</p><p>As of 2026, Waymo operates in 11 cities including San Francisco, Los Angeles, Austin, and Atlanta, and has driven over 220 million miles—all without a human driver.</p><p>Waymo is currently preparing to launch in 23 more cities including London, Tokyo, Madrid, and Munich.</p>"
+            "html_content": "<p>Based on the results of our research, the difficult but necessary decision was made to focus on \"end-to-end\" self driving capabilities in order to mitigate the dangers presented during autonomous-to-manual driving handoff.</p><p>The self-driving cars project within Google [x] has since spun out into its own company within Google called Waymo. My former colleague Dmitri Dolgov now serves as co-CEO of Waymo alongside Tekedra Mawakana.</p><p>In 2017, Waymo launched Waymo One, the world’s first self-driving ride-hailing service, in Chandler, AZ.</p><p>As of Sep 2026, Waymo operates in 14 cities including San Francisco, Los Angeles, Austin, and Atlanta, and has driven over 220 million miles<sup>1</sup>—all without a human driver.</p><p>Waymo is currently preparing to launch in 18 more cities<sup>2</sup> including London, Tokyo, and Munich.</p>",
+            "footnotes": [
+                {
+                    "id": 1,
+                    "html_content": "As of June 2026 (via <a href='https://waymo.com/blog/shorts/safetydata-june26/'>Waymo</a>)"
+                },
+                {
+                    "id": 2,
+                    "html_content": "As of Sep 2026 (via <a href='https://waymo.com/updates/'>Waymo</a>)"
+                }
+            ]
         },
         {
             "title": "Links",

@@ -64,6 +64,26 @@ describe('Project page', () => {
   });
 });
 
+describe('Case study footnotes on the page', () => {
+  it('renders the Alfred footnote once, generated from the JSON', async () => {
+    const alfred = getCaseStudy('alfred');
+    const html = await render(ProjectPage, { props: { caseStudy: alfred } });
+
+    // Exactly one: the hand-written copy that used to live in html_content is
+    // gone, so the note comes only from the footnotes array.
+    expect(html.match(/class="section-footnotes"/g)).toHaveLength(1);
+    expect(html.match(/As of Sep 2026/g)).toHaveLength(1);
+    expect(html).toContain('linkedin.com/company/hello-alfred');
+    // The marker in the prose still points at it.
+    expect(html).toContain('300,000 residents.<sup>1</sup>');
+  });
+
+  it('leaves case studies without footnotes untouched', async () => {
+    const html = await render(ProjectPage, { props: { caseStudy: getCaseStudy('gfm') } });
+    expect(html).not.toContain('section-footnotes');
+  });
+});
+
 describe('Résumé page', () => {
   it('embeds the PDF and fills the window rather than hugging it', async () => {
     const html = await render(Resume);
