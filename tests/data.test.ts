@@ -18,8 +18,6 @@ describe('siteInfo', () => {
 
   it('names every icon the head links to', () => {
     expect(siteInfo.icons).toEqual({
-      ico: 'favicon.ico',
-      svg: 'favicon.svg',
       png: 'favicon.png',
       appleTouch: 'apple-touch-icon.png',
     });
