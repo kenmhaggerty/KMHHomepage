@@ -100,13 +100,25 @@ const cardDescription = shareDescription ?? description;
         root.dataset.viewport =
           window.innerWidth < 768 ? 'mobile' : viewport === 'mobile' ? 'mobile' : 'desktop';
 
+        /* Mirrors resolveThemeMode in src/utils/theme.ts. A chosen theme
+           holds only while the device's own setting is the one it was chosen
+           against; switching the device retires the choice, here and in
+           storage, so the site follows the device again. */
+        const system = window.matchMedia?.('(prefers-color-scheme: dark)')?.matches
+          ? 'dark'
+          : 'light';
         const theme = read('theme-mode');
-        root.dataset.theme =
-          theme === 'light' || theme === 'dark'
-            ? theme
-            : window.matchMedia('(prefers-color-scheme: dark)').matches
-              ? 'dark'
-              : 'light';
+        const chosenAgainst = read('theme-mode-system');
+        const chose = theme === 'light' || theme === 'dark';
+        if (chose && chosenAgainst !== system) {
+          try {
+            localStorage.removeItem('theme-mode');
+            localStorage.removeItem('theme-mode-system');
+          } catch {
+            /* storage unavailable */
+          }
+        }
+        root.dataset.theme = chose && chosenAgainst === system ? theme : system;
       })();
     </script>
   </head>
@@ -116,6 +128,29 @@ const cardDescription = shareDescription ?? description;
         <DarkModeToggle />
         <ViewportToggle />
       </div>
+      <script is:inline>
+        /* Which toggle looks selected is decided by CSS keyed on the data
+           attributes the head script already set, so the buttons paint
+           correctly. `aria-pressed` is a DOM attribute, though, so without
+           this it would read "false" on both buttons until the module bundle
+           finished loading -- assistive tech would announce the wrong state
+           for as long as that took. Running here, right after the buttons
+           parse, keeps it in step from the first paint. */
+        (() => {
+          const root = document.documentElement;
+          for (const [attribute, active] of [
+            ['data-theme-button', root.dataset.theme],
+            ['data-mode-button', root.dataset.viewport],
+          ]) {
+            for (const button of document.querySelectorAll(`[${attribute}]`)) {
+              button.setAttribute(
+                'aria-pressed',
+                String(button.getAttribute(attribute) === active),
+              );
+            }
+          }
+        })();
+      </script>
       <main class:list={['card', { 'fill-height': fillHeight }]}>
         <SiteHeader />
         <div class="scrollable">
