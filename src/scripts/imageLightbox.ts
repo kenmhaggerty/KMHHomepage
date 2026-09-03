@@ -1,5 +1,8 @@
 import { MODAL_OPEN_CLASS } from '../utils/modal';
 
+/** On the dialog while the full-resolution file is still on its way. */
+export const LIGHTBOX_LOADING_CLASS = 'is-loading';
+
 function isPlainLeftClick(event: MouseEvent): boolean {
   // A modified click is the visitor asking for a new tab, a window, or a save;
   // intercepting those would take away something they already had.
@@ -26,6 +29,22 @@ export function initImageLightbox(doc: Document): void {
     }
   };
 
+  /* The originals are large -- several megabytes in places -- so there is a
+     real wait between opening the viewer and the picture arriving. aria-busy
+     alongside the spinner, since the spinner itself is decorative. */
+  const setLoading = (loading: boolean) => {
+    dialog.classList.toggle(LIGHTBOX_LOADING_CLASS, loading);
+    if (loading) {
+      dialog.setAttribute('aria-busy', 'true');
+    } else {
+      dialog.removeAttribute('aria-busy');
+    }
+  };
+
+  image.addEventListener('load', () => setLoading(false));
+  // A file that will not load has nothing more to wait for either.
+  image.addEventListener('error', () => setLoading(false));
+
   /* The gallery the open image came from, so the arrow keys have something to
      step through. Rebuilt on each open rather than up front, since a page can
      hold more than one gallery. */
@@ -38,6 +57,10 @@ export function initImageLightbox(doc: Document): void {
     const link = gallery[index];
     image.src = link.href;
     image.alt = link.dataset.lightboxAlt ?? '';
+    /* `complete` is already true for anything served from cache, so stepping
+       back to a picture that has been seen shows no spinner at all rather
+       than flashing one for a frame. */
+    setLoading(!image.complete);
   };
 
   doc.addEventListener('click', (event) => {
@@ -95,6 +118,7 @@ export function initImageLightbox(doc: Document): void {
   // cleanup only needs writing once.
   dialog.addEventListener('close', () => {
     doc.documentElement.classList.remove(MODAL_OPEN_CLASS);
+    setLoading(false);
     // Dropping the source releases what can be a very large decoded image.
     image.removeAttribute('src');
   });

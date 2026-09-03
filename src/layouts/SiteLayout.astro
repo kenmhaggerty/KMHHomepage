@@ -83,6 +83,15 @@ const cardDescription = shareDescription ?? description;
       ))
     }
     <title>{title}</title>
+    <!-- Panels arrive marked as loading (see CaseStudyPanel). Without script
+         nothing would ever clear that, so without script there is no ring. -->
+    <noscript>
+      <style>
+        .skeleton {
+          display: none !important;
+        }
+      </style>
+    </noscript>
     <script is:inline>
       /* Set the viewport mode and theme before first paint, to avoid a layout
          flash and a flash of the wrong theme. */
@@ -167,6 +176,7 @@ const cardDescription = shareDescription ?? description;
       import { initThemeMode } from '../scripts/themeMode';
       import { initImageLightbox } from '../scripts/imageLightbox';
       import { initChangelogModal } from '../scripts/changelogModal';
+      import { initPanelSkeletons } from '../scripts/panelSkeletons';
 
       initThemeMode(document, window);
       initViewportMode(document, window);
@@ -175,6 +185,7 @@ const cardDescription = shareDescription ?? description;
       initPanelHover(document);
       initImageLightbox(document);
       initChangelogModal(document, window);
+      initPanelSkeletons(document);
     </script>
   </body>
 </html>

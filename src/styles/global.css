@@ -39,6 +39,10 @@
   --color-url-bg: #f4f4f4;
   --color-url-bg-hover: #ececec;
 
+  /* Skeleton placeholder: the resting block and the band that sweeps it. */
+  --color-skeleton: #ececec;
+  --color-skeleton-sheen: #f4f4f4;
+
   --color-track: #f0f0f0;
   --color-scrubber: #aaaaaa;
   /* The filled half of a toggle, and the text sitting on it. */
@@ -837,6 +841,120 @@ html[data-viewport='mobile'] .page-work .section-title {
 html.is-modal-open,
 html.is-modal-open body {
   overflow: hidden;
+}
+
+/* -------------------------------------------------- loading indicators */
+
+/* A ring with one lit segment, turning. The image viewer only: it sits on a
+   dark scrim, where a spinner reads better than a placeholder block would.
+   inset+margin:auto rather than a translate, so the transform stays free for
+   the spin, and pointer-events:none so it never intercepts a click meant for
+   what is underneath. */
+.spinner {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  display: none;
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.lightbox.is-loading .lightbox-spinner {
+  display: block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lightbox.is-loading .lightbox-spinner {
+    animation: spinner-turn 700ms linear infinite;
+  }
+}
+
+@keyframes spinner-turn {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* Panels get a skeleton instead: they are content-shaped, so a block standing
+   in for the picture reads better than a mark floating in the middle of one.
+
+   It sits *behind* the image rather than over it, which is what makes it safe
+   to mark from the first byte: the moment a picture paints it covers the
+   skeleton on its own, even before the script has cleared the class.
+
+   It still holds back for 400ms before fading in. On a fast connection the
+   picture arrives about a frame later, and measured, the skeleton was showing
+   for exactly one of them -- a 17ms grey blink that read as a stutter. Under
+   the delay nothing that loads inside 400ms is ever announced. The sweep is
+   held back by the same amount, so no repainting happens during the window
+   where the page is busiest.
+
+   The sweep is a tiled gradient walked by exactly one tile per cycle, which is
+   what makes it seamless: after one cycle the pattern is pixel-identical to
+   where it started, so it loops with no reset and no dead beat. Two highlights
+   one panel-width apart mean the next is entering as the last leaves -- that
+   spacing is what keeps it continuous, so the way to make it less frequent is
+   a longer cycle rather than fewer bands. `linear` keeps the speed even; with
+   an eased curve it visibly slowed at each end. Travel is right to left:
+   background-position rising slides the image left, carrying the bands with
+   it. The bands are centred at 25% and 75% of the tile and ramp out to either
+   side, with flat ground between, so the panel is partly still rather than a
+   gradient shifting end to end. Widening a band means moving its two outer
+   stops away from its centre; they must stay clear of the neighbouring band's
+   stops, or the flat ground between them closes up. */
+.skeleton {
+  position: absolute;
+  inset: 0;
+  display: none;
+  background-color: var(--color-skeleton);
+  background-image: linear-gradient(
+    90deg,
+    var(--color-skeleton) 0%,
+    var(--color-skeleton) 9%,
+    var(--color-skeleton-sheen) 25%,
+    var(--color-skeleton) 41%,
+    var(--color-skeleton) 59%,
+    var(--color-skeleton-sheen) 75%,
+    var(--color-skeleton) 91%,
+    var(--color-skeleton) 100%
+  );
+  background-size: 200% 100%;
+  background-repeat: repeat;
+  pointer-events: none;
+}
+
+.panel.is-loading .skeleton {
+  display: block;
+  opacity: 0;
+  animation: skeleton-appear 250ms ease-out 400ms forwards;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .panel.is-loading .skeleton {
+    animation:
+      skeleton-appear 250ms ease-out 400ms forwards,
+      skeleton-sweep 2800ms linear 400ms infinite;
+  }
+}
+
+@keyframes skeleton-appear {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Reduced motion keeps the block, drops the travelling highlight. */
+@keyframes skeleton-sweep {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
 }
 
 /* ------------------------------------------------------- image viewer only */

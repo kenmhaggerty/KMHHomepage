@@ -2,6 +2,7 @@
 import type { CaseStudy } from '../types';
 import { Image } from 'astro:assets';
 import { imageAsset } from '../data/site';
+import Skeleton from './Skeleton.astro';
 
 interface Props {
   caseStudy: CaseStudy;
@@ -14,8 +15,15 @@ const loading = eager ? 'eager' : 'lazy';
 const { key, title, company, year, filters, hero } = caseStudy;
 ---
 
+{
+  /* is-loading is set here, in the HTML, not by script: a loading indicator that
+    waits for the JavaScript to arrive is late by definition on the connections
+    where it matters. The script only ever clears it. The spinner sits before
+    the images so that, once a picture has painted, it covers the ring on its
+    own -- even if the script has not caught up yet. */
+}
 <a
-  class="panel panel-hoverable"
+  class="panel panel-hoverable is-loading"
   href={`/work/${key}/`}
   data-case-study={key}
   data-filter-zero-to-one={String(filters.zero_to_one)}
@@ -23,6 +31,7 @@ const { key, title, company, year, filters, hero } = caseStudy;
   data-filter-gov-dod={String(filters.gov_dod)}
   data-filter-mobile={String(filters.mobile)}
 >
+  <Skeleton />
   <Image
     class="hero-desktop"
     src={imageAsset(hero.desktop)}

@@ -37,6 +37,9 @@ html[data-theme='dark'] {
   --color-url-bg: #262626;
   --color-url-bg-hover: #303030;
 
+  --color-skeleton: #262626;
+  --color-skeleton-sheen: #303030;
+
   --color-track: #2f2f2f;
   --color-scrubber: #6f6f6f;
   --color-toggle-accent: #ededed;

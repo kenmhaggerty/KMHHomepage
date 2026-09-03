@@ -70,6 +70,10 @@ describe('Case study image viewer', () => {
     const html = await render(ProjectPage, { props: { caseStudy } });
 
     expect(html).toContain('data-lightbox-open');
+    // Each thumbnail arrives marked loading, ring before image; see the
+    // CaseStudyPanel test for why.
+    expect(html.match(/class="panel is-loading"/g)).toHaveLength(caseStudy.gallery.length);
+    expect(html).toMatch(/data-skeleton[^>]*><\/span>\s*<img/);
     // Taken from the data rather than written out, so the alt text the overlay
     // announces is the same one the thumbnail carries.
     for (const item of caseStudy.gallery) {

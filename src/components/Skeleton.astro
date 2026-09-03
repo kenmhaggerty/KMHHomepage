@@ -1,0 +1,16 @@
+---
+/**
+ * The shimmering placeholder a panel shows until its picture arrives.
+ *
+ * Deliberately not react-loading-skeleton's <Skeleton>: that one is a React
+ * component, so it could not paint until the bundle had been fetched, parsed
+ * and hydrated -- which on a slow connection is exactly when the placeholder
+ * is wanted and exactly when it would not be there. This renders with the
+ * HTML, before any script, and draws the same sweep in CSS.
+ *
+ * Placed *before* the image it stands in for: once the picture paints it
+ * covers the skeleton on its own, without waiting to be told.
+ */
+---
+
+<span class="skeleton" data-skeleton aria-hidden="true"></span>

@@ -271,6 +271,12 @@ describe('CaseStudyPanel', () => {
     // Intrinsic dimensions come along, which is what stops the layout shifting.
     expect(html).toMatch(/width="\d+"/);
     expect(html).toMatch(/height="\d+"/);
+    // Marked loading from the server, with the ring placed before the images
+    // so a painted picture covers it even before the script clears it.
+    expect(html).toMatch(/<a[^>]*class="panel panel-hoverable is-loading"/);
+    // Behind the image, so a painted picture covers it without waiting for the
+    // script; that is what lets it be marked loading from the server.
+    expect(html.indexOf('data-skeleton')).toBeLessThan(html.indexOf('hero-desktop'));
     expect(html).toContain('data-filter-gov-dod="true"');
     expect(html).toContain('data-filter-consumer="false"');
     expect(html).toContain('GFM');

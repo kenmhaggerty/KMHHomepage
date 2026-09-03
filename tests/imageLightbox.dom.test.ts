@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { initImageLightbox } from '../src/scripts/imageLightbox';
+import { LIGHTBOX_LOADING_CLASS, initImageLightbox } from '../src/scripts/imageLightbox';
 import { MODAL_OPEN_CLASS } from '../src/utils/modal';
 
 const FULL_RES = '/_astro/mockup-';
@@ -48,6 +48,7 @@ function renderPage({ withDialog = true, dialogSupported = true, images = 1 } = 
       withDialog
         ? `<dialog class="modal lightbox" data-lightbox aria-label="Image viewer">
              <button type="button" data-lightbox-close aria-label="Close image viewer"></button>
+             <div class="lightbox-spinner" data-lightbox-spinner aria-hidden="true"></div>
              <img class="lightbox-image" data-lightbox-image alt="" />
            </dialog>`
         : ''
@@ -65,6 +66,7 @@ function renderPage({ withDialog = true, dialogSupported = true, images = 1 } = 
     dialog,
     image: doc.querySelector<HTMLImageElement>('[data-lightbox-image]'),
     closeButton: doc.querySelector<HTMLButtonElement>('[data-lightbox-close]'),
+    spinner: doc.querySelector<HTMLElement>('[data-lightbox-spinner]'),
   };
 }
 
@@ -152,6 +154,71 @@ describe('initImageLightbox', () => {
 
     click(closeButton!);
 
+    expect(dialog!.open).toBe(false);
+  });
+
+  it('marks the viewer busy until the full-resolution file arrives', () => {
+    const { doc, trigger, dialog, image } = renderPage();
+    initImageLightbox(doc);
+
+    click(trigger);
+
+    // The originals run to several megabytes, so this wait is real.
+    expect(dialog!.classList.contains(LIGHTBOX_LOADING_CLASS)).toBe(true);
+    expect(dialog!.getAttribute('aria-busy')).toBe('true');
+
+    image!.dispatchEvent(new (viewOf(image!).Event)('load'));
+
+    expect(dialog!.classList.contains(LIGHTBOX_LOADING_CLASS)).toBe(false);
+    expect(dialog!.hasAttribute('aria-busy')).toBe(false);
+  });
+
+  it('stops waiting on a file that fails to load', () => {
+    const { doc, trigger, dialog, image } = renderPage();
+    initImageLightbox(doc);
+    click(trigger);
+
+    image!.dispatchEvent(new (viewOf(image!).Event)('error'));
+
+    // Nothing more is coming, so the spinner must not be left turning forever.
+    expect(dialog!.classList.contains(LIGHTBOX_LOADING_CLASS)).toBe(false);
+  });
+
+  it('waits again for each image stepped to with the arrows', () => {
+    const { doc, triggers, dialog, image } = renderPage({ images: 3 });
+    initImageLightbox(doc);
+    click(triggers[0]);
+    image!.dispatchEvent(new (viewOf(image!).Event)('load'));
+    expect(dialog!.classList.contains(LIGHTBOX_LOADING_CLASS)).toBe(false);
+
+    press(dialog!, 'ArrowRight');
+
+    expect(dialog!.classList.contains(LIGHTBOX_LOADING_CLASS)).toBe(true);
+  });
+
+  it('clears the wait when the viewer is dismissed mid-load', () => {
+    const { doc, trigger, dialog } = renderPage();
+    initImageLightbox(doc);
+    click(trigger);
+    expect(dialog!.classList.contains(LIGHTBOX_LOADING_CLASS)).toBe(true);
+
+    click(dialog!);
+
+    // Otherwise the next open would inherit a stale spinner.
+    expect(dialog!.classList.contains(LIGHTBOX_LOADING_CLASS)).toBe(false);
+    expect(dialog!.hasAttribute('aria-busy')).toBe(false);
+  });
+
+  it('keeps the spinner clear of the dismiss target', () => {
+    // It sits over the middle of the scrim, so a click there still has to
+    // reach the dialog rather than being swallowed.
+    const { doc, trigger, dialog, spinner } = renderPage();
+    initImageLightbox(doc);
+    click(trigger);
+
+    expect(spinner).not.toBeNull();
+    expect(spinner!.getAttribute('aria-hidden')).toBe('true');
+    click(dialog!);
     expect(dialog!.open).toBe(false);
   });
 
