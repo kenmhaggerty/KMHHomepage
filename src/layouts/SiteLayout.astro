@@ -34,12 +34,12 @@ interface Props {
 
 const {
   pageTitle,
-  description = 'Portfolio of Ken M. Haggerty',
+  description = siteInfo.description,
   shareTitle,
   shareDescription,
   fillHeight = false,
 } = Astro.props;
-const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
+const title = pageTitle ? `${pageTitle} · ${siteInfo.name}` : siteInfo.title;
 
 /*
  * Share cards and canonical links have to be absolute, and a scraper reads the
@@ -50,6 +50,19 @@ const canonicalUrl = new URL(Astro.url.pathname, siteInfo.url).href;
 const shareImageUrl = new URL(siteInfo.openGraph.image, siteInfo.url).href;
 const cardTitle = shareTitle ?? title;
 const cardDescription = shareDescription ?? description;
+
+/*
+ * Structured data describing the site itself, so search engines can name
+ * it rather than guessing from the page titles. It is the same on every
+ * page, and resolved against the same origin as the canonical link so the
+ * two never disagree about which host is the real one.
+ */
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: siteInfo.name,
+  url: new URL('/', siteInfo.url).href,
+};
 ---
 
 <!doctype html>
@@ -83,6 +96,7 @@ const cardDescription = shareDescription ?? description;
       ))
     }
     <title>{title}</title>
+    <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} is:inline />
     <!-- Panels arrive marked as loading (see CaseStudyPanel). Without script
          nothing would ever clear that, so without script there is no ring. -->
     <noscript>

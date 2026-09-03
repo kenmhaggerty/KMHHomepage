@@ -12,7 +12,8 @@ const publicFileNames = new Set(
 
 describe('siteInfo', () => {
   it('exposes the site-info.json contents', () => {
-    expect(siteInfo.title).toBe('Ken M. Haggerty');
+    expect(siteInfo.title).toBe('Ken M. Haggerty | Product Lead + Software Developer');
+    expect(siteInfo.name).toBe('Ken M. Haggerty');
     expect(siteInfo.footer).toMatch(/Ken M\. Haggerty/);
   });
 
@@ -33,10 +34,15 @@ describe('siteInfo', () => {
   });
 
   it('carries the share card copy', () => {
-    expect(siteInfo.openGraph.title).toBe('Case Studies • Ken M. Haggerty');
-    expect(siteInfo.openGraph.description).toMatch(/multi-disciplinary product lead/);
+    /* openGraph.title and .description are optional overrides, for a card
+       that should read differently from the page. site-info.json sets
+       neither, so the copy the card actually gets is the site's own. */
+    const cardTitle = siteInfo.openGraph.title ?? siteInfo.title;
+    const cardDescription = siteInfo.openGraph.description ?? siteInfo.description;
+    expect(cardTitle).toMatch(/Ken M\. Haggerty/);
+    expect(cardDescription).toMatch(/multi-disciplinary/);
     // Cards get truncated well before this; the limit is a rough guard.
-    expect(siteInfo.openGraph.description.length).toBeLessThanOrEqual(300);
+    expect(cardDescription.length).toBeLessThanOrEqual(300);
   });
 
   it('gives an absolute production origin for share and canonical URLs', () => {

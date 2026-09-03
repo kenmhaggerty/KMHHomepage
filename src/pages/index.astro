@@ -2,7 +2,7 @@
 import SiteLayout from '../layouts/SiteLayout.astro';
 import CaseStudyPanel from '../components/CaseStudyPanel.astro';
 import { Image } from 'astro:assets';
-import { about, caseStudies, imageAsset, siteInfo } from '../data/site';
+import { about, caseStudies, imageAsset } from '../data/site';
 import { FILTERS } from '../utils/filters';
 
 /*
@@ -15,7 +15,7 @@ import { FILTERS } from '../utils/filters';
 const EAGER_PANELS = 3;
 ---
 
-<SiteLayout shareTitle={siteInfo.openGraph.title} shareDescription={siteInfo.openGraph.description}>
+<SiteLayout>
   <div class="page-work">
     <section class="section about">
       <h2 class="section-title">{about.title}</h2>

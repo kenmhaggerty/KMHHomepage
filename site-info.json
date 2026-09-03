@@ -1,15 +1,15 @@
 {
-    "title": "Ken M. Haggerty",
-    "url": "https://www.kenmhaggerty.com",
+    "title": "Ken M. Haggerty | Product Lead + Software Developer",
+    "name": "Ken M. Haggerty",
+    "description": "I am a multi-disciplinary who designs and builds with over 15 years of experience across tech.",
     "footer": "Ken M. Haggerty © 2026",
     "version": "3.0.1",
+    "url": "https://www.kenmhaggerty.com",
     "icons": {
         "png": "favicon.png",
         "appleTouch": "apple-touch-icon.png"
     },
     "openGraph": {
-        "title": "Case Studies • Ken M. Haggerty",
-        "description": "I am a multi-disciplinary product lead who designs and builds with 15 years of experience shipping complex software. I've worked on Google's self-driving car project, Alfred, iOS development, and various contracts with the US Air Force and US Army.",
         "image": "og-image.png",
         "imageWidth": 1200,
         "imageHeight": 630

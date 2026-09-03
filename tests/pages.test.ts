@@ -32,7 +32,7 @@ describe('Work page (index)', () => {
     expect(html).toContain('data-mode-button="desktop"');
     expect(html).toContain('class="site-title"');
     expect(html).toContain('Ken M. Haggerty © 2026');
-    expect(html).toContain('<title>Ken M. Haggerty</title>');
+    expect(html).toContain(`<title>${siteInfo.title}</title>`);
   });
 });
 
@@ -135,10 +135,15 @@ describe('Résumé page', () => {
 describe('Share card metadata', () => {
   it('gives the work page the card copy from site-info', async () => {
     const html = await render(Index);
-    expect(html).toContain(`property="og:title" content="${siteInfo.openGraph.title}"`);
-    expect(html).toContain(`property="og:description" content="${siteInfo.openGraph.description}"`);
+    /* The openGraph copy fields are optional overrides that site-info.json
+       leaves unset, so the work page's card falls back to the site's own
+       title and description. */
+    const cardTitle = siteInfo.openGraph.title ?? siteInfo.title;
+    const cardDescription = siteInfo.openGraph.description ?? siteInfo.description;
+    expect(html).toContain(`property="og:title" content="${cardTitle}"`);
+    expect(html).toContain(`property="og:description" content="${cardDescription}"`);
     // Twitter reads its own tags, so the same copy has to reach both.
-    expect(html).toContain(`name="twitter:title" content="${siteInfo.openGraph.title}"`);
+    expect(html).toContain(`name="twitter:title" content="${cardTitle}"`);
   });
 
   it('makes the card image and canonical URL absolute', async () => {
@@ -165,7 +170,7 @@ describe('Share card metadata', () => {
   it('falls back to the page title on pages with no card copy of their own', async () => {
     const html = await render(Resume);
     expect(html).toContain('property="og:title" content="Résumé · Ken M. Haggerty"');
-    expect(html).toContain('property="og:description" content="Portfolio of Ken M. Haggerty"');
+    expect(html).toContain(`property="og:description" content="${siteInfo.description}"`);
     // The per-page canonical path is not asserted here: the container renders
     // every page at "/" rather than at its route, so only the build shows it.
   });

@@ -9,9 +9,9 @@ export interface SiteIcons {
 /** The card social platforms build when a link to the site is shared. */
 export interface OpenGraphInfo {
   /** Headline on the card, which need not match the page's own title. */
-  title: string;
+  title?: string;
   /** Blurb on the card, which need not match the page's meta description. */
-  description: string;
+  description?: string;
   /** Served as-is from public/, so the URL stays stable for scraper caches. */
   image: string;
   imageWidth: number;
@@ -20,6 +20,9 @@ export interface OpenGraphInfo {
 
 export interface SiteInfo {
   title: string;
+  /** The site owner, as structured data names them. */
+  name: string;
+  description: string;
   /** Production origin, used to make share and canonical URLs absolute. */
   url: string;
   icons: SiteIcons;
