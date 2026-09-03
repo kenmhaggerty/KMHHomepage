@@ -721,6 +721,135 @@ html[data-viewport='mobile'] .page-work .section-title {
   color: var(--color-text-muted-2);
 }
 
+/* Gallery image viewer.
+   The darkening lives on ::backdrop, not on the dialog. Measured on an iPhone,
+   ::backdrop is painted across the whole screen -- behind the status bar and
+   behind Safari's toolbar -- while the dialog element itself is held to the
+   layout viewport between them. Colouring the dialog instead left those two
+   bands showing whatever ::backdrop was, as a pair of lighter stripes.
+   The dialog still covers the viewport, transparently, so a click anywhere on
+   the darkened area, but not on the image or the close button, still lands on
+   it and dismisses. */
+.lightbox {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+/* Scoped to [open] so it does not override the browser's own rule that keeps a
+   closed dialog hidden. */
+.lightbox[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* The picture and the close button fade in. Opening only: closing removes
+     [open] and the dialog is display:none at once, which no transition
+     survives. */
+  opacity: 1;
+  transition: opacity 220ms ease-out;
+}
+
+@starting-style {
+  .lightbox[open] {
+    opacity: 0;
+  }
+}
+
+/* The scrim fades in on the same curve as the picture -- except on iPhone,
+   where it lands whole in the first frame instead. Safari there reads the
+   backdrop as rendered at the instant showModal() runs, tints the status bar
+   and toolbar from it, and never reads it again: measured, a backdrop that
+   starts transparent -- whether its colour or its opacity is what fades --
+   leaves those two bands light for as long as the viewer is open. The guard
+   is `-webkit-touch-callout`, which Safari supports on iOS and nowhere else
+   (macOS Safari was probed and does not match). Opacity rather than colour so
+   the 0.66 is declared once, above. */
+.lightbox[open]::backdrop {
+  opacity: 1;
+  transition: opacity 220ms ease-out;
+}
+
+@starting-style {
+  .lightbox[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  .lightbox[open]::backdrop {
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lightbox[open],
+  .lightbox[open]::backdrop {
+    transition: none;
+  }
+}
+
+.lightbox::backdrop {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.lightbox-image {
+  max-width: 90vw;
+  /* dvh, not lvh: the picture stays inside the part of the screen actually on
+     show, even though the darkening behind it runs past that to the edges. */
+  max-height: 90dvh;
+  object-fit: contain;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* showModal moves focus here as the overlay opens. Safari counts that as
+   keyboard-like focus and rings the button -- the blue circle -- where Chrome,
+   going by :focus-visible, draws nothing. So: no ring in either state, and
+   keyboard focus shown by lifting the button's own fill instead. That keeps
+   the focus visible for anyone navigating by keyboard without drawing a circle
+   around the button, which is the thing that had to go. */
+.lightbox-close:focus {
+  outline: none;
+}
+
+.lightbox-close:focus-visible {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* The overlay covers the window, so the page behind it should not scroll. */
+html.is-lightbox-open,
+html.is-lightbox-open body {
+  overflow: hidden;
+}
+
+a[data-lightbox-open] {
+  cursor: pointer;
+}
+
 .link-url {
   display: flex;
   align-items: center;

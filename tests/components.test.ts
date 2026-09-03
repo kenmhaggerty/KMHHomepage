@@ -8,6 +8,7 @@ import DarkModeToggle from '../src/components/DarkModeToggle.astro';
 import Icon from '../src/components/Icon.astro';
 import LinkUrl from '../src/components/LinkUrl.astro';
 import Section from '../src/components/Section.astro';
+import ImageLightbox from '../src/components/ImageLightbox.astro';
 import CaseStudyPanel from '../src/components/CaseStudyPanel.astro';
 import { getCaseStudy } from '../src/data/site';
 
@@ -86,6 +87,25 @@ describe('LinkUrl', () => {
     expect(html).toContain('target="_blank"');
     expect(html).toContain('rel="noopener noreferrer"');
     expect(html).toContain('DecisionPoint Corporation');
+  });
+});
+
+describe('ImageLightbox', () => {
+  it('renders a labelled dialog with a close button and an empty image', async () => {
+    const html = await render(ImageLightbox);
+    expect(html).toContain('<dialog');
+    expect(html).toContain('data-lightbox');
+    expect(html).toContain('aria-label="Image viewer"');
+    expect(html).toContain('aria-label="Close image viewer"');
+    expect(html).toContain('data-lightbox-image');
+    // No src until something is opened -- an empty src attribute makes some
+    // browsers re-request the page itself.
+    expect(html).not.toMatch(/<img[^>]*\ssrc=/);
+  });
+
+  it('starts closed, since a dialog without [open] is hidden by the browser', async () => {
+    const html = await render(ImageLightbox);
+    expect(html).not.toMatch(/<dialog[^>]*\sopen/);
   });
 });
 

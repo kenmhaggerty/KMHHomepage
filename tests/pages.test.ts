@@ -64,6 +64,35 @@ describe('Project page', () => {
   });
 });
 
+describe('Case study image viewer', () => {
+  it('marks each gallery image as opening in the overlay, still linking the full file', async () => {
+    const caseStudy = getCaseStudy('gfm')!;
+    const html = await render(ProjectPage, { props: { caseStudy } });
+
+    expect(html).toContain('data-lightbox-open');
+    // Taken from the data rather than written out, so the alt text the overlay
+    // announces is the same one the thumbnail carries.
+    for (const item of caseStudy.gallery) {
+      expect(html).toContain(`data-lightbox-alt="${item.alt_text}"`);
+    }
+    // The href stays a real link to the full-resolution file, so the image
+    // still opens if the script never runs.
+    expect(html).toMatch(/href="[^"]*gfm-1\.png[^"]*"[^>]*data-lightbox-open/);
+  });
+
+  it('renders one overlay for the whole page, not one per image', async () => {
+    const caseStudy = getCaseStudy('gfm')!;
+    const html = await render(ProjectPage, { props: { caseStudy } });
+    expect(html.match(/data-lightbox(?![-\w])/g)).toHaveLength(1);
+    expect(html.match(/data-lightbox-open/g)!.length).toBe(caseStudy.gallery.length);
+  });
+
+  it('leaves the work page alone, whose panels navigate rather than open images', async () => {
+    const html = await render(Index);
+    expect(html).not.toContain('data-lightbox');
+  });
+});
+
 describe('Case study footnotes on the page', () => {
   it('renders the Alfred footnote once, generated from the JSON', async () => {
     const alfred = getCaseStudy('alfred');

@@ -3,7 +3,7 @@
  * Inline SVG icons. The design uses Apple SF Symbols glyphs (text layers),
  * which cannot be embedded on the web; these are hand-drawn equivalents.
  */
-export type IconName = 'chevron-back' | 'link' | 'iphone' | 'macbook' | 'sun' | 'moon';
+export type IconName = 'chevron-back' | 'link' | 'iphone' | 'macbook' | 'sun' | 'moon' | 'xmark';
 
 interface Props {
   name: IconName;
@@ -21,6 +21,7 @@ const paths: Record<IconName, string> = {
     'M5.2 6h13.6a1.2 1.2 0 0 1 1.2 1.2v8.3H4v-8.3A1.2 1.2 0 0 1 5.2 6ZM2 17.8h20a2 2 0 0 1-2 1.2H4a2 2 0 0 1-2-1.2Z',
   sun: 'M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10ZM12 1.5v2.5M12 20v2.5M4.22 4.22l1.77 1.77M18.01 18.01l1.77 1.77M1.5 12h2.5M20 12h2.5M4.22 19.78l1.77-1.77M18.01 5.99l1.77-1.77',
   moon: 'M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z',
+  xmark: 'M6 6 18 18M18 6 6 18',
 };
 ---
 

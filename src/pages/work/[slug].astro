@@ -2,6 +2,7 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import Icon from '../../components/Icon.astro';
 import Section from '../../components/Section.astro';
+import ImageLightbox from '../../components/ImageLightbox.astro';
 import { Image } from 'astro:assets';
 import { caseStudies, imageAsset } from '../../data/site';
 import type { CaseStudy } from '../../types';
@@ -44,6 +45,8 @@ const { caseStudy } = Astro.props;
             <a
               class="panel"
               href={imageAsset(item.full_res).src}
+              data-lightbox-open
+              data-lightbox-alt={item.alt_text}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -63,4 +66,5 @@ const { caseStudy } = Astro.props;
     {caseStudy.sections.map((section) => <Section section={section} />)}
     <div class="spacer"></div>
   </div>
+  <ImageLightbox />
 </SiteLayout>
