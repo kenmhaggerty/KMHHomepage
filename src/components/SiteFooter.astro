@@ -1,6 +1,6 @@
 ---
 import ChangelogModal from './ChangelogModal.astro';
-import { siteInfo } from '../data/site';
+import { siteInfo, version } from '../data/site';
 ---
 
 <footer class="site-footer">
@@ -18,7 +18,7 @@ import { siteInfo } from '../data/site';
       aria-haspopup="dialog"
       title="View changelog"
     >
-      v{siteInfo.version}
+      v{version}
     </button>
   </p>
   <ChangelogModal />

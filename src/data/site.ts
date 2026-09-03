@@ -2,10 +2,18 @@ import type { ImageMetadata } from 'astro';
 import type { CaseStudy, SiteInfo } from '../types';
 import { loadCaseStudies } from '../utils/caseStudies';
 import siteInfoJson from '../../site-info.json';
+import packageJson from '../../package.json';
 import aboutJson from './about.json';
 import type { AboutInfo } from '../types';
 
 export const siteInfo: SiteInfo = siteInfoJson;
+
+/*
+ * The footer's version is the package version, so releasing is one bump in
+ * one file. Frontmatter runs at build time, so package.json is read there and
+ * only the resulting string is ever served.
+ */
+export const version: string = packageJson.version;
 
 export const about: AboutInfo = aboutJson;
 

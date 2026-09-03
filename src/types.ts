@@ -28,7 +28,6 @@ export interface SiteInfo {
   icons: SiteIcons;
   openGraph: OpenGraphInfo;
   footer: string;
-  version: string;
 }
 
 export interface CaseStudyFilterFlags {
