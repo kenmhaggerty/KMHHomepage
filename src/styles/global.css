@@ -810,27 +810,27 @@ html[data-viewport='mobile'] .page-work .section-title {
   padding: 0;
   border: none;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(133, 133, 133, 0.85);
   color: #ffffff;
   cursor: pointer;
 }
 
-.modal-close:hover {
-  background: rgba(255, 255, 255, 0.28);
-}
-
 /* showModal moves focus here as the overlay opens. Safari counts that as
    keyboard-like focus and rings the button -- the blue circle -- where Chrome,
-   going by :focus-visible, draws nothing. So: no ring in either state, and
-   keyboard focus shown by lifting the button's own fill instead. That keeps
-   the focus visible for anyone navigating by keyboard without drawing a circle
-   around the button, which is the thing that had to go. */
+   going by :focus-visible, draws nothing. So: no ring in either state, and the
+   focus fill left matching the resting one, since a button focused for the
+   whole time the modal is up would otherwise look permanently hovered. */
 .modal-close:focus {
   outline: none;
 }
 
-.modal-close:focus-visible {
-  background: rgba(255, 255, 255, 0.15);
+/* Must come after :focus-visible, not before. Both are one class and one
+   pseudo-class, so the cascade falls to source order -- and this button is
+   focused from the moment showModal runs, always in Safari, so declared first
+   the hover fill never showed at all. */
+.modal-close:hover {
+  background: rgba(110, 110, 110, 0.85);
+  transition: all 60ms ease-out;
 }
 
 /* The overlay covers the window, so the page behind it should not scroll. */
