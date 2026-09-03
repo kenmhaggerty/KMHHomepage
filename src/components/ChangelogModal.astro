@@ -1,0 +1,23 @@
+---
+import Icon from './Icon.astro';
+import { Content as Changelog } from '../../CHANGELOG.md';
+
+/**
+ * The release notes, shown over the page from the footer's info button. Shares
+ * the .modal shell with the image viewer -- the same scrim, close button, and
+ * fade -- and adds a scrolling panel for the prose, since unlike a picture this
+ * content can be taller than the window.
+ *
+ * The markdown is imported rather than fetched, so it is compiled at build time
+ * and the file stays the single source for what shipped when.
+ */
+---
+
+<dialog class="modal changelog" data-changelog aria-label="Changelog">
+  <button type="button" class="modal-close" data-changelog-close aria-label="Close changelog">
+    <Icon name="xmark" size={18} />
+  </button>
+  <div class="changelog-panel">
+    <Changelog />
+  </div>
+</dialog>

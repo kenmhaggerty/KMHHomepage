@@ -9,6 +9,7 @@ import Icon from '../src/components/Icon.astro';
 import LinkUrl from '../src/components/LinkUrl.astro';
 import Section from '../src/components/Section.astro';
 import ImageLightbox from '../src/components/ImageLightbox.astro';
+import ChangelogModal from '../src/components/ChangelogModal.astro';
 import CaseStudyPanel from '../src/components/CaseStudyPanel.astro';
 import { getCaseStudy } from '../src/data/site';
 
@@ -58,6 +59,20 @@ describe('SiteFooter', () => {
     const html = await render(SiteFooter);
     expect(html).toContain('Ken M. Haggerty © 2026');
   });
+
+  it('makes the version itself the changelog trigger', async () => {
+    const html = await render(SiteFooter);
+    // A button, not a clickable <p>: it has to be reachable by keyboard and
+    // announced as a control, and its name is the version text it shows.
+    expect(html).toMatch(/<button[^>]*class="version-button"[^>]*data-changelog-open/);
+    expect(html).toMatch(/data-changelog-open[\s\S]*?v3\.\d+\.\d+/);
+    expect(html).toContain('aria-haspopup="dialog"');
+  });
+
+  it('carries the changelog modal, so the button has something to open', async () => {
+    const html = await render(SiteFooter);
+    expect(html).toContain('data-changelog');
+  });
 });
 
 describe('ViewportToggle', () => {
@@ -105,6 +120,36 @@ describe('ImageLightbox', () => {
 
   it('starts closed, since a dialog without [open] is hidden by the browser', async () => {
     const html = await render(ImageLightbox);
+    expect(html).not.toMatch(/<dialog[^>]*\sopen/);
+  });
+});
+
+describe('ChangelogModal', () => {
+  it('renders the compiled CHANGELOG.md inside a labelled dialog', async () => {
+    const html = await render(ChangelogModal);
+    expect(html).toContain('<dialog');
+    expect(html).toContain('aria-label="Changelog"');
+    expect(html).toContain('aria-label="Close changelog"');
+    // Compiled from the markdown at build time, so the file stays the single
+    // source for what shipped when.
+    expect(html).toContain('CHANGELOG');
+    expect(html).toContain('<table>');
+    expect(html).toContain('Relaunch website');
+  });
+
+  it('shares the modal shell with the image viewer', async () => {
+    const changelog = await render(ChangelogModal);
+    const lightbox = await render(ImageLightbox);
+    // One set of scrim, fade and close-button rules serves both -- including
+    // the iOS backdrop behaviour, which is not worth having two copies of.
+    for (const html of [changelog, lightbox]) {
+      expect(html).toMatch(/<dialog[^>]*class="modal /);
+      expect(html).toContain('class="modal-close"');
+    }
+  });
+
+  it('starts closed, since a dialog without [open] is hidden by the browser', async () => {
+    const html = await render(ChangelogModal);
     expect(html).not.toMatch(/<dialog[^>]*\sopen/);
   });
 });

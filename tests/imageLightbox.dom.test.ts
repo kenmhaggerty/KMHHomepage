@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { LIGHTBOX_OPEN_CLASS, initImageLightbox } from '../src/scripts/imageLightbox';
+import { initImageLightbox } from '../src/scripts/imageLightbox';
+import { MODAL_OPEN_CLASS } from '../src/utils/modal';
 
 const FULL_RES = '/_astro/mockup-';
 
@@ -45,7 +46,7 @@ function renderPage({ withDialog = true, dialogSupported = true, images = 1 } = 
     <a class="elsewhere" href="/work/gfm/">A link that is not a gallery image</a>
     ${
       withDialog
-        ? `<dialog class="lightbox" data-lightbox aria-label="Image viewer">
+        ? `<dialog class="modal lightbox" data-lightbox aria-label="Image viewer">
              <button type="button" data-lightbox-close aria-label="Close image viewer"></button>
              <img class="lightbox-image" data-lightbox-image alt="" />
            </dialog>`
@@ -116,10 +117,10 @@ describe('initImageLightbox', () => {
     initImageLightbox(doc);
 
     click(trigger);
-    expect(doc.documentElement.classList.contains(LIGHTBOX_OPEN_CLASS)).toBe(true);
+    expect(doc.documentElement.classList.contains(MODAL_OPEN_CLASS)).toBe(true);
 
     click(dialog!);
-    expect(doc.documentElement.classList.contains(LIGHTBOX_OPEN_CLASS)).toBe(false);
+    expect(doc.documentElement.classList.contains(MODAL_OPEN_CLASS)).toBe(false);
   });
 
   it('closes on a click that lands on the backdrop', () => {

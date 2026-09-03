@@ -1,5 +1,4 @@
-/** Set on <html> while the viewer is open, to stop the page behind scrolling. */
-export const LIGHTBOX_OPEN_CLASS = 'is-lightbox-open';
+import { MODAL_OPEN_CLASS } from '../utils/modal';
 
 function isPlainLeftClick(event: MouseEvent): boolean {
   // A modified click is the visitor asking for a new tab, a window, or a save;
@@ -63,7 +62,7 @@ export function initImageLightbox(doc: Document): void {
     }
     show(Math.max(position, 0));
     dialog.showModal();
-    doc.documentElement.classList.add(LIGHTBOX_OPEN_CLASS);
+    doc.documentElement.classList.add(MODAL_OPEN_CLASS);
   });
 
   dialog.addEventListener('keydown', (event) => {
@@ -95,7 +94,7 @@ export function initImageLightbox(doc: Document): void {
   // Fires for the close button, a backdrop click, and Escape alike, so the
   // cleanup only needs writing once.
   dialog.addEventListener('close', () => {
-    doc.documentElement.classList.remove(LIGHTBOX_OPEN_CLASS);
+    doc.documentElement.classList.remove(MODAL_OPEN_CLASS);
     // Dropping the source releases what can be a very large decoded image.
     image.removeAttribute('src');
   });

@@ -1,8 +1,25 @@
 ---
+import ChangelogModal from './ChangelogModal.astro';
 import { siteInfo } from '../data/site';
 ---
 
 <footer class="site-footer">
   <p class="site-copyright">{siteInfo.footer}</p>
-  <p class="site-version">v{siteInfo.version}</p>
+  <p class="site-version">
+    {
+      /* A button rather than a clickable <p>: this opens something, so it has to
+        be reachable by keyboard and announced as a control. Its accessible name
+        is the version text itself, with aria-haspopup saying what it opens. */
+    }
+    <button
+      type="button"
+      class="version-button"
+      data-changelog-open
+      aria-haspopup="dialog"
+      title="View changelog"
+    >
+      v{siteInfo.version}
+    </button>
+  </p>
+  <ChangelogModal />
 </footer>
