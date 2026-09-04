@@ -18,8 +18,11 @@ export interface OpenGraphInfo {
 
 /** The site's icons, all served as-is from public/. */
 export interface SiteIcons {
-  /** 32px raster, and the only icon the tab bar needs. */
-  png: string;
+  png: {
+    /** Minimum 48×48 for Google, 32×32 for legacy */
+    large: string;
+    small: string;
+  };
   /** 180px icon iOS uses when the site is saved to the home screen. */
   appleTouch: string;
 }

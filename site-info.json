@@ -14,7 +14,10 @@
         "imageHeight": 630
     },
     "icons": {
-        "png": "favicon.png",
+        "png": {
+            "large": "favicon-192.png",
+            "small": "favicon-32.png"
+        },
         "appleTouch": "apple-touch-icon.png"
     }
 }

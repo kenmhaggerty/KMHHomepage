@@ -79,9 +79,8 @@ const websiteSchema = {
     <meta name="generator" content={Astro.generator} />
     <!-- Used by Google -->
     <meta name="description" content={googleDescription} />
-    <!-- Raster first, then SVG: browsers that take an SVG icon prefer it and
-         scale it to any size; the rest fall back to the 32px PNG. -->
-    <link rel="icon" href={`/${siteInfo.icons.png}`} sizes="32x32" type="image/png" />
+    <link rel="icon" href={`/${siteInfo.icons.png.large}`} sizes="192x192" type="image/png" />
+    <link rel="icon" href={`/${siteInfo.icons.png.small}`} sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" sizes="180x180" href={`/${siteInfo.icons.appleTouch}`} />
     <link rel="canonical" href={canonicalUrl} />
     <meta property="og:type" content="website" />

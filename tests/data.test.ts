@@ -20,7 +20,10 @@ describe('siteInfo', () => {
 
   it('names every icon the head links to', () => {
     expect(siteInfo.icons).toEqual({
-      png: 'favicon.png',
+      png: {
+        large: 'favicon-192.png',
+        small: 'favicon-32.png',
+      },
       appleTouch: 'apple-touch-icon.png',
     });
   });
@@ -29,7 +32,12 @@ describe('siteInfo', () => {
     // These are served untouched from public/, so nothing at build time
     // notices if one is renamed -- it just quietly stops loading, and for the
     // share image that means a blank card wherever the site is posted.
-    for (const file of [...Object.values(siteInfo.icons), siteInfo.openGraph.image]) {
+    const iconFiles = [
+      siteInfo.icons.png.large,
+      siteInfo.icons.png.small,
+      siteInfo.icons.appleTouch,
+    ];
+    for (const file of [...iconFiles, siteInfo.openGraph.image]) {
       expect(publicFileNames.has(file), `missing public/${file}`).toBe(true);
     }
   });
