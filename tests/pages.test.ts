@@ -32,7 +32,7 @@ describe('Work page (index)', () => {
     expect(html).toContain('data-mode-button="desktop"');
     expect(html).toContain('class="site-title"');
     expect(html).toContain('Ken M. Haggerty © 2026');
-    expect(html).toContain(`<title>${siteInfo.title}</title>`);
+    expect(html).toContain(`<title>${siteInfo.google.title}</title>`);
   });
 });
 

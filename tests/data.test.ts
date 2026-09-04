@@ -12,8 +12,9 @@ const publicFileNames = new Set(
 
 describe('siteInfo', () => {
   it('exposes the site-info.json contents', () => {
-    expect(siteInfo.title).toBe('Ken M. Haggerty | Product Lead + Software Developer');
-    expect(siteInfo.name).toBe('Ken M. Haggerty');
+    expect(siteInfo.title).toBe('Ken M. Haggerty');
+    expect(siteInfo.description).toMatch(/building software/);
+    expect(siteInfo.owner).toBe('Ken M. Haggerty');
     expect(siteInfo.footer).toMatch(/Ken M\. Haggerty/);
   });
 
@@ -40,7 +41,7 @@ describe('siteInfo', () => {
     const cardTitle = siteInfo.openGraph.title ?? siteInfo.title;
     const cardDescription = siteInfo.openGraph.description ?? siteInfo.description;
     expect(cardTitle).toMatch(/Ken M\. Haggerty/);
-    expect(cardDescription).toMatch(/multi-disciplinary/);
+    expect(cardDescription).toBe(siteInfo.description);
     // Cards get truncated well before this; the limit is a rough guard.
     expect(cardDescription.length).toBeLessThanOrEqual(300);
   });

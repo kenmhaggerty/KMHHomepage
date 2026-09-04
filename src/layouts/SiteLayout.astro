@@ -34,12 +34,12 @@ interface Props {
 
 const {
   pageTitle,
-  description = siteInfo.description,
+  description,
   shareTitle,
   shareDescription,
   fillHeight = false,
 } = Astro.props;
-const title = pageTitle ? `${pageTitle} · ${siteInfo.name}` : siteInfo.title;
+const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
 
 /*
  * Share cards and canonical links have to be absolute, and a scraper reads the
@@ -49,7 +49,13 @@ const title = pageTitle ? `${pageTitle} · ${siteInfo.name}` : siteInfo.title;
 const canonicalUrl = new URL(Astro.url.pathname, siteInfo.url).href;
 const shareImageUrl = new URL(siteInfo.openGraph.image, siteInfo.url).href;
 const cardTitle = shareTitle ?? title;
-const cardDescription = shareDescription ?? description;
+const cardDescription = shareDescription ?? description ?? siteInfo.description;
+
+/*
+ * Google Search results info
+ */
+const googleTitle = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.google.title;
+const googleDescription = description ?? siteInfo.google.description;
 
 /*
  * Structured data describing the site itself, so search engines can name
@@ -60,7 +66,7 @@ const cardDescription = shareDescription ?? description;
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: siteInfo.name,
+  name: siteInfo.owner,
   url: new URL('/', siteInfo.url).href,
 };
 ---
@@ -71,14 +77,15 @@ const websiteSchema = {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
-    <meta name="description" content={description} />
+    <!-- Used by Google -->
+    <meta name="description" content={googleDescription} />
     <!-- Raster first, then SVG: browsers that take an SVG icon prefer it and
          scale it to any size; the rest fall back to the 32px PNG. -->
     <link rel="icon" href={`/${siteInfo.icons.png}`} sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" sizes="180x180" href={`/${siteInfo.icons.appleTouch}`} />
     <link rel="canonical" href={canonicalUrl} />
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content={siteInfo.name} />
+    <meta property="og:site_name" content={siteInfo.owner} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:title" content={cardTitle} />
     <meta property="og:description" content={cardDescription} />
@@ -95,7 +102,8 @@ const websiteSchema = {
         <link rel="preload" href={href} as="font" type="font/woff2" crossorigin />
       ))
     }
-    <title>{title}</title>
+    <!-- Used by Google -->
+    <title>{googleTitle}</title>
     <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} is:inline />
     <!-- Panels arrive marked as loading (see CaseStudyPanel). Without script
          nothing would ever clear that, so without script there is no ring. -->

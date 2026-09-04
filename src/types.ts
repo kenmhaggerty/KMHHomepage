@@ -1,9 +1,7 @@
-/** The site's icons, all served as-is from public/. */
-export interface SiteIcons {
-  /** 32px raster, and the only icon the tab bar needs. */
-  png: string;
-  /** 180px icon iOS uses when the site is saved to the home screen. */
-  appleTouch: string;
+/** Info used when appearing in Google Search results. */
+export interface GoogleSearchInfo {
+  title: string;
+  description: string;
 }
 
 /** The card social platforms build when a link to the site is shared. */
@@ -18,16 +16,25 @@ export interface OpenGraphInfo {
   imageHeight: number;
 }
 
+/** The site's icons, all served as-is from public/. */
+export interface SiteIcons {
+  /** 32px raster, and the only icon the tab bar needs. */
+  png: string;
+  /** 180px icon iOS uses when the site is saved to the home screen. */
+  appleTouch: string;
+}
+
 export interface SiteInfo {
   title: string;
-  /** The site owner, as structured data names them. */
-  name: string;
   description: string;
+  /** The site owner, as structured data names them. */
+  owner: string;
+  footer: string;
   /** Production origin, used to make share and canonical URLs absolute. */
   url: string;
-  icons: SiteIcons;
+  google: GoogleSearchInfo;
   openGraph: OpenGraphInfo;
-  footer: string;
+  icons: SiteIcons;
 }
 
 export interface CaseStudyFilterFlags {

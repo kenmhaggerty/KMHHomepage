@@ -1,16 +1,20 @@
 {
-    "title": "Ken M. Haggerty | Product Lead + Software Developer",
-    "name": "Ken M. Haggerty",
-    "description": "I am a multi-disciplinary who designs and builds with over 15 years of experience across tech.",
+    "title": "Ken M. Haggerty",
+    "description": "15+ years building software across UX research, product management, and engineering—from Google's self-driving car program to US Army and US Air Force systems.",
+    "owner": "Ken M. Haggerty",
     "footer": "Ken M. Haggerty © 2026",
     "url": "https://www.kenmhaggerty.com",
-    "icons": {
-        "png": "favicon.png",
-        "appleTouch": "apple-touch-icon.png"
+    "google": {
+        "title": "Ken M. Haggerty | Product Lead + Software Developer",
+        "description": "15+ years building software across UX research, product management, and engineering—from Google's self-driving car program to US Army and US Air Force systems."
     },
     "openGraph": {
         "image": "og-image.png",
         "imageWidth": 1200,
         "imageHeight": 630
+    },
+    "icons": {
+        "png": "favicon.png",
+        "appleTouch": "apple-touch-icon.png"
     }
 }
