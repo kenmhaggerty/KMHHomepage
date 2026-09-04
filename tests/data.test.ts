@@ -14,7 +14,7 @@ describe('siteInfo', () => {
   it('exposes the site-info.json contents', () => {
     expect(siteInfo.title).toBe('Ken M. Haggerty');
     expect(siteInfo.description).toMatch(/building software/);
-    expect(siteInfo.owner).toBe('Ken M. Haggerty');
+    expect(siteInfo.owner.name).toBe('Ken M. Haggerty');
     expect(siteInfo.footer).toMatch(/Ken M\. Haggerty/);
   });
 
@@ -57,6 +57,56 @@ describe('siteInfo', () => {
   it('gives an absolute production origin for share and canonical URLs', () => {
     expect(siteInfo.url).toMatch(/^https:\/\//);
     expect(siteInfo.url).not.toMatch(/\/$/);
+  });
+});
+
+describe('siteInfo.owner', () => {
+  it('names the person the structured data describes', () => {
+    // The Person and WebSite schemas and og:site_name all read this one name,
+    // so a search engine never sees the site and its author named differently.
+    expect(siteInfo.owner.name).toBe(siteInfo.title);
+    expect(siteInfo.owner.jobTitle.trim().length).toBeGreaterThan(0);
+  });
+
+  it('gives every headshot as an absolute URL', () => {
+    // Structured data is read off the built HTML by a crawler that has no
+    // page to resolve against, so a relative path here would name no image.
+    expect(siteInfo.owner.images.length).toBeGreaterThan(0);
+    for (const image of siteInfo.owner.images) {
+      expect(image, `${image} is not an absolute https URL`).toMatch(/^https:\/\//);
+      expect(() => new URL(image)).not.toThrow();
+    }
+  });
+
+  it('serves every headshot from public/, on the production origin', () => {
+    /* Google asks for the same headshot at several aspect ratios and picks
+       between them, so a crawler fetches each of these URLs directly. They
+       are absolute for that reason, which also means nothing at build time
+       notices when one names a file that is not there -- it just 404s. */
+    for (const image of siteInfo.owner.images) {
+      const url = new URL(image);
+      expect(url.origin, `${image} is not on ${siteInfo.url}`).toBe(new URL(siteInfo.url).origin);
+      const file = url.pathname.slice(url.pathname.lastIndexOf('/') + 1);
+      expect(publicFileNames.has(file), `missing public/${file}`).toBe(true);
+    }
+  });
+
+  it('lists profile links that are absolute, secure and distinct', () => {
+    // sameAs is how Google ties the profiles to the person; a duplicate or a
+    // bare handle is either ignored or read as a second, weaker signal.
+    expect(siteInfo.owner.links.length).toBeGreaterThan(0);
+    expect(new Set(siteInfo.owner.links).size).toBe(siteInfo.owner.links.length);
+    for (const link of siteInfo.owner.links) {
+      expect(link, `${link} is not an absolute https URL`).toMatch(/^https:\/\//);
+      expect(() => new URL(link)).not.toThrow();
+    }
+  });
+
+  it('keeps the Google result title in step with the owner', () => {
+    // site-info.json writes the search title out by hand rather than joining
+    // these, so this is what notices when only one of the two is edited.
+    expect(siteInfo.google.title).toContain(siteInfo.owner.name);
+    expect(siteInfo.google.title).toContain(siteInfo.owner.jobTitle);
   });
 });
 

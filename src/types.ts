@@ -1,4 +1,12 @@
-/** Info used when appearing in Google Search results. */
+/** Owner info used when appearing in Google Search results. */
+export interface OwnerInfo {
+  name: string;
+  images: string[];
+  jobTitle: string;
+  links: string[];
+}
+
+/** Site info used when appearing in Google Search results. */
 export interface GoogleSearchInfo {
   title: string;
   description: string;
@@ -31,7 +39,7 @@ export interface SiteInfo {
   title: string;
   description: string;
   /** The site owner, as structured data names them. */
-  owner: string;
+  owner: OwnerInfo;
   footer: string;
   /** Production origin, used to make share and canonical URLs absolute. */
   url: string;

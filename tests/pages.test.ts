@@ -11,6 +11,13 @@ async function render(component: Parameters<AstroContainer['renderToString']>[0]
   return container.renderToString(component, options);
 }
 
+/* The schemas are serialised into the page, so reading them back the way a
+   crawler would is the only check that they survive the trip intact. */
+function structuredData(html: string): Record<string, unknown>[] {
+  const blocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
+  return blocks.map((block) => JSON.parse(block[1]) as Record<string, unknown>);
+}
+
 describe('Work page (index)', () => {
   it('renders the About Me section and case study panels', async () => {
     const html = await render(Index);
@@ -114,6 +121,50 @@ describe('Case study footnotes on the page', () => {
   it('leaves case studies without footnotes untouched', async () => {
     const html = await render(ProjectPage, { props: { caseStudy: getCaseStudy('gfm') } });
     expect(html).not.toContain('section-footnotes');
+  });
+});
+
+describe('Structured data', () => {
+  it('emits the WebSite and Person schemas as parseable JSON-LD', async () => {
+    const schemas = structuredData(await render(Index));
+    // Parsing is the assertion: a value carrying a quote or a </script> would
+    // break the block silently, and a crawler drops the whole thing.
+    expect(schemas.map((schema) => schema['@type'])).toEqual(['WebSite', 'Person']);
+    for (const schema of schemas) {
+      expect(schema['@context']).toBe('https://schema.org');
+    }
+  });
+
+  it('names the site after its owner, on the same origin as the canonical link', async () => {
+    const [website] = structuredData(await render(Index));
+    expect(website.name).toBe(siteInfo.owner.name);
+    // The trailing slash matters: this is the origin, not a page on it.
+    expect(website.url).toBe('https://www.kenmhaggerty.com/');
+  });
+
+  it('describes the owner with their title, headshots and profile links', async () => {
+    const [, person] = structuredData(await render(Index));
+    expect(person.name).toBe(siteInfo.owner.name);
+    expect(person.url).toBe('https://www.kenmhaggerty.com/');
+    expect(person.jobTitle).toBe(siteInfo.owner.jobTitle);
+    // image goes out as the whole list: Google chooses among the aspect
+    // ratios, so handing it one would be the crawler's only option.
+    expect(person.image).toEqual(siteInfo.owner.images);
+    // sameAs goes out whole and in order -- Google reads the list, not a
+    // sample of it, so a dropped profile is a lost link between accounts.
+    expect(person.sameAs).toEqual(siteInfo.owner.links);
+  });
+
+  it('repeats the same schemas on every page, so no page describes the site differently', async () => {
+    expect(structuredData(await render(Resume))).toEqual(structuredData(await render(Index)));
+  });
+
+  it('names the owner in og:site_name rather than the record describing them', async () => {
+    // owner became an object; anything still passing it whole to a meta tag
+    // renders "[object Object]" for every scraper that reads the card.
+    const html = await render(Index);
+    expect(html).toContain(`property="og:site_name" content="${siteInfo.owner.name}"`);
+    expect(html).not.toContain('[object Object]');
   });
 });
 

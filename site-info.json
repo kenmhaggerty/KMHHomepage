@@ -1,7 +1,33 @@
 {
     "title": "Ken M. Haggerty",
     "description": "15+ years building software across UX research, product management, and engineering—from Google's self-driving car program to US Army and US Air Force systems.",
-    "owner": "Ken M. Haggerty",
+    "owner": {
+        "name": "Ken M. Haggerty",
+        "images": [
+            "https://www.kenmhaggerty.com/kenmhaggerty-1x1.png",
+            "https://www.kenmhaggerty.com/kenmhaggerty-4x3.png",
+            "https://www.kenmhaggerty.com/kenmhaggerty-16x9.png"
+        ],
+        "jobTitle": "Product Lead + Software Developer",
+        "links": [
+            "https://bsky.app/profile/kenmhaggerty.bsky.social",
+            "https://buymeacoffee.com/kenmhaggerty",
+            "https://github.com/kenmhaggerty",
+            "https://gravatar.com/kenhaggerty",
+            "https://www.instagram.com/kenmhaggerty",
+            "https://letterboxd.com/kenmhaggerty/",
+            "https://www.linkedin.com/in/kenmhaggerty",
+            "https://linktr.ee/kenmhaggerty",
+            "https://mstdn.social/@kenmhaggerty",
+            "https://m.me/kenmhaggerty",
+            "https://paypal.me/kenmhaggerty",
+            "https://www.threads.com/@kenmhaggerty",
+            "https://twitter.com/kenmhaggerty",
+            "https://venmo.com/u/kenmhaggerty",
+            "https://x.com/kenmhaggerty",
+            "https://www.youtube.com/@KenMHaggerty"
+        ]
+    },
     "footer": "Ken M. Haggerty © 2026",
     "url": "https://www.kenmhaggerty.com",
     "google": {
