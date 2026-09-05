@@ -63,6 +63,17 @@ const websiteSchema = {
   name: siteInfo.owner.name,
   url: new URL('/', siteInfo.url).href,
 };
+const webPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  url: new URL('/', siteInfo.url).href,
+  primaryImageOfPage: {
+    '@type': 'ImageObject',
+    url: 'https://www.kenmhaggerty.com/kenmhaggerty-1x1.png',
+    width: 1200,
+    height: 1200,
+  },
+};
 const personSchema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
@@ -107,6 +118,7 @@ const personSchema = {
     <!-- Used by Google -->
     <title>{googleTitle}</title>
     <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} is:inline />
+    <script type="application/ld+json" set:html={JSON.stringify(webPageSchema)} is:inline />
     <script type="application/ld+json" set:html={JSON.stringify(personSchema)} is:inline />
     <!-- Panels arrive marked as loading (see CaseStudyPanel). Without script
          nothing would ever clear that, so without script there is no ring. -->
