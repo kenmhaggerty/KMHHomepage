@@ -1,0 +1,35 @@
+---
+/*
+ * The "?" is the one place the site sets Public Sans Light. Its @font-face is
+ * imported here rather than in the layout so the file is only fetched on this
+ * page: a declaration costs nothing until something renders in that weight.
+ */
+import '@fontsource/public-sans/300.css';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import Icon from '../components/Icon.astro';
+import { segmentTitle } from '../utils/title';
+
+const title = '404 Not Found';
+const message = 'The given URL could not be found.';
+const segments = segmentTitle(title);
+---
+
+<SiteLayout pageTitle={title} description={message} fillHeight>
+  <div class="page-not-found">
+    <div class="not-found-content">
+      <p class="not-found-glyph" aria-hidden="true">?</p>
+      <h2 class="not-found-title">
+        {
+          segments.map((segment) =>
+            segment.small ? <span class="small-caps">{segment.text}</span> : segment.text,
+          )
+        }
+      </h2>
+      <p class="not-found-message">{message}</p>
+      <a class="back-button" href="/">
+        <Icon name="chevron-back" size={12} />
+        Back to Home Page
+      </a>
+    </div>
+  </div>
+</SiteLayout>

@@ -19,6 +19,7 @@ html[data-theme='dark'] {
 
   --color-page-bg: #121212;
   --color-card-bg: #1e1e1e;
+  --color-inset-bg: #121212;
   --color-text: #ededed;
   --color-text-muted: #9a9a9a;
   --color-text-muted-2: #555555;
@@ -68,5 +69,8 @@ html[data-theme='dark'] {
 @media (max-width: 767px) {
   html[data-theme='dark'] {
     --color-card-bg: #121212;
+    /* The card is now the page's colour, so a well in that colour would
+       vanish; it steps up instead, and reads as a surface on the ground. */
+    --color-inset-bg: #1a1a1a;
   }
 }

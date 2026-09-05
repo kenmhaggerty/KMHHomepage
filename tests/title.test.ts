@@ -27,6 +27,15 @@ describe('segmentTitle', () => {
     expect(segmentTitle('')).toEqual([]);
   });
 
+  it('treats digits as caps, so a numbered title keeps its number at full size', () => {
+    expect(segmentTitle('404 Not Found')).toEqual([
+      { text: '404 N', small: false },
+      { text: 'ot', small: true },
+      { text: ' F', small: false },
+      { text: 'ound', small: true },
+    ]);
+  });
+
   it('handles accented characters', () => {
     expect(segmentTitle('Résumé')).toEqual([
       { text: 'R', small: false },

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import Index from '../src/pages/index.astro';
 import Resume from '../src/pages/resume.astro';
+import NotFound from '../src/pages/404.astro';
 import ProjectPage, { getStaticPaths } from '../src/pages/work/[slug].astro';
 import { getCaseStudy, siteInfo } from '../src/data/site';
 
@@ -180,6 +181,41 @@ describe('Résumé page', () => {
     const html = await render(Resume);
     expect(html).toMatch(/<a[^>]*class="resume-download"[^>]*download[^>]*>/);
     expect(html).toContain('Download PDF');
+  });
+});
+
+describe('404 page', () => {
+  it('titles the page and fills the window, so the well reaches the footer', async () => {
+    const html = await render(NotFound);
+    expect(html).toContain('<title>404 Not Found · Ken M. Haggerty</title>');
+    expect(html).toContain('fill-height');
+    expect(html).toContain('class="page-not-found"');
+  });
+
+  it('sets the heading in the same faux small caps as the site title', async () => {
+    const html = await render(NotFound);
+    // Digits count as capitals, so "404 N" stays full size and only the
+    // lowercase runs step down.
+    expect(html).toMatch(
+      /<h2 class="not-found-title"[^>]*>\s*404 N<span class="small-caps"[^>]*>ot<\/span> F<span class="small-caps"[^>]*>ound<\/span>/,
+    );
+  });
+
+  it('explains itself and offers the way home', async () => {
+    const html = await render(NotFound);
+    expect(html).toContain('The given URL could not be found.');
+    expect(html).toMatch(
+      /<a class="back-button" href="\/"[^>]*>[\s\S]*?Back to Home Page[\s\S]*?<\/a>/,
+    );
+    // The mark is decoration; a screen reader gets the heading instead.
+    expect(html).toMatch(/<p class="not-found-glyph" aria-hidden="true"[^>]*>\?<\/p>/);
+  });
+
+  it('keeps the site chrome, so the visitor is still on the site', async () => {
+    const html = await render(NotFound);
+    expect(html).toContain('class="site-title"');
+    expect(html).toContain('data-mode-button="desktop"');
+    expect(html).toContain('Ken M. Haggerty © 2026');
   });
 });
 

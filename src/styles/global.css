@@ -22,6 +22,11 @@
 
   --color-page-bg: #f8f8f8;
   --color-card-bg: #ffffff;
+  /* A well set into the card, in the page's own colour. Its own variable
+     rather than --color-page-bg because that is lifted to the card's colour
+     on small screens (see the breakpoint below), and the well has to stay
+     visible there. */
+  --color-inset-bg: #f8f8f8;
   --color-text: #000000;
   --color-text-muted: #888888;
   --color-text-muted-2: #b4b4b4;
@@ -1442,6 +1447,59 @@ html[data-viewport='mobile'] .page-project .hscroll {
     line-height: normal;
     text-transform: uppercase;
   }
+}
+
+/* --------------------------------------------------------------- 404 page */
+
+/* The message sits centred in a well the colour of the page, and the well
+   fills the card the way the résumé's PDF does: the card opts out of hugging
+   and this takes whatever height is left below the header. */
+.page-not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  background: var(--color-inset-bg);
+}
+
+.not-found-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Lifts the group a little above true centre, as designed. */
+  padding-bottom: 20px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.not-found-glyph {
+  margin: 0;
+  font-size: 64px;
+  font-weight: 300;
+  line-height: normal;
+}
+
+/* Faux small caps like the site title, at the section-title size. */
+.not-found-title {
+  margin: 2px 0 4px;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  line-height: normal;
+}
+
+.not-found-title .small-caps {
+  font-size: 14px;
+}
+
+.not-found-message {
+  margin: 0 0 24px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: normal;
 }
 
 .spacer {
