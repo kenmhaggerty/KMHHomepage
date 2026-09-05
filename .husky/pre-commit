@@ -1,0 +1,4 @@
+# Formats only the staged files, then re-stages them (lint-staged does both).
+# Partially staged files are handled by stashing the unstaged hunks around
+# the run, so only what was staged is formatted and committed.
+npx lint-staged
