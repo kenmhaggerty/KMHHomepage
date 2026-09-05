@@ -6,6 +6,7 @@ import Resume from '../src/pages/resume.astro';
 import NotFound from '../src/pages/404.astro';
 import ProjectPage, { getStaticPaths } from '../src/pages/work/[slug].astro';
 import { getCaseStudy, siteInfo } from '../src/data/site';
+import htaccess from '../public/.htaccess?raw';
 
 async function render(component: Parameters<AstroContainer['renderToString']>[0], options = {}) {
   const container = await AstroContainer.create();
@@ -216,6 +217,43 @@ describe('404 page', () => {
     expect(html).toContain('class="site-title"');
     expect(html).toContain('data-mode-button="desktop"');
     expect(html).toContain('Ken M. Haggerty © 2026');
+  });
+});
+
+describe('Apache 404 configuration', () => {
+  /* Hostinger serves the built files with Apache, which shows its own
+     plain-text error page unless pointed at ours. public/ is copied into
+     dist/ untouched, so the .htaccess lands at the document root where
+     Apache reads it. Nothing at build time checks the two agree. */
+  const directives = htaccess
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('#'));
+
+  const errorDocument = directives.find((line) => line.startsWith('ErrorDocument 404'));
+
+  it('points Apache at the 404 page, in an active directive', () => {
+    // Found among the uncommented lines: a directive behind a '#' is inert,
+    // and reads exactly like a working one.
+    expect(errorDocument).toBe('ErrorDocument 404 /404.html');
+  });
+
+  it('names a page the build actually emits', () => {
+    /* Astro writes most routes as directories (/work/gfm/index.html) but
+       special-cases this one to 404.html at the root. That is why the
+       directive names a file rather than a path, and this is what notices
+       if the page is renamed or removed and the directive is left behind. */
+    const pages = import.meta.glob('../src/pages/**/*.astro');
+    const [, , path] = (errorDocument ?? '').split(' ');
+    expect(path).toBe('/404.html');
+    expect(Object.keys(pages)).toContain('../src/pages/404.astro');
+  });
+
+  it('names it absolutely, so it resolves the same from every directory', () => {
+    // Relative, Apache would resolve it against the requested directory, so
+    // a bad URL under /work/ would look for a 404.html that is not there.
+    const [, , path] = (errorDocument ?? '').split(' ');
+    expect(path.startsWith('/')).toBe(true);
   });
 });
 
