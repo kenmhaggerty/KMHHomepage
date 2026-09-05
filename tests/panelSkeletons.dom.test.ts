@@ -158,4 +158,14 @@ describe('initPanelSkeletons', () => {
     const { doc } = renderPage('<p>No panels here</p>');
     expect(() => initPanelSkeletons(doc)).not.toThrow();
   });
+
+  it('ignores a load event whose target has no closest method, such as the document itself', () => {
+    // `load` is caught on the way down at the document, so the target is
+    // whatever fired it -- not necessarily an element with `closest`.
+    const { doc, panel } = galleryPanel(false);
+    initPanelSkeletons(doc);
+
+    expect(() => doc.dispatchEvent(new doc.defaultView!.Event('load'))).not.toThrow();
+    expect(waiting(panel)).toBe(true);
+  });
 });

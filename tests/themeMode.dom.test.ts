@@ -196,4 +196,29 @@ describe('initThemeMode', () => {
     expect(() => button('light').click()).not.toThrow();
     expect(document.documentElement.dataset.theme).toBe('light');
   });
+
+  it('still applies the device theme when clearing a stale choice fails', () => {
+    // Reads have to succeed so the choice is actually recognised as stale --
+    // makeWindow's `throws` option fails every call, including the reads that
+    // decide staleness, which would never reach the clear at all.
+    const store = new Map([
+      [THEME_STORAGE_KEY, 'light'],
+      [THEME_SYSTEM_STORAGE_KEY, 'light'],
+    ]);
+    const win = {
+      localStorage: {
+        getItem: (key: string) => store.get(key) ?? null,
+        setItem: (key: string, value: string) => store.set(key, value),
+        removeItem: () => {
+          throw new Error('storage blocked');
+        },
+      },
+      matchMedia: () => ({ matches: true, addEventListener: () => {} }),
+    } as unknown as Window;
+
+    expect(() => initThemeMode(document, win)).not.toThrow();
+    // The stored choice was made against a light device, which is now dark --
+    // stale, so the device wins even though the clear itself failed.
+    expect(document.documentElement.dataset.theme).toBe('dark');
+  });
 });

@@ -370,4 +370,72 @@ describe('initImageLightbox', () => {
     expect(() => initImageLightbox(doc)).not.toThrow();
     expect(click(trigger)).toBe(true);
   });
+
+  it('ignores a click whose target has no closest method, such as the document itself', () => {
+    const { doc, dialog } = renderPage();
+    initImageLightbox(doc);
+    const view = viewOf(dialog!);
+
+    const notPrevented = doc.dispatchEvent(
+      new view.MouseEvent('click', { bubbles: true, cancelable: true, button: 0 }),
+    );
+
+    expect(notPrevented).toBe(true);
+    expect(dialog!.open).toBe(false);
+  });
+
+  it('falls back to just the clicked image when it is its own gallery container', () => {
+    // querySelectorAll only matches descendants, so an anchor that is both the
+    // trigger and the [data-gallery] container it looks under would never find
+    // itself in the results.
+    const { doc, dialog, image } = renderPage({ images: 2 });
+    doc.body.insertAdjacentHTML(
+      'beforeend',
+      `<a data-gallery data-lightbox-open href="${FULL_RES}self.png" data-lightbox-alt="Self"><img alt="Self" /></a>`,
+    );
+    initImageLightbox(doc);
+    const selfContained = doc.querySelector<HTMLAnchorElement>(
+      'a[data-gallery][data-lightbox-open]',
+    )!;
+
+    click(selfContained);
+
+    expect(dialog!.open).toBe(true);
+    expect(image!.src).toBe(selfContained.href);
+    expect(image!.alt).toBe('Self');
+  });
+
+  it('falls back to the whole document as the gallery when the trigger has no [data-gallery] ancestor', () => {
+    const { doc, dialog, image } = renderPage({ images: 0 });
+    doc.body.insertAdjacentHTML(
+      'beforeend',
+      `<a href="${FULL_RES}loose.png" data-lightbox-open data-lightbox-alt="Loose"><img alt="Loose" /></a>`,
+    );
+    initImageLightbox(doc);
+    const loose = doc.querySelector<HTMLAnchorElement>('a[data-lightbox-open]')!;
+
+    click(loose);
+
+    expect(dialog!.open).toBe(true);
+    expect(image!.src).toBe(loose.href);
+  });
+
+  it('clears the alt text for an image with none of its own', () => {
+    const { doc, trigger, dialog, image } = renderPage({ images: 1 });
+    doc.body.insertAdjacentHTML(
+      'beforeend',
+      `<a href="${FULL_RES}untitled.png" data-lightbox-open><img alt="" /></a>`,
+    );
+    initImageLightbox(doc);
+    click(trigger);
+    expect(image!.alt).toBe('Mockup #1');
+    const untitled = doc.querySelectorAll<HTMLAnchorElement>('a[data-lightbox-open]')[1];
+
+    click(untitled);
+
+    expect(dialog!.open).toBe(true);
+    // No data-lightbox-alt of its own, so the previous image's alt text must
+    // not linger on a picture it does not describe.
+    expect(image!.alt).toBe('');
+  });
 });
