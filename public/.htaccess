@@ -1,0 +1,10 @@
+# Apache config for the deployed site (Hostinger). Files in public/ are copied
+# into dist/ untouched, so this lands at the site root where Apache looks for
+# it. Without it a bad URL gets Apache's own plain-text 404 rather than the
+# site's page.
+#
+# The path is absolute so it names the file at the document root, rather than
+# a "404.html" relative to whatever directory was requested. Astro builds
+# routes as directories (/work/gfm/index.html) but special-cases this one to
+# 404.html at the root, which is the name Apache is pointed at here.
+ErrorDocument 404 /404.html
