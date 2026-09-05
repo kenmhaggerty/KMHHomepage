@@ -131,7 +131,7 @@ describe('Structured data', () => {
     const schemas = structuredData(await render(Index));
     // Parsing is the assertion: a value carrying a quote or a </script> would
     // break the block silently, and a crawler drops the whole thing.
-    expect(schemas.map((schema) => schema['@type'])).toEqual(['WebSite', 'Person']);
+    expect(schemas.map((schema) => schema['@type'])).toEqual(['WebSite', 'WebPage', 'Person']);
     for (const schema of schemas) {
       expect(schema['@context']).toBe('https://schema.org');
     }
@@ -144,8 +144,21 @@ describe('Structured data', () => {
     expect(website.url).toBe('https://www.kenmhaggerty.com/');
   });
 
+  it('points the WebPage schema at the same URL as the site, with a primary image', async () => {
+    const [, webPage] = structuredData(await render(Index));
+    expect(webPage.url).toBe('https://www.kenmhaggerty.com/');
+    // The 1x1 crop is the only one of the owner's images with the square
+    // aspect ratio primaryImageOfPage expects.
+    expect(webPage.primaryImageOfPage).toEqual({
+      '@type': 'ImageObject',
+      url: siteInfo.owner.images[0],
+      width: 1200,
+      height: 1200,
+    });
+  });
+
   it('describes the owner with their title, headshots and profile links', async () => {
-    const [, person] = structuredData(await render(Index));
+    const [, , person] = structuredData(await render(Index));
     expect(person.name).toBe(siteInfo.owner.name);
     expect(person.url).toBe('https://www.kenmhaggerty.com/');
     expect(person.jobTitle).toBe(siteInfo.owner.jobTitle);
