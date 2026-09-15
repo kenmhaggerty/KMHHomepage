@@ -36,6 +36,18 @@ describe('Work page (index)', () => {
     }
   });
 
+  it('prioritises exactly one panel, the one that paints largest first', async () => {
+    const html = await render(Index);
+    /* Both heroes of the first panel carry the hint and nothing else does.
+       More than one high-priority image is the same as none: the point is to
+       put this fetch in front of the fonts and the rest of the gallery. */
+    expect(html.match(/fetchpriority="high"/g)).toHaveLength(2);
+    const first = html.indexOf('data-case-study="gfm"');
+    const second = html.indexOf('data-case-study=', first + 1);
+    expect(html.indexOf('fetchpriority="high"')).toBeGreaterThan(first);
+    expect(html.indexOf('fetchpriority="high"')).toBeLessThan(second);
+  });
+
   it('renders the site chrome (toggle, header, footer)', async () => {
     const html = await render(Index);
     expect(html).toContain('data-mode-button="desktop"');
@@ -267,6 +279,41 @@ describe('Apache 404 configuration', () => {
     // a bad URL under /work/ would look for a 404.html that is not there.
     const [, , path] = (errorDocument ?? '').split(' ');
     expect(path.startsWith('/')).toBe(true);
+  });
+
+  it('keeps the fingerprinted build output for a year, and the pages for none of it', () => {
+    /* Astro puts a content hash in every filename it emits, so those URLs can
+       never go stale and immutable spares the browser even the revalidation.
+       The HTML is what names them, so it has to be rechecked every visit or a
+       return visitor keeps loading the previous build. */
+    const assets = directives.find((line) => line.includes('max-age=31536000, immutable'));
+    expect(assets).toBe('Header set Cache-Control "public, max-age=31536000, immutable"');
+    expect(directives).toContain('<FilesMatch "\\.html$">');
+    expect(directives).toContain('Header set Cache-Control "public, no-cache, must-revalidate"');
+  });
+
+  it('sets the security headers the site can actually wear', () => {
+    const header = (name: string) =>
+      directives.find((line) => line.startsWith(`Header always set ${name} `));
+    expect(header('X-Content-Type-Options')).toContain('nosniff');
+    expect(header('X-Frame-Options')).toContain('SAMEORIGIN');
+    expect(header('Referrer-Policy')).toContain('strict-origin-when-cross-origin');
+    expect(header('Cross-Origin-Opener-Policy')).toContain('same-origin');
+    expect(header('Strict-Transport-Security')).toContain('max-age=31536000');
+  });
+
+  it("leaves object-src at 'self', because the résumé page is an <embed>", () => {
+    /* object-src governs <embed>, so the 'none' an audit asks for would blank
+       /resume. Anything looser than 'self' would be pointless, and dropping
+       the directive would fall back to allowing any origin. */
+    const csp = directives.find((line) =>
+      line.startsWith('Header always set Content-Security-Policy'),
+    );
+    expect(csp).toContain("object-src 'self'");
+    expect(csp).not.toContain("object-src 'none'");
+    // 'unsafe-inline' would be needed for the pre-paint scripts and would make
+    // a script-src that protects nothing; better to leave it off and say why.
+    expect(csp).not.toContain('unsafe-inline');
   });
 });
 

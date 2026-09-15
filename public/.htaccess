@@ -8,3 +8,59 @@
 # routes as directories (/work/gfm/index.html) but special-cases this one to
 # 404.html at the root, which is the name Apache is pointed at here.
 ErrorDocument 404 /404.html
+
+# ---------------------------------------------------------------- caching --
+#
+# The host's default is a week for everything, which is both too short for the
+# build output and too long for the pages that point at it. Astro fingerprints
+# everything it emits into /_astro -- the content hash is in the filename, so a
+# changed file is a different URL and the old one can never go stale. Those are
+# safe to keep for a year and to mark immutable, which also spares the browser
+# the revalidation request on a repeat visit.
+#
+# HTML is the opposite case: its URL never changes, and it is what names the
+# current hashed assets, so it has to be rechecked or a visitor would keep
+# loading last week's page. no-cache does not mean "do not store" -- the copy
+# is kept and revalidated, so an unchanged page still comes back as a 304.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|mjs|css|woff2|woff|ttf|otf|webp|avif|png|jpe?g|gif|svg|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # Unhashed files served from the site root: the favicons and share images are
+  # referenced by fixed names, and the résumé is replaced in place. A day is
+  # long enough to help a return visit without pinning a stale copy for a year.
+  # These names also match the rule above, which is why this block follows it:
+  # the last Header set for a request is the one that survives.
+  <FilesMatch "^(favicon-\d+\.png|apple-touch-icon\.png|og-image\.png|kenmhaggerty-[0-9x]+\.png|.*\.pdf)$">
+    Header set Cache-Control "public, max-age=86400, must-revalidate"
+  </FilesMatch>
+
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, no-cache, must-revalidate"
+  </FilesMatch>
+
+  # ------------------------------------------------------------- security --
+  #
+  # The site is static, first-party and serves no credentials, so these are
+  # cheap: nothing here needs framing by another origin, sniffed content types,
+  # or a document that shares a browsing context group with a pop-up.
+  #
+  # object-src is 'self' rather than 'none' because /resume embeds the PDF in
+  # an <embed>, which that directive governs -- 'none' would blank the page.
+  # There is deliberately no script-src: the theme and viewport modes are set
+  # by inline scripts before first paint, so locking scripts down means hashing
+  # those at build time, and 'unsafe-inline' would only look like protection.
+  Header always set Content-Security-Policy "object-src 'self'; base-uri 'none'; frame-ancestors 'self'"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Cross-Origin-Opener-Policy "same-origin"
+
+  # HSTS. Note this one sticks: a browser that has seen it refuses plain HTTP
+  # for this host until the max-age runs out, and shortening that only reaches
+  # browsers that call again. To back it out, serve max-age=0 and leave it up
+  # long enough for return visitors to pick it up. No preload directive, which
+  # would be far harder to undo.
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>

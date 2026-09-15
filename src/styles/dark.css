@@ -11,8 +11,8 @@
  * glare of light text and hides elevation), a lighter surface for the card so
  * depth reads without leaning on shadow, and off-white text rather than #fff,
  * which halates against a dark ground. Shadows go deeper because a faint black
- * shadow is invisible here. Muted text keeps ~5:1 against its own background
- * and body text ~14:1, so both clear WCAG AA.
+ * shadow is invisible here. Every muted grey keeps at least 4.5:1 against its
+ * own background and body text ~14:1, so all of them clear WCAG AA.
  */
 html[data-theme='dark'] {
   color-scheme: dark;
@@ -21,9 +21,15 @@ html[data-theme='dark'] {
   --color-card-bg: #1e1e1e;
   --color-inset-bg: #121212;
   --color-text: #ededed;
-  --color-text-muted: #9a9a9a;
-  --color-text-muted-2: #555555;
+  --color-text-muted: #9e9e9e;
+  /* Was #555555, at 2.2:1 against the card -- the same WCAG AA failure the
+     light theme's #b4b4b4 had, in the other direction. Lifted until it clears
+     4.5:1 on card and page, while staying the dimmest of the three. */
+  --color-text-muted-2: #8c8c8c;
   --color-text-soft: #a8a8a8;
+
+  /* The hairline keeps the weight muted-2 used to carry. */
+  --color-rule: #555555;
 
   --color-chip-bg: #2a2a2a;
   --color-chip-bg-hover: #333333;

@@ -282,4 +282,33 @@ describe('CaseStudyPanel', () => {
     expect(html).toContain('GFM');
     expect(html).toContain('US Army');
   });
+
+  it('offers each hero at several widths, with the size it will be shown at', async () => {
+    const gfm = getCaseStudy('gfm');
+    const html = await render(CaseStudyPanel, { props: { caseStudy: gfm } });
+    // Without these the browser is handed one source at its full resolution --
+    // 1440px of desktop artwork for a 480px panel, and a square three times
+    // the width of the one a phone draws.
+    expect(html).toMatch(/<img[^>]*srcset="[^"]*480w[^"]*1440w[^"]*"[^>]*class="hero-desktop"/);
+    expect(html).toMatch(/<img[^>]*srcset="[^"]*190w[^"]*567w[^"]*"[^>]*class="hero-mobile"/);
+    // A srcset without sizes leaves the browser guessing at the layout width,
+    // and it guesses the full viewport.
+    expect(html).toMatch(/<img[^>]*sizes="480px"[^>]*class="hero-desktop"/);
+    expect(html).toMatch(
+      /<img[^>]*sizes="\(max-width: 767px\) 50vw, 190px"[^>]*class="hero-mobile"/,
+    );
+  });
+
+  it('hints the priority of both heroes only when asked, since either can be the LCP', async () => {
+    const gfm = getCaseStudy('gfm');
+    const plain = await render(CaseStudyPanel, { props: { caseStudy: gfm } });
+    expect(plain).not.toContain('fetchpriority="high"');
+
+    const prioritised = await render(CaseStudyPanel, {
+      props: { caseStudy: gfm, eager: true, priority: true },
+    });
+    // Which of the two shows is decided by the viewport mode at runtime, so
+    // the hint cannot be put on one of them here.
+    expect(prioritised.match(/fetchpriority="high"/g)).toHaveLength(2);
+  });
 });

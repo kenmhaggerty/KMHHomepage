@@ -28,9 +28,19 @@
      visible there. */
   --color-inset-bg: #f8f8f8;
   --color-text: #000000;
-  --color-text-muted: #888888;
-  --color-text-muted-2: #b4b4b4;
-  --color-text-soft: #777777;
+  /* The three muted greys are darker than the Figma swatches (#888888,
+     #b4b4b4, #777777), which sat at 3.5:1, 2.1:1 and 3.9:1 against the
+     surfaces they are painted on and failed WCAG AA. These clear 4.5:1 on
+     every background each one lands on -- card, page, chip and its hover --
+     while keeping the design's ordering: soft is the darkest of the three,
+     muted-2 the lightest. Hairlines are not text and do not need the
+     contrast, so the old value lives on as --color-rule below. */
+  --color-text-muted: #666666;
+  --color-text-muted-2: #6f6f6f;
+  --color-text-soft: #5f5f5f;
+
+  /* A hairline separator, not text: the weight the old muted-2 had. */
+  --color-rule: #b4b4b4;
 
   --color-chip-bg: #f0f0f0;
   --color-chip-bg-hover: #e5e5e5;
@@ -707,7 +717,7 @@ html[data-viewport='mobile'] .page-work .section-title {
 .section-footnotes {
   color: var(--color-text-muted);
   font-size: 11.5px;
-  border-top: 1px solid var(--color-text-muted-2);
+  border-top: 1px solid var(--color-rule);
   margin-top: 26px !important;
   padding-top: 6px;
 }
@@ -904,9 +914,9 @@ html.is-modal-open body {
    one panel-width apart mean the next is entering as the last leaves -- that
    spacing is what keeps it continuous, so the way to make it less frequent is
    a longer cycle rather than fewer bands. `linear` keeps the speed even; with
-   an eased curve it visibly slowed at each end. Travel is right to left:
-   background-position rising slides the image left, carrying the bands with
-   it. The bands are centred at 25% and 75% of the tile and ramp out to either
+   an eased curve it visibly slowed at each end. Travel is right to left: the
+   strip carrying the bands slides left by one tile. The tile is two panels
+   wide, so the bands are centred at 25% and 75% of it and ramp out to either
    side, with flat ground between, so the panel is partly still rather than a
    gradient shifting end to end. Widening a band means moving its two outer
    stops away from its centre; they must stay clear of the neighbouring band's
@@ -916,6 +926,26 @@ html.is-modal-open body {
   inset: 0;
   display: none;
   background-color: var(--color-skeleton);
+  /* Clips the band strip below, which is four panels wide. */
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* The bands ride on a child rather than on the skeleton's own background,
+   because a background-position animation runs on the main thread: the
+   browser cannot hand it to the compositor, so every frame of it repaints,
+   and it plays during page load on one element per panel still waiting for
+   its picture. A transform on a strip of the same gradient is the same
+   picture moving the same way, composited. */
+.skeleton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  /* Four panel-widths holding two tiles, so the strip still covers the panel
+     after it has travelled a whole tile and the loop can restart in place. */
+  width: 400%;
   background-image: linear-gradient(
     90deg,
     var(--color-skeleton) 0%,
@@ -927,9 +957,8 @@ html.is-modal-open body {
     var(--color-skeleton) 91%,
     var(--color-skeleton) 100%
   );
-  background-size: 200% 100%;
+  background-size: 50% 100%;
   background-repeat: repeat;
-  pointer-events: none;
 }
 
 .panel.is-loading .skeleton {
@@ -939,10 +968,8 @@ html.is-modal-open body {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .panel.is-loading .skeleton {
-    animation:
-      skeleton-appear 250ms ease-out 400ms forwards,
-      skeleton-sweep 2800ms linear 400ms infinite;
+  .panel.is-loading .skeleton::after {
+    animation: skeleton-sweep 2800ms linear 400ms infinite;
   }
 }
 
@@ -955,10 +982,12 @@ html.is-modal-open body {
 /* Reduced motion keeps the block, drops the travelling highlight. */
 @keyframes skeleton-sweep {
   from {
-    background-position: 0 0;
+    transform: translateX(0);
   }
   to {
-    background-position: 200% 0;
+    /* Half the strip is one tile, so the bands land exactly where the
+       previous ones were and the loop has no seam. */
+    transform: translateX(-50%);
   }
 }
 

@@ -17,21 +17,39 @@ function findGalleryElements(gallery: HTMLElement): GalleryElements | null {
 }
 
 export function updateScrubber({ viewport, track, scrubber }: GalleryElements): void {
+  // Everything that has to be measured is read up front, before anything is
+  // written. This runs on every scroll event and on every resize the observer
+  // reports, and the two cannot be interleaved: a write invalidates layout, so
+  // a read after one makes the browser stop and recompute it there and then.
+  // Doing that per scroll frame was the page's longest forced reflow.
+  const viewportWidth = viewport.clientWidth;
+  const contentWidth = viewport.scrollWidth;
+  const scrollLeft = viewport.scrollLeft;
+
   // A track with nothing to scroll is just a decorative bar, so it hides --
   // unless the markup asks it to stay, in which case it sits there full width
-  // the way a scrollbar does when everything already fits. This runs before
-  // the measurements below so the track has its width back by the time we
-  // read it.
+  // the way a scrollbar does when everything already fits.
   const persistent = track.dataset.galleryTrack === 'persistent';
-  track.hidden = !persistent && !hasHorizontalOverflow(viewport.clientWidth, viewport.scrollWidth);
-  if (track.hidden) {
+  const hidden = !persistent && !hasHorizontalOverflow(viewportWidth, contentWidth);
+  if (hidden) {
+    if (!track.hidden) {
+      track.hidden = true;
+    }
     return;
   }
+
+  // A hidden track measures zero, so it has to be shown before its width is
+  // any use. Only assigning on a change keeps this off the common path, where
+  // the track was already visible and nothing needs invalidating.
+  if (track.hidden) {
+    track.hidden = false;
+  }
+
   const { width, offset } = computeScrubber(
     track.clientWidth,
-    viewport.clientWidth,
-    viewport.scrollWidth,
-    viewport.scrollLeft,
+    viewportWidth,
+    contentWidth,
+    scrollLeft,
   );
   scrubber.style.width = `${width}px`;
   scrubber.style.transform = `translateX(${offset}px)`;

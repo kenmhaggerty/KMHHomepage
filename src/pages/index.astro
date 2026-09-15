@@ -11,6 +11,11 @@ import { FILTERS } from '../utils/filters';
  * these load eagerly -- lazy-loading an image the visitor is already looking
  * at just delays it, which is what an audit means by an unoptimized loading
  * attribute.
+ *
+ * The first of them gets the priority hint as well. Loading eagerly only means
+ * the fetch is not deferred; it still queues behind the stylesheet and the
+ * fonts, which is why the largest paint waited on a picture that was already
+ * discoverable in the HTML.
  */
 const EAGER_PANELS = 3;
 ---
@@ -55,7 +60,11 @@ const EAGER_PANELS = 3;
         <div class="hscroll-viewport" data-gallery-scroll>
           {
             caseStudies.map((caseStudy, index) => (
-              <CaseStudyPanel caseStudy={caseStudy} eager={index < EAGER_PANELS} />
+              <CaseStudyPanel
+                caseStudy={caseStudy}
+                eager={index < EAGER_PANELS}
+                priority={index === 0}
+              />
             ))
           }
         </div>

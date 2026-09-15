@@ -8,11 +8,32 @@ interface Props {
   caseStudy: CaseStudy;
   /** Set for the panels that start on screen, so they are not deprioritised. */
   eager?: boolean;
+  /**
+   * Set for the one panel that is the largest thing on screen at first paint,
+   * so the browser fetches its artwork ahead of the fonts and the rest of the
+   * gallery. Both heroes carry the hint because either can be the one on show:
+   * which of the two is displayed is decided by the viewport mode, not by the
+   * window, so the markup cannot know here which it will be.
+   */
+  priority?: boolean;
 }
 
-const { caseStudy, eager = false } = Astro.props;
+const { caseStudy, eager = false, priority = false } = Astro.props;
 const loading = eager ? 'eager' : 'lazy';
+const fetchpriority = priority ? 'high' : 'auto';
 const { key, title, company, year, filters, hero } = caseStudy;
+
+/*
+ * Panels are laid out at a fixed size, so the browser can be given the exact
+ * widths to choose between rather than one source scaled down on the fly. The
+ * desktop hero is always 480px wide; the mobile one is half the card, which is
+ * half the window below the breakpoint and half of the 420px preview card
+ * above it. The rest of each srcset covers the denser screens.
+ */
+const DESKTOP_WIDTHS = [480, 720, 960, 1440];
+const DESKTOP_SIZES = '480px';
+const MOBILE_WIDTHS = [190, 280, 380, 567];
+const MOBILE_SIZES = '(max-width: 767px) 50vw, 190px';
 ---
 
 {
@@ -37,8 +58,19 @@ const { key, title, company, year, filters, hero } = caseStudy;
     src={imageAsset(hero.desktop)}
     alt={hero.alt_text}
     loading={loading}
+    fetchpriority={fetchpriority}
+    widths={DESKTOP_WIDTHS}
+    sizes={DESKTOP_SIZES}
   />
-  <Image class="hero-mobile" src={imageAsset(hero.mobile)} alt={hero.alt_text} loading={loading} />
+  <Image
+    class="hero-mobile"
+    src={imageAsset(hero.mobile)}
+    alt={hero.alt_text}
+    loading={loading}
+    fetchpriority={fetchpriority}
+    widths={MOBILE_WIDTHS}
+    sizes={MOBILE_SIZES}
+  />
   <span class="panel-overlay">
     <span class="panel-title">{title}</span>
     <span class="panel-subtitle">{company} • {year}</span>
