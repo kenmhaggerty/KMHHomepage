@@ -52,8 +52,9 @@ html[data-theme='dark'] {
   --color-toggle-accent: #ededed;
   --color-toggle-accent-text: #121212;
 
+  --color-button-text: #ededed;
   --color-button-bg: #444444;
-  --color-button-text: #000000;
+  --color-button-bg-hover: #3a3a3a;
 
   --color-overlay-inner: rgba(38, 38, 38, 0.85);
   --color-overlay-mid: rgba(34, 34, 34, 0.7);
