@@ -24,6 +24,11 @@ export interface OpenGraphInfo {
   imageHeight: number;
 }
 
+/** The info used when saved to Home Screen and/or as a Progressive Web App. */
+export interface PWAInfo {
+  title: string;
+}
+
 /** The site's icons, all served as-is from public/. */
 export interface SiteIcons {
   png: {
@@ -45,6 +50,7 @@ export interface SiteInfo {
   url: string;
   google: GoogleSearchInfo;
   openGraph: OpenGraphInfo;
+  pwa: PWAInfo;
   icons: SiteIcons;
 }
 

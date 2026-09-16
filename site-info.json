@@ -39,6 +39,9 @@
         "imageWidth": 1200,
         "imageHeight": 630
     },
+    "pwa": {
+        "title": "Ken M. Haggerty"
+    },
     "icons": {
         "png": {
             "large": "favicon-192.png",
