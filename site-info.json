@@ -73,6 +73,13 @@
                 },
                 "tooltip": "Letterboxd",
                 "url": "https://letterboxd.com/kenmhaggerty/list/my-favorite-films/"
+            },
+            {
+                "icon": {
+                    "simpleIcon": "youtube"
+                },
+                "tooltip": "YouTube",
+                "url": "https://www.youtube.com/playlist?list=PLDWNkdpnXXHFMwRIc7noMn0gqLqBCfTUJ"
             }
         ]
     },
