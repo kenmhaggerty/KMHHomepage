@@ -1065,7 +1065,15 @@ a[data-lightbox-open] {
   overflow: auto;
   /* Keeps a flick at the end of the list from scrolling the page behind. */
   overscroll-behavior: contain;
-  padding: 20px 24px 24px;
+  /* The scrollbar runs the full height of the padding box, so a transparent
+     border is what holds it off the ends -- there is no property that insets
+     the track itself. The background paints through it (background-clip is
+     border-box by default), so the 8px reads as part of the surface rather
+     than a gap, and the padding is short by the same 8px top and bottom to
+     leave the prose where it was. */
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  padding: 12px 24px 16px;
   border-radius: 12px;
   background: var(--color-card-bg);
   color: var(--color-text);
