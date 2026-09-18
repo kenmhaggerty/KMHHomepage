@@ -94,7 +94,10 @@ describe('SiteFooter', () => {
   it('opens each link in a new tab, named by its tooltip', async () => {
     const html = await render(SiteFooter);
     for (const link of siteInfo.footer.links) {
-      const anchor = html.match(new RegExp(`<a[^>]*href="${link.url}"[^>]*>`))?.[0] ?? '';
+      // link.url is data, not a pattern -- a query string's "?" is a regex
+      // metacharacter and would otherwise make part of the URL optional.
+      const escapedUrl = link.url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const anchor = html.match(new RegExp(`<a[^>]*href="${escapedUrl}"[^>]*>`))?.[0] ?? '';
       expect(anchor, `no anchor for ${link.url}`).not.toBe('');
       expect(anchor).toContain('target="_blank"');
       // Without noopener the opened tab can reach back into this one.
