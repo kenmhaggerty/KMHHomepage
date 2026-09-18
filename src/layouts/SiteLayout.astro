@@ -30,9 +30,25 @@ interface Props {
   /* Opt out of the card hugging its content, for pages whose content is meant
      to fill the window instead (the résumé PDF). */
   fillHeight?: boolean;
+  /*
+   * Where this page sends the visitor on arrival, for a page that exists only
+   * to bounce (/work). Such a page is still a real page here rather than the
+   * bare markup Astro's `redirects` config emits, so it wears the site's own
+   * styling for the moment it is on screen -- but it has to behave like a
+   * redirect in the head: nothing to index, and the canonical URL is the
+   * destination rather than this path.
+   */
+  redirectTo?: string;
 }
 
-const { pageTitle, description, shareTitle, shareDescription, fillHeight = false } = Astro.props;
+const {
+  pageTitle,
+  description,
+  shareTitle,
+  shareDescription,
+  fillHeight = false,
+  redirectTo,
+} = Astro.props;
 const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
 
 /*
@@ -40,7 +56,7 @@ const title = pageTitle ? `${pageTitle} · ${siteInfo.title}` : siteInfo.title;
  * built HTML rather than running in a browser, so these are resolved against
  * the production origin rather than against wherever the page is being served.
  */
-const canonicalUrl = new URL(Astro.url.pathname, siteInfo.url).href;
+const canonicalUrl = new URL(redirectTo ?? Astro.url.pathname, siteInfo.url).href;
 const shareImageUrl = new URL(siteInfo.openGraph.image, siteInfo.url).href;
 const cardTitle = shareTitle ?? title;
 const cardDescription = shareDescription ?? description ?? siteInfo.description;
@@ -89,6 +105,22 @@ const personSchema = {
 <html lang="en" data-viewport="desktop">
   <head>
     <meta charset="utf-8" />
+    {
+      /* Straight after the charset, so the browser leaves for the destination
+        before it has fetched a font or painted a pixel -- the styling below is
+        for the slow connection where it does paint, not the common case. The
+        script is what actually runs: replace() rather than assign() so the
+        bounce leaves no history entry to trap Back on. The refresh meta is the
+        fallback for a visitor with no script, where a history entry is the
+        lesser problem, and it is also what a crawler reads. */
+      redirectTo && (
+        <>
+          <script is:inline set:html={`location.replace(${JSON.stringify(redirectTo)})`} />
+          <meta http-equiv="refresh" content={`0;url=${redirectTo}`} />
+          <meta name="robots" content="noindex" />
+        </>
+      )
+    }
     <meta name="application-name" content={siteInfo.pwa.title} />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />

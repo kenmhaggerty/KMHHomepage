@@ -1,0 +1,47 @@
+---
+/*
+ * /work has no page of its own -- case studies live at /work/<slug> -- so the
+ * bare path used to reach an empty directory, which Apache answered with a 403
+ * (see public/.htaccess). This page is what it finds instead, and it bounces
+ * to the home page, where those same case studies are listed.
+ *
+ * It is a real page rather than an entry in Astro's `redirects` config because
+ * that config emits unstyled markup: on a slow connection the bounce is slow
+ * enough to see, and what showed was black Times New Roman on white. The
+ * redirect itself is in SiteLayout, from the prop below.
+ */
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import Spinner from '../../components/Spinner.astro';
+import Icon from '../../components/Icon.astro';
+import { segmentTitle } from '../../utils/title';
+
+const destination = '/';
+const title = 'Redirecting...';
+const message = 'Thank you for your patience.';
+const segments = segmentTitle(title);
+---
+
+<SiteLayout description={message} redirectTo={destination} fillHeight>
+  <div class="page-redirect">
+    <div class="redirect-content">
+      <Spinner />
+      <p class="redirect-title">
+        {
+          segments.map((segment) =>
+            segment.small ? <span class="small-caps">{segment.text}</span> : segment.text,
+          )
+        }
+      </p>
+      <p class="redirect-message">{message}</p>
+      {
+        /* The visitor is not meant to need this, but it is the way out if the
+          bounce never happens: no script and a refresh meta the browser
+          ignored, or a crawler reading the page. */
+      }
+      <a class="back-button" href={destination}>
+        <Icon name="chevron-back" size={12} />
+        Back to Home Page
+      </a>
+    </div>
+  </div>
+</SiteLayout>

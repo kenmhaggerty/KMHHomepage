@@ -1,0 +1,48 @@
+---
+/**
+ * A small turning ring, for a page that is only ever passing through and has
+ * nothing of its own to show while it does (see /work).
+ *
+ * The class is `spinner-ring` and not `spinner` because global.css already
+ * owns that name, for the image viewer's indicator, which ships `display:
+ * none` until the lightbox turns it on. Scoping does not save a component
+ * from that: the scoped rule outranks the global one only on the properties
+ * it declares, and `display` is not one of them, so a ring called `spinner`
+ * inherits the `none` and never paints.
+ *
+ * Decorative, so it is hidden from assistive tech: the text beside it is
+ * what says the page is going somewhere.
+ */
+---
+
+<div class="spinner-ring" aria-hidden="true"></div>
+
+<style>
+  /* Themed rather than fixed. The ring sits on the card's well, which is
+     near-white in light and near-black in dark, so one hard-coded grey would
+     be invisible against one of the two. */
+  .spinner-ring {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--color-chip-border);
+    border-top-color: var(--color-text-muted);
+    border-radius: 50%;
+  }
+
+  /* Guarded like every other animation here. Stood still the ring still
+     reads as a waiting mark, and the gap it fills is a blink either way. */
+  @media (prefers-reduced-motion: no-preference) {
+    .spinner-ring {
+      /* Astro scopes selectors but leaves @keyframes names global, so this
+         one is namespaced by hand -- a plain `spin` is a name anything else
+         could claim, and the last one parsed would win for everybody. */
+      animation: spinner-ring-turn 850ms ease-in-out infinite;
+    }
+  }
+
+  @keyframes spinner-ring-turn {
+    to {
+      transform: rotate(1turn);
+    }
+  }
+</style>

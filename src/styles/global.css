@@ -1571,7 +1571,8 @@ html[data-viewport='mobile'] .page-project .hscroll {
 }
 
 /* Faux small caps like the site title, at the section-title size. */
-.not-found-title {
+.not-found-title,
+.redirect-title {
   margin: 2px 0 4px;
   font-size: 16px;
   font-weight: 600;
@@ -1579,12 +1580,56 @@ html[data-viewport='mobile'] .page-project .hscroll {
   line-height: normal;
 }
 
-.not-found-title .small-caps {
+.not-found-title .small-caps,
+.redirect-title .small-caps {
   font-size: 14px;
 }
 
 .not-found-message {
   margin: 0 0 24px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: normal;
+}
+
+/* ----------------------------------------------------------- redirect page */
+
+/* The same well as the 404: the card opts out of hugging its content
+   (fillHeight), this takes whatever height is left under the header, and
+   centres the group in it on both axes. Keyed to the page rather than
+   shared with .page-not-found because the two only agree by coincidence --
+   that one is a destination, and this is a page nobody should see for long,
+   which is why a turning ring belongs on it and not on that one. */
+.page-redirect {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  background: var(--color-inset-bg);
+}
+
+.redirect-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Where the ring sits, rather than what it looks like: the component owns its
+   own size, colour and spin, and the page it lands on owns the room around
+   it. Roughly the space the 404's glyph takes above its title, so the two
+   pages read as the same furniture. */
+.redirect-content .spinner-ring {
+  margin-bottom: 14px;
+}
+
+/* The message and the way out are one group, so the gap is between them
+   rather than below the link, and the group stays centred. */
+.redirect-message {
+  margin: 0 0 16px;
   font-size: 13px;
   font-weight: 500;
   line-height: normal;

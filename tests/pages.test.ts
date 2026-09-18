@@ -5,6 +5,7 @@ import Index from '../src/pages/index.astro';
 import Resume from '../src/pages/resume.astro';
 import NotFound from '../src/pages/404.astro';
 import ProjectPage, { getStaticPaths } from '../src/pages/work/[slug].astro';
+import WorkRedirect from '../src/pages/work/index.astro';
 import { getCaseStudy, siteInfo } from '../src/data/site';
 import htaccess from '../public/.htaccess?raw';
 
@@ -321,24 +322,85 @@ describe('/work redirect', () => {
   /* /work only exists as /work/<slug>: there is no index for the bare path,
      so Apache found the directory, had nothing to list, and returned 403
      rather than the site's own 404 (that page is wired up above, but only
-     for a missing file -- an empty listing never reaches it). The redirect
-     makes Astro emit an actual /work/index.html, which resolves both: the
-     request now finds a file, and it lands on the page that lists the same
-     case studies /work/<slug> opens. */
-  it('sends the bare path back to the page that links every case study', async () => {
-    // Read as source rather than imported and executed, like the .htaccess
-    // checks above -- astro.config.mjs pulls in the whole of 'astro/config'
-    // to run, which a test has no reason to load just to read one object.
-    const { default: source } = await import('../astro.config.mjs?raw');
-    const redirects = source.match(/redirects:\s*{([^}]*)}/)?.[1] ?? '';
-    expect(redirects).toMatch(/['"]\/work['"]\s*:\s*['"]\/['"]/);
+     for a missing file -- an empty listing never reaches it). A page at
+     /work resolves both: the request now finds a file, and it lands on the
+     page that lists the same case studies /work/<slug> opens. */
+  it('bounces to the page that links every case study', async () => {
+    const html = await render(WorkRedirect);
+    // The script is what runs; replace() leaves no history entry, so Back
+    // from the home page does not land here and bounce forward again.
+    expect(html).toContain('location.replace("/")');
+    // The meta is the fallback with no script, and what a crawler reads.
+    expect(html).toContain('<meta http-equiv="refresh" content="0;url=/">');
+  });
+
+  it('leaves before painting, on the connection where that is possible', async () => {
+    /* Whichever fires first has to come before the work: the fonts, the
+       schemas and the theme script are all wasted on a page being left, and
+       on a fast connection none of it should ever reach the screen. */
+    const html = await render(WorkRedirect);
+    const bounce = html.indexOf('location.replace');
+    expect(bounce).toBeGreaterThan(-1);
+    for (const later of ['rel="preload"', 'application/ld+json', 'localStorage']) {
+      expect(html.indexOf(later), `${later} comes before the bounce`).toBeGreaterThan(bounce);
+    }
+  });
+
+  it('keeps itself out of the index, and points at the destination instead', async () => {
+    /* A bouncing page is not a page to rank. Left indexable it would compete
+       with the home page on the home page's own content, and the canonical
+       has to name where the visitor ends up, not where they knocked. */
+    const html = await render(WorkRedirect);
+    expect(html).toContain('<meta name="robots" content="noindex">');
+    expect(html).toContain('rel="canonical" href="https://www.kenmhaggerty.com/"');
+  });
+
+  it('wears the site chrome, for the slow connection where it is seen', async () => {
+    // The whole point of a page here rather than a `redirects` entry: what
+    // Astro emits for that is unstyled, and the bounce can be slow enough
+    // to read. Header, footer and the stylesheet all come with the layout.
+    const html = await render(WorkRedirect);
+    expect(html).toContain('class="site-title"');
+    expect(html).toContain('class="site-external-links"');
+    expect(html).toContain('Ken M. Haggerty © 2026');
+    expect(html).toContain('class="page-redirect"');
+  });
+
+  it('offers a link out, since the bounce is what might not happen', async () => {
+    const html = await render(WorkRedirect);
+    expect(html).toMatch(/<a class="back-button" href="\/"/);
+  });
+
+  it('turns a ring while it waits, under a name global.css has not claimed', async () => {
+    /* The ring is the one thing on the page that says it is working. It was
+       called `spinner` to begin with and never painted: global.css owns that
+       class for the image viewer's indicator, which ships `display: none`
+       until the lightbox turns it on, and a scoped rule outranks the global
+       one only on the properties it declares -- `display` not among them.
+       So the class has to stay off that name, and this is what says so. */
+    const html = await render(WorkRedirect);
+    expect(html).toContain('spinner-ring');
+    expect(html, 'the ring is back on the lightbox-only class').not.toMatch(/class="spinner[" ]/);
+    // Decorative: the text beside it is what announces the wait.
+    expect(html).toMatch(/<div class="spinner-ring"[^>]*aria-hidden="true"/);
   });
 
   it('does not shadow a real case study route', () => {
-    // getStaticPaths never emits an empty slug, so nothing here can collide
-    // with the redirect once Astro builds /work/index.html for it.
+    // getStaticPaths never emits an empty slug, so nothing there can collide
+    // with the /work/index.html this page builds.
     const paths = getStaticPaths();
     expect(paths.every(({ params }) => params.slug.length > 0)).toBe(true);
+  });
+
+  it('is a page, not a config redirect, so the two cannot both claim /work', async () => {
+    /* Astro would have to choose between them, and the config would win
+       silently -- putting the unstyled markup back without touching this
+       page. Read as source rather than imported: astro.config.mjs pulls in
+       the whole of 'astro/config' to run. */
+    const { default: source } = await import('../astro.config.mjs?raw');
+    expect(source).not.toMatch(/redirects:/);
+    const pages = import.meta.glob('../src/pages/**/*.astro');
+    expect(Object.keys(pages)).toContain('../src/pages/work/index.astro');
   });
 });
 
