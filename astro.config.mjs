@@ -5,6 +5,17 @@ import react from '@astrojs/react';
 // https://astro.build/config
 export default defineConfig({
   integrations: [react()],
+  /*
+   * /work only exists as /work/<slug> -- there is no index for the bare
+   * path, so Apache found the directory, had nothing to list, and returned
+   * 403 rather than a 404 (which only /404.html is wired up for; see
+   * public/.htaccess). This builds an actual /work/index.html that bounces
+   * to /, which resolves both: the request now finds a file, and it lands
+   * back on the page that lists the same case studies /work/<slug> opens.
+   */
+  redirects: {
+    '/work': '/',
+  },
   build: {
     /*
      * Astro's default only inlines a stylesheet under 4kB and links the rest.

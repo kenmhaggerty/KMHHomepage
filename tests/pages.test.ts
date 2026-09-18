@@ -317,6 +317,31 @@ describe('Apache 404 configuration', () => {
   });
 });
 
+describe('/work redirect', () => {
+  /* /work only exists as /work/<slug>: there is no index for the bare path,
+     so Apache found the directory, had nothing to list, and returned 403
+     rather than the site's own 404 (that page is wired up above, but only
+     for a missing file -- an empty listing never reaches it). The redirect
+     makes Astro emit an actual /work/index.html, which resolves both: the
+     request now finds a file, and it lands on the page that lists the same
+     case studies /work/<slug> opens. */
+  it('sends the bare path back to the page that links every case study', async () => {
+    // Read as source rather than imported and executed, like the .htaccess
+    // checks above -- astro.config.mjs pulls in the whole of 'astro/config'
+    // to run, which a test has no reason to load just to read one object.
+    const { default: source } = await import('../astro.config.mjs?raw');
+    const redirects = source.match(/redirects:\s*{([^}]*)}/)?.[1] ?? '';
+    expect(redirects).toMatch(/['"]\/work['"]\s*:\s*['"]\/['"]/);
+  });
+
+  it('does not shadow a real case study route', () => {
+    // getStaticPaths never emits an empty slug, so nothing here can collide
+    // with the redirect once Astro builds /work/index.html for it.
+    const paths = getStaticPaths();
+    expect(paths.every(({ params }) => params.slug.length > 0)).toBe(true);
+  });
+});
+
 describe('Share card metadata', () => {
   it('gives the work page the card copy from site-info', async () => {
     const html = await render(Index);
