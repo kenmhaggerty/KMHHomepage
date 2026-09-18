@@ -1,10 +1,18 @@
 ---
 import ChangelogModal from './ChangelogModal.astro';
+import IconLink from './IconLink.astro';
 import { siteInfo, version } from '../data/site';
 ---
 
 <footer class="site-footer">
-  <p class="site-copyright">{siteInfo.footer}</p>
+  <p class="site-external-links">
+    {
+      siteInfo.footer.links.map((link) => (
+        <IconLink url={link.url} icon={link.icon} tooltip={link.tooltip} />
+      ))
+    }
+  </p>
+  <p class="site-copyright">{siteInfo.footer.text}</p>
   <p class="site-version">
     {
       /* A button rather than a clickable <p>: this opens something, so it has to

@@ -44,6 +44,16 @@ html[data-theme='dark'] {
   --color-url-bg: #262626;
   --color-url-bg-hover: #303030;
 
+  /* The footer's link discs sit on the page, so they step up from it the way
+     the card does rather than staying white, which would read as six lamps
+     under the footer. They lift again on hover, and the mark gains contrast
+     instead of losing it -- what "darker on hover" comes to on a dark ground.
+     Both marks clear 4.5:1 on the disc they are painted on. */
+  --color-icon-link-bg: #1e1e1e;
+  --color-icon-link-bg-hover: #262626;
+  --color-icon-link-mark: #9e9e9e;
+  --color-icon-link-mark-hover: #b5b5b5;
+
   --color-skeleton: #262626;
   --color-skeleton-sheen: #303030;
 
@@ -61,6 +71,7 @@ html[data-theme='dark'] {
   --color-overlay-outer: rgba(34, 34, 34, 0.6);
   --color-overlay-base: rgba(18, 18, 18, 0.9);
 
+  --shadow-icon: 0px 1px 2px rgba(0, 0, 0, 0.6);
   --shadow-card: 0px 2px 8px rgba(0, 0, 0, 0.55);
   --shadow-panel: 0px 0px 12px rgba(0, 0, 0, 0.6);
   --shadow-toggle: 0px 1px 3px rgba(0, 0, 0, 0.6);

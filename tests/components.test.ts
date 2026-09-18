@@ -6,12 +6,21 @@ import SiteFooter from '../src/components/SiteFooter.astro';
 import ViewportToggle from '../src/components/ViewportToggle.astro';
 import DarkModeToggle from '../src/components/DarkModeToggle.astro';
 import Icon from '../src/components/Icon.astro';
+import IconLink from '../src/components/IconLink.astro';
 import LinkUrl from '../src/components/LinkUrl.astro';
 import Section from '../src/components/Section.astro';
 import ImageLightbox from '../src/components/ImageLightbox.astro';
 import ChangelogModal from '../src/components/ChangelogModal.astro';
 import CaseStudyPanel from '../src/components/CaseStudyPanel.astro';
-import { getCaseStudy } from '../src/data/site';
+import { getCaseStudy, siteInfo, svgIconSource } from '../src/data/site';
+import { inlineSvg } from '../src/utils/svgIcon';
+
+/** The `d` of the first path in some inlined markup, to match against. */
+function firstPathData(content: string): string {
+  const data = content.match(/d="[^"]+"/)?.[0];
+  expect(data, 'inlined markup has no path').toBeTruthy();
+  return data ?? '';
+}
 
 async function render(component: Parameters<AstroContainer['renderToString']>[0], options = {}) {
   const container = await AstroContainer.create();
@@ -72,6 +81,106 @@ describe('SiteFooter', () => {
   it('carries the changelog modal, so the button has something to open', async () => {
     const html = await render(SiteFooter);
     expect(html).toContain('data-changelog');
+  });
+
+  it('renders one external link per entry in site-info.json, in that order', async () => {
+    const html = await render(SiteFooter);
+    expect(html.match(/class="icon-link"/g)).toHaveLength(siteInfo.footer.links.length);
+    const positions = siteInfo.footer.links.map((link) => html.indexOf(`href="${link.url}"`));
+    expect(positions).not.toContain(-1);
+    expect([...positions].sort((a, b) => a - b)).toEqual(positions);
+  });
+
+  it('opens each link in a new tab, named by its tooltip', async () => {
+    const html = await render(SiteFooter);
+    for (const link of siteInfo.footer.links) {
+      const anchor = html.match(new RegExp(`<a[^>]*href="${link.url}"[^>]*>`))?.[0] ?? '';
+      expect(anchor, `no anchor for ${link.url}`).not.toBe('');
+      expect(anchor).toContain('target="_blank"');
+      // Without noopener the opened tab can reach back into this one.
+      expect(anchor).toContain('rel="noopener noreferrer"');
+      // title is the tooltip; aria-label is the same text, because the icon
+      // alone carries the meaning of the link.
+      expect(anchor).toContain(`title="${link.tooltip}"`);
+      expect(anchor).toContain(`aria-label="${link.tooltip}"`);
+    }
+  });
+
+  /* The footer also carries the changelog modal, whose close button is an
+     Icon -- so the row of links has to be cut out before counting glyphs. */
+  async function renderExternalLinks(): Promise<string> {
+    const html = await render(SiteFooter);
+    const row = html.match(/<p class="site-external-links"[^>]*>[\s\S]*?<\/p>/)?.[0];
+    expect(row, 'no external links row in the footer').toBeTruthy();
+    return row ?? '';
+  }
+
+  it('inlines every icon the data names, so each one takes the link colour', async () => {
+    const row = await renderExternalLinks();
+    // Slugs and local files land in the same <svg>, and fill="currentColor"
+    // is what lets one CSS rule grey them all and darken them on hover.
+    expect(row.match(/<svg class="icon"[^>]*fill="currentColor"/g)).toHaveLength(
+      siteInfo.footer.links.length,
+    );
+    // Read from the package and the file rather than pasted in, so swapping
+    // an icon out is not a test to rewrite.
+    const { siGithub } = await import('simple-icons');
+    expect(row).toContain(`d="${siGithub.path}"`);
+    const linkedin = inlineSvg(svgIconSource('linkedin.svg'));
+    expect(row).toContain(`viewBox="${linkedin.viewBox}"`);
+    expect(row).toContain(firstPathData(linkedin.content));
+  });
+
+  it('leaves no hard-coded fill on an icon read from a file', async () => {
+    const row = await renderExternalLinks();
+    // A fill of its own would outrank the <svg>'s currentColor, and the mark
+    // would stay black in both themes. linkedin.svg ships with one.
+    const svgs = row.match(/<svg class="icon"[\s\S]*?<\/svg>/g) ?? [];
+    expect(svgs).toHaveLength(siteInfo.footer.links.length);
+    for (const svg of svgs) {
+      expect(svg.match(/fill="[^"]*"/g)).toEqual(['fill="currentColor"']);
+    }
+  });
+});
+
+describe('IconLink', () => {
+  const url = 'https://example.com/profile';
+  const linkedin = inlineSvg(svgIconSource('linkedin.svg'));
+
+  it('renders a Simple Icons slug as one path', async () => {
+    const html = await render(IconLink, {
+      props: { url, tooltip: 'GitHub', icon: { simpleIcon: 'github' } },
+    });
+    expect(html).toContain('viewBox="0 0 24 24"');
+    expect(html.match(/<path/g)).toHaveLength(1);
+  });
+
+  it('fails the build on a slug Simple Icons does not have', async () => {
+    await expect(
+      render(IconLink, { props: { url, tooltip: 'Nope', icon: { simpleIcon: 'notareal' } } }),
+    ).rejects.toThrow(/notareal/);
+  });
+
+  it('inlines a local SVG at the scale its own viewBox sets', async () => {
+    const html = await render(IconLink, {
+      props: { url, tooltip: 'LinkedIn', icon: { svg: 'linkedin.svg' } },
+    });
+    // The file's own viewBox, whatever it is: its path data is drawn against
+    // that, so an assumed 24-square would render the glyph at the wrong size.
+    expect(html).toContain(`viewBox="${linkedin.viewBox}"`);
+    // The file is drawn at its own size and wrapped in a prolog and a
+    // doctype; the page gets the shapes at the size asked for, and nothing
+    // else. One <svg>, ours -- the file's root is not nested inside it.
+    expect(html).toContain('width="16"');
+    expect(html).not.toContain('<?xml');
+    expect(html).not.toContain('DOCTYPE');
+    expect(html.match(/<svg/g)).toHaveLength(1);
+  });
+
+  it('fails the build on an SVG that is not in src/assets/icons', async () => {
+    await expect(
+      render(IconLink, { props: { url, tooltip: 'Nope', icon: { svg: 'not-a-real-icon.svg' } } }),
+    ).rejects.toThrow(/not-a-real-icon\.svg/);
   });
 });
 

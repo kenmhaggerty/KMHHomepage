@@ -1,0 +1,76 @@
+---
+/**
+ * One icon in the footer's row of external links.
+ *
+ * The glyph comes from whichever shape the entry's `icon` carries: a Simple
+ * Icons slug, or a local SVG file. Both are inlined into one <svg> that takes
+ * `currentColor`, so a single CSS rule colours every icon the footer has.
+ */
+import type { SimpleIcon } from 'simple-icons';
+import * as simpleIcons from 'simple-icons';
+import type { SimpleIconInfo, SvgIconInfo } from '../types';
+import { svgIconSource } from '../data/site';
+import { inlineSvg } from '../utils/svgIcon';
+
+interface Props {
+  url: string;
+  icon: SimpleIconInfo | SvgIconInfo;
+  tooltip: string;
+  size?: number;
+}
+
+const { url, icon, tooltip, size = 16 } = Astro.props;
+
+/*
+ * simple-icons exports every mark as `si` + its capitalised slug. The lookup
+ * has to be by name because the slug comes from the JSON, so a typo there
+ * would otherwise render an empty <svg>; this fails the build instead.
+ */
+const simpleIconsByExport = simpleIcons as unknown as Record<string, SimpleIcon | undefined>;
+
+function simpleIconPath(slug: string): string {
+  const mark = simpleIconsByExport[`si${slug.charAt(0).toUpperCase()}${slug.slice(1)}`];
+  if (!mark) {
+    throw new Error(`No Simple Icon with the slug "${slug}"`);
+  }
+  return mark.path;
+}
+
+/*
+ * Simple Icons are all drawn on a 24-square; a local file brings its own
+ * viewBox, because it was drawn wherever it was drawn.
+ */
+const localSvg = 'svg' in icon ? inlineSvg(svgIconSource(icon.svg)) : null;
+const glyphPath = 'simpleIcon' in icon ? simpleIconPath(icon.simpleIcon) : null;
+const viewBox = localSvg?.viewBox ?? '0 0 24 24';
+---
+
+{
+  /* The tooltip is also the accessible name: the icon carries the whole
+    meaning of the link, so aria-hidden on the glyph and the label here leave
+    one announcement rather than two. */
+}
+<a
+  class="icon-link"
+  href={url}
+  target="_blank"
+  rel="noopener noreferrer"
+  title={tooltip}
+  aria-label={tooltip}
+>
+  <svg
+    class="icon"
+    width={size}
+    height={size}
+    viewBox={viewBox}
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    {
+      /* A slug contributes one path; a file contributes its own markup,
+        already stripped of the fills it hard-coded. Both are repo files
+        read at build time, never anything a visitor can reach. */
+    }
+    {glyphPath ? <path d={glyphPath} /> : <Fragment set:html={localSvg?.content ?? ''} />}
+  </svg>
+</a>

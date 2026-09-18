@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { about, caseStudies, getCaseStudy, imageAsset, siteInfo } from '../src/data/site';
+import {
+  about,
+  caseStudies,
+  getCaseStudy,
+  imageAsset,
+  siteInfo,
+  svgIconSource,
+} from '../src/data/site';
 
 /*
  * Names only -- the glob is lazy, so nothing here decodes an icon. The project
@@ -15,7 +22,7 @@ describe('siteInfo', () => {
     expect(siteInfo.title).toBe('Ken M. Haggerty');
     expect(siteInfo.description).toMatch(/building software/);
     expect(siteInfo.owner.name).toBe('Ken M. Haggerty');
-    expect(siteInfo.footer).toMatch(/Ken M\. Haggerty/);
+    expect(siteInfo.footer.text).toMatch(/Ken M\. Haggerty/);
   });
 
   it('names every icon the head links to', () => {
@@ -200,5 +207,40 @@ describe('imageAsset', () => {
         expect(() => imageAsset(item.full_res)).not.toThrow();
       }
     }
+  });
+});
+
+describe('siteInfo.footer.links', () => {
+  it('gives every link a tooltip and an absolute URL', () => {
+    // The icon is the whole of the link -- there is no text beside it -- so
+    // the tooltip is also its accessible name, and has to be there. That
+    // there is an icon at all is the union's job, not this one's.
+    expect(siteInfo.footer.links.length).toBeGreaterThan(0);
+    for (const link of siteInfo.footer.links) {
+      expect(link.tooltip.trim().length, `${link.url} has no tooltip`).toBeGreaterThan(0);
+      expect(link.url, `${link.url} is not an absolute https URL`).toMatch(/^https:\/\//);
+    }
+  });
+
+  it('names a Simple Icon that exists, for each slug', async () => {
+    // A missing slug fails the build; this says which one, and why.
+    const icons = (await import('simple-icons')) as unknown as Record<string, unknown>;
+    for (const { icon } of siteInfo.footer.links) {
+      if (!('simpleIcon' in icon)) continue;
+      const slug = icon.simpleIcon;
+      const exportName = `si${slug.charAt(0).toUpperCase()}${slug.slice(1)}`;
+      expect(icons[exportName], `simple-icons has no "${slug}"`).toBeDefined();
+    }
+  });
+
+  it('resolves every local icon file it names', () => {
+    for (const { icon } of siteInfo.footer.links) {
+      if ('simpleIcon' in icon) continue;
+      expect(() => svgIconSource(icon.svg)).not.toThrow();
+    }
+  });
+
+  it('throws on an icon filename with no matching file', () => {
+    expect(() => svgIconSource('not-a-real-icon.svg')).toThrow(/not-a-real-icon\.svg/);
   });
 });

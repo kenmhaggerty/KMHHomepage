@@ -29,7 +29,53 @@
             "https://www.instapaper.com/p/4963954"
         ]
     },
-    "footer": "Ken M. Haggerty © 2026",
+    "footer": {
+        "text": "Ken M. Haggerty © 2026",
+        "links": [
+            {
+                "icon": {
+                    "svg": "linkedin.svg"
+                },
+                "tooltip": "LinkedIn",
+                "url": "https://www.linkedin.com/in/kenmhaggerty"
+            },
+            {
+                "icon": {
+                    "simpleIcon": "github"
+                },
+                "tooltip": "GitHub",
+                "url": "https://github.com/kenmhaggerty"
+            },
+            {
+                "icon": {
+                    "simpleIcon": "instapaper"
+                },
+                "tooltip": "Instapaper",
+                "url": "https://www.instapaper.com/p/4963954"
+            },
+            {
+                "icon": {
+                    "simpleIcon": "letterboxd"
+                },
+                "tooltip": "Letterboxd",
+                "url": "https://letterboxd.com/kenmhaggerty/"
+            },
+            {
+                "icon": {
+                    "simpleIcon": "bluesky"
+                },
+                "tooltip": "Bluesky",
+                "url": "https://bsky.app/profile/kenmhaggerty.bsky.social"
+            },
+            {
+                "icon": {
+                    "simpleIcon": "instagram"
+                },
+                "tooltip": "Instagram",
+                "url": "https://www.instagram.com/kenmhaggerty"
+            }
+        ]
+    },
     "url": "https://www.kenmhaggerty.com",
     "google": {
         "title": "Ken M. Haggerty | Product Lead + Software Developer",

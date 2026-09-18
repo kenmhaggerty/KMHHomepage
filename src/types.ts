@@ -6,6 +6,29 @@ export interface OwnerInfo {
   links: string[];
 }
 
+/** Object type for Simple Icon. */
+export interface SimpleIconInfo {
+  simpleIcon: string;
+}
+
+/** Object type for SVG icon. */
+export interface SvgIconInfo {
+  svg: string;
+}
+
+/** Info used for each icon link in site footer. */
+export interface IconLink {
+  icon: SimpleIconInfo | SvgIconInfo;
+  tooltip: string;
+  url: string;
+}
+
+/** Info used inside of site footer. */
+export interface FooterInfo {
+  text: string;
+  links: IconLink[];
+}
+
 /** Site info used when appearing in Google Search results. */
 export interface GoogleSearchInfo {
   title: string;
@@ -45,7 +68,7 @@ export interface SiteInfo {
   description: string;
   /** The site owner, as structured data names them. */
   owner: OwnerInfo;
-  footer: string;
+  footer: FooterInfo;
   /** Production origin, used to make share and canonical URLs absolute. */
   url: string;
   google: GoogleSearchInfo;

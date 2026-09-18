@@ -54,6 +54,15 @@
   --color-url-bg: #f4f4f4;
   --color-url-bg-hover: #ececec;
 
+  /* The footer's external links: a disc, and the mark sitting on it. Its own
+     colours rather than the card's because the disc sits on the page, outside
+     the card, and has to read as lifted off it. The mark clears 4.5:1 on the
+     disc at rest and gains contrast on hover, like the version text. */
+  --color-icon-link-bg: #ffffff;
+  --color-icon-link-bg-hover: #fafafa;
+  --color-icon-link-mark: #707070;
+  --color-icon-link-mark-hover: #666666;
+
   /* Skeleton placeholder: the resting block and the band that sweeps it. */
   --color-skeleton: #ececec;
   --color-skeleton-sheen: #f4f4f4;
@@ -75,6 +84,7 @@
   --color-overlay-outer: rgba(238, 238, 238, 0.5);
   --color-overlay-base: rgba(255, 255, 255, 0.9);
 
+  --shadow-icon: 0px 1px 2px rgba(0, 0, 0, 0.12);
   --shadow-card: 0px 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-panel: 0px 0px 12px rgba(0, 0, 0, 0.12);
   --shadow-toggle: 0px 1px 3px rgba(0, 0, 0, 0.25);
@@ -194,6 +204,41 @@ html[data-viewport='mobile'] .card {
   font-size: 13px;
   line-height: 1.5;
   white-space: nowrap;
+}
+
+/* The row of external links. A <p> like its neighbours, so it keeps the
+   footer's own rhythm, but laid out as a row of icons rather than text. */
+.site-external-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 16px;
+}
+
+/* Every icon sits at the weight the version text rests at, and gains a little
+   contrast on hover -- darker against light, brighter against dark, which is
+   what "darker" amounts to once the ground is inverted. Both inline shapes,
+   the Simple Icons marks and the local files, are one <svg> taking
+   `currentColor`, so this one declaration colours the lot. */
+.icon-link {
+  display: flex;
+  color: var(--color-icon-link-mark);
+  background: var(--color-icon-link-bg);
+  border-radius: 50%;
+  padding: 8px;
+  filter: drop-shadow(var(--shadow-icon));
+}
+
+.icon-link:hover {
+  color: var(--color-icon-link-mark-hover);
+  background: var(--color-icon-link-bg-hover);
+  transition: all 60ms ease-out;
+}
+
+.icon-link:focus-visible {
+  outline: 1px solid var(--color-text-soft);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 .site-copyright {

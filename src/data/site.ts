@@ -55,3 +55,31 @@ export function imageAsset(filename: string): ImageMetadata {
   }
   return image;
 }
+
+/*
+ * Footer link icons with no Simple Icon to fall back on, globbed as source
+ * text rather than as assets: site-info.json names them as bare filenames,
+ * and an SVG is inlined into the page so its glyph can take the link's
+ * colour, which it could not as the src of an <img>.
+ */
+const svgIconModules = import.meta.glob<string>('../assets/icons/*.svg', {
+  eager: true,
+  query: '?raw',
+  import: 'default',
+});
+
+const svgIconsByFilename = new Map(
+  Object.entries(svgIconModules).map(([path, source]) => [
+    path.slice(path.lastIndexOf('/') + 1),
+    source,
+  ]),
+);
+
+/** Reads an SVG icon named by the JSON data, as the file's own markup. */
+export function svgIconSource(filename: string): string {
+  const source = svgIconsByFilename.get(filename);
+  if (!source) {
+    throw new Error(`No SVG icon named "${filename}" in src/assets/icons`);
+  }
+  return source;
+}
