@@ -55,13 +55,6 @@
             },
             {
                 "icon": {
-                    "simpleIcon": "letterboxd"
-                },
-                "tooltip": "Letterboxd",
-                "url": "https://letterboxd.com/kenmhaggerty/list/my-favorite-films/"
-            },
-            {
-                "icon": {
                     "simpleIcon": "bluesky"
                 },
                 "tooltip": "Bluesky",
@@ -73,6 +66,13 @@
                 },
                 "tooltip": "Instagram",
                 "url": "https://www.instagram.com/kenmhaggerty"
+            },
+            {
+                "icon": {
+                    "simpleIcon": "letterboxd"
+                },
+                "tooltip": "Letterboxd",
+                "url": "https://letterboxd.com/kenmhaggerty/list/my-favorite-films/"
             }
         ]
     },
