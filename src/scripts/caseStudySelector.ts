@@ -7,6 +7,13 @@
  * to: on the trigger again, on Escape (handing focus back to the trigger, so
  * the keyboard is not left on a hidden link), on a press anywhere outside it,
  * and when the focus tabs out of it.
+ *
+ * Not loaded as a module: CaseStudySelector.astro writes this function's own
+ * source into the page right after the selector, so it works before the
+ * site's script bundle arrives. It must therefore stay self-contained --
+ * anything it uses has to be declared inside it, since an import or a
+ * module-level constant would not exist on the page. A test runs the inlined
+ * copy in a bare page to hold it to that.
  */
 export function initCaseStudySelector(doc: Document): void {
   const root = doc.querySelector<HTMLElement>('[data-cs-selector]');

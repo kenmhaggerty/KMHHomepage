@@ -127,3 +127,33 @@ describe('initCaseStudySelector', () => {
     expect(() => initCaseStudySelector(document)).not.toThrow();
   });
 });
+
+describe('the copy inlined into the page', () => {
+  /* CaseStudySelector.astro writes this function's source into the page --
+     `(${initCaseStudySelector.toString()})(document);` -- so the selector works
+     before the site's script bundle arrives. That copy is only correct while
+     the function is self-contained: a name it borrowed from its module would
+     not exist on the page. So the same string is run here inside a fresh
+     iframe, whose global scope has nothing from the module in it. */
+  it('works on its own, with nothing from its module around it', () => {
+    const frame = document.createElement('iframe');
+    document.body.appendChild(frame);
+    const view = frame.contentWindow as Window & typeof globalThis;
+    const doc = frame.contentDocument!;
+    doc.body.innerHTML = `
+      <div data-cs-selector>
+        <h2><button type="button" data-cs-selector-trigger aria-expanded="false">Case Studies</button></h2>
+        <ul data-cs-selector-menu hidden><li><a href="/work/gfm">GFM</a></li></ul>
+      </div>`;
+
+    view.eval(`(${initCaseStudySelector.toString()})(document);`);
+
+    const button = doc.querySelector<HTMLButtonElement>('[data-cs-selector-trigger]')!;
+    const list = doc.querySelector<HTMLElement>('[data-cs-selector-menu]')!;
+    button.click();
+    expect(list.hidden).toBe(false);
+    expect(button.getAttribute('aria-expanded')).toBe('true');
+    button.click();
+    expect(list.hidden).toBe(true);
+  });
+});

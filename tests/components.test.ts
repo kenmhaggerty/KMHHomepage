@@ -374,6 +374,19 @@ describe('Section', () => {
 });
 
 describe('CaseStudySelector', () => {
+  it('carries its own script, right after the list, so it works before the bundle', async () => {
+    /* On a slow connection the site's bundle arrives seconds after the
+       heading is on screen; inline, the selector is live as soon as its markup
+       is parsed. The copy is the tested function itself (see
+       caseStudySelector.dom.test.ts, which runs it in a bare page). */
+    const html = await render(CaseStudySelector);
+    const inline = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+    expect(inline).toHaveLength(1);
+    expect(inline[0][1]).toMatch(/^\(function initCaseStudySelector\(doc\)/);
+    expect(inline[0][1].trimEnd()).toMatch(/\)\(document\);$/);
+    expect(inline[0].index).toBeGreaterThan(html.indexOf('</ul>'));
+  });
+
   it('keeps the heading, with the trigger inside it wired to the list it opens', async () => {
     const html = await render(CaseStudySelector);
     // A heading still, so the page outline keeps its Case Studies section.

@@ -12,8 +12,26 @@
 import Icon from './Icon.astro';
 import { caseStudies } from '../data/site';
 import { displayYear } from '../utils/caseStudies';
+import { initCaseStudySelector } from '../scripts/caseStudySelector';
 
 const MENU_ID = 'case-study-selector-menu';
+
+/*
+ * The script that opens the list is written into the page right after the
+ * list, not left to the site's bundle. That bundle is a module at the end of
+ * the document: it is only found once all the HTML has arrived, downloads
+ * alongside the fonts and the first images, and runs only after the page has
+ * finished parsing -- so on a slow connection the heading sat on screen for
+ * seconds before a tap did anything. Inline, it runs the moment the markup
+ * above exists, with nothing to download.
+ *
+ * It is the tested function itself, as the build compiled it, rather than a
+ * second copy kept in step by hand. That only works while the function stays
+ * self-contained -- reaching for anything outside its own body would be a
+ * name the page does not have -- which a test checks by running this exact
+ * script in a fresh page.
+ */
+const inlineInit = `(${initCaseStudySelector.toString()})(document);`;
 ---
 
 <div class="cs-selector" data-cs-selector>
@@ -49,4 +67,5 @@ const MENU_ID = 'case-study-selector-menu';
       ))
     }
   </ul>
+  <script is:inline set:html={inlineInit} />
 </div>

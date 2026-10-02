@@ -242,7 +242,6 @@ const personSchema = {
       import { initViewportMode } from '../scripts/viewportMode';
       import { initGalleryScrollbars } from '../scripts/galleryScrollbar';
       import { initCaseStudyFilters } from '../scripts/caseStudyFilters';
-      import { initCaseStudySelector } from '../scripts/caseStudySelector';
       import { initPanelHover } from '../scripts/panelHover';
       import { initThemeMode } from '../scripts/themeMode';
       import { initImageLightbox } from '../scripts/imageLightbox';
@@ -252,7 +251,10 @@ const personSchema = {
       initThemeMode(document, window);
       initViewportMode(document, window);
       initCaseStudyFilters(document);
-      initCaseStudySelector(document);
+      // The Case Studies selector is not started here: it runs inline, right
+      // after its own markup, so it works before this bundle has arrived (see
+      // CaseStudySelector.astro). Starting it here as well would wire every
+      // click to two toggles that cancel out.
       initGalleryScrollbars(document, window);
       initPanelHover(document);
       initImageLightbox(document);
