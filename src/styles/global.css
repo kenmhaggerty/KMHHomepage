@@ -1495,9 +1495,14 @@ html[data-viewport='mobile'] .cs-header .chip {
 }
 
 /* The fill is on the label, as in the nav, but the whole button is the
-   control: hovering the chevron lights the label too. */
-.cs-selector-trigger:hover .cs-selector-label {
-  background: var(--color-nav-hover-bg);
+   control: hovering the chevron lights the label too. Only where there is a
+   real pointer to hover with: a touchscreen applies :hover on a tap and keeps
+   it until the next tap elsewhere, which left the fill stuck on after the
+   list was opened -- and, since this button stays on the page, closed. */
+@media (hover: hover) {
+  .cs-selector-trigger:hover .cs-selector-label {
+    background: var(--color-nav-hover-bg);
+  }
 }
 
 /* Drawn in the design at #999999, which is 2.9:1 against the card and short
