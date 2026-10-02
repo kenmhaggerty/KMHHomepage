@@ -1,5 +1,7 @@
 ---
 import Icon from './Icon.astro';
+import { initImageLightbox, LIGHTBOX_LOADING_CLASS } from '../scripts/imageLightbox';
+import { MODAL_OPEN_CLASS } from '../utils/modal';
 
 /**
  * The viewer for a gallery image, rendered once per page and filled in by
@@ -9,7 +11,21 @@ import Icon from './Icon.astro';
  * and because its ::backdrop is the one thing iOS Safari paints across the
  * whole screen, behind the status bar and the toolbar; see .lightbox in
  * global.css.
+ *
+ * The page puts this at the very top of the body (the layout's `lightbox` slot)
+ * and the script that drives it is written in right after it, rather than left
+ * to the site's bundle. The bundle is a module at the end of the document: on a
+ * slow connection it is the last thing to arrive, and until it has, a gallery
+ * link is only a link -- a click follows it to the file, in a new tab. Up here,
+ * the viewer exists and is wired up before any link does, so a click opens it
+ * whatever else is still loading, and the file starts loading in it. The code
+ * is the tested function itself, as the build compiled it, handed the class
+ * names it should use; see the note on it for why it has to stay
+ * self-contained.
  */
+const inlineInit = `(${initImageLightbox.toString()})(document, ${JSON.stringify(
+  MODAL_OPEN_CLASS,
+)}, ${JSON.stringify(LIGHTBOX_LOADING_CLASS)});`;
 ---
 
 <dialog class="modal lightbox" data-lightbox aria-label="Image viewer">
@@ -27,3 +43,4 @@ import Icon from './Icon.astro';
     <figcaption class="lightbox-caption" data-lightbox-figcaption hidden></figcaption>
   </figure>
 </dialog>
+<script is:inline set:html={inlineInit} />

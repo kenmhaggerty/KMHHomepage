@@ -22,6 +22,18 @@ function structuredData(html: string): Record<string, unknown>[] {
 }
 
 describe('Work page (index)', () => {
+  it('has the viewer and its script in place before the avatar link', async () => {
+    // The same guarantee as on a case study page: see there for why.
+    const html = await render(Index);
+    const dialog = html.indexOf('<dialog class="modal lightbox"');
+    const script = html.indexOf('function initImageLightbox');
+    const avatar = html.indexOf('class="avatar-link"');
+    expect(dialog, 'no viewer on the page').toBeGreaterThan(-1);
+    expect(dialog).toBeLessThan(script);
+    expect(script).toBeLessThan(avatar);
+    expect(dialog).toBeLessThan(html.indexOf('class="viewport"'));
+  });
+
   it('makes the avatar open the portraits in the image viewer, with the caption', async () => {
     const html = await render(Index);
     const [first] = siteInfo.portraits;
@@ -42,7 +54,8 @@ describe('Work page (index)', () => {
     // In a gallery of its own, and with the viewer on the page to open in.
     expect(html).toMatch(/<div class="avatar-frame"[^>]*data-gallery/);
     expect(html).toContain('data-lightbox-figcaption hidden');
-    expect(html.match(/data-lightbox(?![-\w])/g)).toHaveLength(1);
+    // Counted as dialogs: the viewer's own script now names its selector too.
+    expect(html.match(/<dialog[^>]*\sdata-lightbox[\s>]/g)).toHaveLength(1);
   });
 
   it('renders the About Me section and case study panels', async () => {
@@ -135,11 +148,34 @@ describe('Case study image viewer', () => {
     expect(html).toMatch(/href="[^"]*gfm-1\.png[^"]*"[^>]*data-lightbox-open/);
   });
 
+  it('puts the viewer and its script ahead of every link that opens it', async () => {
+    /* A click made while the page is still arriving needs a viewer to open and
+       a script already wired to it. The viewer is the first thing in the body,
+       its script follows, and only then the page -- so there is no moment in
+       which a gallery link exists and the viewer does not. Left at the end of
+       the page, as it was, a click in that window followed the link to the file
+       in a new tab. */
+    const caseStudy = getCaseStudy('gfm')!;
+    const html = await render(ProjectPage, { props: { caseStudy } });
+    const dialog = html.indexOf('<dialog class="modal lightbox"');
+    const script = html.indexOf('function initImageLightbox');
+    const firstLink = html.indexOf('data-lightbox-open');
+    const pageStart = html.indexOf('class="viewport"');
+    expect(dialog, 'no viewer on the page').toBeGreaterThan(-1);
+    expect(dialog).toBeLessThan(script);
+    expect(script).toBeLessThan(firstLink);
+    expect(dialog).toBeLessThan(pageStart);
+    // Once only: a second copy would handle every click twice.
+    expect(html.match(/function initImageLightbox/g)).toHaveLength(1);
+  });
+
   it('renders one overlay for the whole page, not one per image', async () => {
     const caseStudy = getCaseStudy('gfm')!;
     const html = await render(ProjectPage, { props: { caseStudy } });
-    expect(html.match(/data-lightbox(?![-\w])/g)).toHaveLength(1);
-    expect(html.match(/data-lightbox-open/g)!.length).toBe(caseStudy.gallery.length);
+    // Counted as dialogs: the viewer's own script now names its selector too.
+    expect(html.match(/<dialog[^>]*\sdata-lightbox[\s>]/g)).toHaveLength(1);
+    // Counted as links, for the same reason.
+    expect(html.match(/<a\b[^>]*\sdata-lightbox-open/g)!.length).toBe(caseStudy.gallery.length);
   });
 
   it('leaves the work page panels alone, which navigate rather than open images', async () => {

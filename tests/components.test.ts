@@ -236,6 +236,23 @@ describe('ImageLightbox', () => {
     const html = await render(ImageLightbox);
     expect(html).not.toMatch(/<dialog[^>]*\sopen/);
   });
+
+  it('carries its own script, right after the viewer, so a click works before the bundle', async () => {
+    /* The site's bundle is the last thing to load. Until it has, a gallery link
+       is only a link, and a click on it opens the file in a new tab. Written in
+       after the viewer, the script is live as soon as the viewer is parsed. */
+    const html = await render(ImageLightbox);
+    const inline = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+    expect(inline).toHaveLength(1);
+    expect(inline[0].index).toBeGreaterThan(html.indexOf('</dialog>'));
+    // The function itself, compiled to plain JavaScript, called on the document
+    // with the class names the page and the stylesheet share.
+    expect(inline[0][1]).toMatch(
+      /^\(function initImageLightbox\(doc, modalOpenClass, loadingClass\)/,
+    );
+    expect(inline[0][1].trimEnd()).toMatch(/\)\(document, "is-modal-open", "is-loading"\);$/);
+    expect(inline[0][1]).not.toMatch(/querySelector<|: void|: Document|: string/);
+  });
 });
 
 describe('ChangelogModal', () => {

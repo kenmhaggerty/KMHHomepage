@@ -67,5 +67,5 @@ const { caseStudy } = Astro.props;
     </div>
     {caseStudy.sections.map((section) => <Section section={section} />)}
   </div>
-  <ImageLightbox />
+  <ImageLightbox slot="lightbox" />
 </SiteLayout>

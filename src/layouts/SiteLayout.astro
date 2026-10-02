@@ -202,6 +202,15 @@ const personSchema = {
     </script>
   </head>
   <body>
+    {
+      /* The image viewer, for the pages that have one. First in the body on
+        purpose: it is wired up by a script written in right after it, so it has
+        to exist before any link that opens it does -- else a click made while
+        the rest of the page is still arriving finds no viewer and follows the
+        link to the file instead. It is a dialog, closed and out of the layout
+        until opened, so where it sits changes nothing on screen. */
+    }
+    <slot name="lightbox" />
     <div class="viewport">
       <div class="toolbar">
         <DarkModeToggle />
@@ -244,7 +253,6 @@ const personSchema = {
       import { initCaseStudyFilters } from '../scripts/caseStudyFilters';
       import { initPanelHover } from '../scripts/panelHover';
       import { initThemeMode } from '../scripts/themeMode';
-      import { initImageLightbox } from '../scripts/imageLightbox';
       import { initChangelogModal } from '../scripts/changelogModal';
       import { initPanelSkeletons } from '../scripts/panelSkeletons';
 
@@ -257,7 +265,9 @@ const personSchema = {
       // click to two toggles that cancel out.
       initGalleryScrollbars(document, window);
       initPanelHover(document);
-      initImageLightbox(document);
+      // The image viewer is not started here either, for the same reason: it
+      // runs inline, right after its own markup at the top of the body (see
+      // ImageLightbox.astro), so a click opens it before this bundle arrives.
       initChangelogModal(document, window);
       initPanelSkeletons(document);
     </script>

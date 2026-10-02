@@ -1,13 +1,5 @@
-import { MODAL_OPEN_CLASS } from '../utils/modal';
-
 /** On the dialog while the full-resolution file is still on its way. */
 export const LIGHTBOX_LOADING_CLASS = 'is-loading';
-
-function isPlainLeftClick(event: MouseEvent): boolean {
-  // A modified click is the visitor asking for a new tab, a window, or a save;
-  // intercepting those would take away something they already had.
-  return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
-}
 
 /**
  * Opens gallery images in an overlay instead of a new tab.
@@ -15,13 +7,33 @@ function isPlainLeftClick(event: MouseEvent): boolean {
  * The trigger stays a real link to the full-resolution file, so if this never
  * runs -- no JavaScript, or a browser without <dialog> -- the click still opens
  * the image the way it always did.
+ *
+ * Not loaded as a module: ImageLightbox.astro writes this function's own source
+ * into the page, right after the viewer, which the layout puts at the very top
+ * of the body. That is what lets a click open the viewer while the page is still
+ * arriving, instead of following the link to the file in a new tab until the
+ * site's script bundle -- the last thing to load -- has run. So it must stay
+ * self-contained: anything it uses is declared inside it or handed in, since an
+ * import or a module-level name would not exist on the page. The two class names
+ * are handed in for that reason, from the one place each is defined. A test runs
+ * the inlined copy in a bare page to hold it to this.
  */
-export function initImageLightbox(doc: Document): void {
+export function initImageLightbox(
+  doc: Document,
+  modalOpenClass: string,
+  loadingClass: string,
+): void {
   const dialog = doc.querySelector<HTMLDialogElement>('[data-lightbox]');
   const image = dialog?.querySelector<HTMLImageElement>('[data-lightbox-image]');
   if (!dialog || !image || typeof dialog.showModal !== 'function') {
     return;
   }
+
+  const isPlainLeftClick = (event: MouseEvent): boolean =>
+    // A modified click is the visitor asking for a new tab, a window, or a
+    // save; intercepting those would take away something they already had.
+    event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
+
   /* Where the caption shows. Optional: a viewer without one simply never shows
      captions. Named apart from the links' data-lightbox-caption, which holds
      the text: one name for both and a query for one finds the other. */
@@ -59,7 +71,7 @@ export function initImageLightbox(doc: Document): void {
      real wait between opening the viewer and the picture arriving. aria-busy
      alongside the spinner, since the spinner itself is decorative. */
   const setLoading = (loading: boolean) => {
-    dialog.classList.toggle(LIGHTBOX_LOADING_CLASS, loading);
+    dialog.classList.toggle(loadingClass, loading);
     if (loading) {
       dialog.setAttribute('aria-busy', 'true');
     } else {
@@ -112,7 +124,7 @@ export function initImageLightbox(doc: Document): void {
     }
     show(Math.max(position, 0));
     dialog.showModal();
-    doc.documentElement.classList.add(MODAL_OPEN_CLASS);
+    doc.documentElement.classList.add(modalOpenClass);
   });
 
   dialog.addEventListener('keydown', (event) => {
@@ -144,7 +156,7 @@ export function initImageLightbox(doc: Document): void {
   // Fires for the close button, a backdrop click, and Escape alike, so the
   // cleanup only needs writing once.
   dialog.addEventListener('close', () => {
-    doc.documentElement.classList.remove(MODAL_OPEN_CLASS);
+    doc.documentElement.classList.remove(modalOpenClass);
     setLoading(false);
     // Dropping the source releases what can be a very large decoded image.
     image.removeAttribute('src');

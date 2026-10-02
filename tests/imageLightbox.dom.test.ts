@@ -1,6 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { LIGHTBOX_LOADING_CLASS, initImageLightbox } from '../src/scripts/imageLightbox';
+import {
+  LIGHTBOX_LOADING_CLASS,
+  initImageLightbox as bindImageLightbox,
+} from '../src/scripts/imageLightbox';
 import { MODAL_OPEN_CLASS } from '../src/utils/modal';
+
+/**
+ * The function is handed the class names it should use, so that it can be
+ * written into the page as it stands (see ImageLightbox.astro). The page passes
+ * these two; so does every test here.
+ */
+const initImageLightbox = (doc: Document) =>
+  bindImageLightbox(doc, MODAL_OPEN_CLASS, LIGHTBOX_LOADING_CLASS);
 
 const FULL_RES = '/_astro/mockup-';
 
@@ -521,5 +532,42 @@ describe('initImageLightbox captions', () => {
     expect(dialog!.open).toBe(true);
     // Read back resolved, so compared against the trigger's own resolved href.
     expect(image!.src).toBe(trigger.href);
+  });
+});
+
+describe('the copy inlined into the page', () => {
+  /* ImageLightbox.astro writes this function's source into the page, right
+     after the viewer at the top of the body, so a click opens the viewer while
+     the site's script bundle is still arriving. That copy is only correct while
+     the function is self-contained: a module-level name it borrowed would not
+     exist on the page, and the click would throw instead of opening anything.
+     So the same string is evaluated here inside a fresh page, whose global scope
+     has nothing from this module in it. */
+  it('opens the viewer on a click, with nothing from its module around it', () => {
+    const { doc, trigger, dialog, image } = renderPage();
+    const view = viewOf(trigger);
+
+    view.eval(
+      `(${bindImageLightbox.toString()})(document, ${JSON.stringify(MODAL_OPEN_CLASS)}, ${JSON.stringify(LIGHTBOX_LOADING_CLASS)});`,
+    );
+
+    const notPrevented = click(trigger);
+    // Taken, so the browser does not also open the file in a new tab.
+    expect(notPrevented).toBe(false);
+    expect(dialog!.open).toBe(true);
+    expect(image!.src).toBe(trigger.href);
+    // Both class names reached it from outside, as the page passes them.
+    expect(doc.documentElement.classList.contains(MODAL_OPEN_CLASS)).toBe(true);
+    expect(dialog!.classList.contains(LIGHTBOX_LOADING_CLASS)).toBe(true);
+  });
+
+  it('still steps through the gallery with the arrow keys', () => {
+    const { trigger, dialog, image } = renderPage({ images: 3 });
+    viewOf(trigger).eval(
+      `(${bindImageLightbox.toString()})(document, ${JSON.stringify(MODAL_OPEN_CLASS)}, ${JSON.stringify(LIGHTBOX_LOADING_CLASS)});`,
+    );
+    click(trigger);
+    press(dialog!, 'ArrowRight');
+    expect(image!.src.endsWith(`${FULL_RES}2.png`)).toBe(true);
   });
 });

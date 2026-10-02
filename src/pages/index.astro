@@ -133,5 +133,10 @@ const { portraits } = siteInfo;
       </div>
     </section>
   </div>
-  {portraits.length > 0 && <ImageLightbox />}
+  {
+    /* The viewer goes in the layout's lightbox slot, at the top of the body: see
+      SiteLayout. A Fragment carries the slot attribute because the viewer is
+      only there when there are portraits for it to open. */
+  }
+  <Fragment slot="lightbox">{portraits.length > 0 && <ImageLightbox />}</Fragment>
 </SiteLayout>
