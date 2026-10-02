@@ -2,6 +2,7 @@
 
 | Version | Description                                                                                                                                                                                                                        | Date        |
 | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| 3.0.7   | • Add Case Studies selector to Home page<br />• Layout and performance improvements                                                                                                                                                | 2026 OCT 02 |
 | 3.0.6   | • Redirect /work to Home page                                                                                                                                                                                                      | 2026 SEP 18 |
 | 3.0.5   | • Add social links to footer<br />• Fix title when saving to Home Screen<br />• Update SuprTEK link in CAMPS                                                                                                                       | 2026 SEP 17 |
 | 3.0.4   | • Accessibility and performance improvements                                                                                                                                                                                       | 2026 SEP 14 |
