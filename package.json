@@ -22,14 +22,14 @@
     "*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
-    "@astrojs/react": "^4.4.0",
+    "@astrojs/react": "^7.0.0",
     "@fontsource/public-sans": "^5.2.5",
-    "astro": "^5.13.0",
+    "astro": "^7.3.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.4",
+    "@astrojs/check": "^0.9.10",
     "@eslint/js": "^9.39.5",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
