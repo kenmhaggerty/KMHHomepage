@@ -1067,12 +1067,96 @@ html.is-modal-open body {
 
 /* ------------------------------------------------------- image viewer only */
 
+/* The picture and, when it has one, its caption, stacked and centred. No
+   margin: a <figure> brings 40px of its own. */
+.lightbox-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
 .lightbox-image {
+  /* What the spinner centres itself on while a caption shows; see below. */
+  anchor-name: --lightbox-image;
   max-width: 90vw;
   /* dvh, not lvh: the picture stays inside the part of the screen actually on
      show, even though the darkening behind it runs past that to the edges. */
   max-height: 90dvh;
   object-fit: contain;
+}
+
+/* With a caption under it, the picture gives up enough height for two lines
+   of caption and the gap, so the pair still fits the screen. */
+.lightbox-figure:has(.lightbox-caption:not([hidden])) .lightbox-image {
+  max-height: calc(90dvh - 56px);
+}
+
+/* Light text on the dark scrim, in both themes: the scrim is dark either way,
+   which is why dark.css applies its palette to .lightbox whatever the theme --
+   so the variables below are the dark values here. Capped narrower than the
+   screen so a long credit wraps into lines rather than running from edge to
+   edge. */
+.lightbox-caption {
+  /* What the spinner positions itself against while a caption shows; see
+     below. */
+  anchor-name: --lightbox-caption;
+  max-width: min(90vw, 600px);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.lightbox-caption p {
+  margin: 0;
+}
+
+/* Links in the caption are styled as links in the page's prose are (see
+   `.section a`): no underline, set a step quieter than the text around them,
+   and lit with a background on hover. The quieter colour is what marks them
+   as links at rest, as it does there. Only where there is a real pointer to
+   hover with, so a tap on a touchscreen -- which opens the link in a new tab
+   -- does not leave the background stuck on behind it. */
+.lightbox-caption a {
+  color: var(--color-text-muted);
+}
+
+@media (hover: hover) {
+  .lightbox-caption a:hover {
+    color: var(--color-text-soft);
+    background: var(--color-url-bg-hover);
+  }
+}
+
+/* The spinner sits at the middle of the picture while it loads, and with a
+   caption showing, never nearer than 32px to the caption's top edge.
+
+   The two can pull apart. Until the file's header arrives the picture has no
+   size, so a caption sits alone at the middle of the screen -- exactly where a
+   centred spinner would be, which drew the two on top of each other. Then the
+   picture's size becomes known, it opens up above the caption, and the middle
+   of it is well clear of it. So the spinner takes whichever is higher: the
+   middle of the picture, or 32px (plus half its own height, since its middle
+   is what is being placed) above the caption. Both are read off the page by
+   anchoring, not guessed: how tall the caption is depends on how many lines its
+   credit wraps to, and how tall the picture is depends on the picture.
+
+   Without a caption the spinner is simply centred, as it always was. In a
+   browser without CSS anchor positioning this block is skipped and it is
+   centred there too -- so it can still overlap a caption, as it did before.
+   `translate` rather than `transform`, which the spin animation owns; the 14px
+   is half the spinner's 28px. */
+@supports (anchor-name: --a) {
+  .lightbox:has(.lightbox-caption:not([hidden])) .lightbox-spinner {
+    inset: auto;
+    margin: 0;
+    left: anchor(--lightbox-image center);
+    top: min(anchor(--lightbox-image center), calc(anchor(--lightbox-caption top) - 32px - 14px));
+    translate: -50% -50%;
+  }
 }
 
 a[data-lightbox-open] {
@@ -1308,16 +1392,27 @@ html[data-viewport='mobile'] .page-work {
   padding-right: 8px;
 }
 
-/* 10px to the text beside it, as the grid's column gap was; 4px under it, so
-   a line that starts just above the photo's bottom edge is not set tight
-   against it. */
-.about-content .avatar {
+/* The float is on the frame around the photo, which is what the text flows
+   past now that the photo can be wrapped in a link to the portraits. 10px to
+   the text beside it, as the grid's column gap was; 4px under it, so a line
+   that starts just above the photo's bottom edge is not set tight against
+   it. */
+.about-content .avatar-frame {
   float: left;
+  margin: 0 10px 4px 0;
+}
+
+.about-content .avatar {
   width: 64px;
   height: 64px;
-  margin: 0 10px 4px 0;
   border-radius: 50%;
   object-fit: cover;
+}
+
+/* Round like the photo, so the keyboard focus ring follows the circle. */
+.about-content .avatar-link {
+  display: block;
+  border-radius: 50%;
 }
 
 .about-content p {

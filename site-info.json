@@ -30,6 +30,13 @@
             "https://www.youtube.com/@KenMHaggerty"
         ]
     },
+    "portraits": [
+        {
+            "full_res": "portrait.png",
+            "alt_text": "Ken M. Haggerty (portrait)",
+            "html_caption": "<p>Portrait by <a href='https://www.johnharderphotography.com'>John Harder Photography</a> (2023)</p>"
+        }
+    ],
     "footer": {
         "text": "Ken M. Haggerty © 2026",
         "links": [

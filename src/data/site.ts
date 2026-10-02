@@ -57,6 +57,33 @@ export function imageAsset(filename: string): ImageMetadata {
 }
 
 /*
+ * The portraits site-info.json lists, kept in portraits/ at the root beside
+ * case-studies/. Globbed for the same reason as the images above: the JSON
+ * names them as bare filenames, and an import is what puts them through the
+ * build with a fingerprinted URL.
+ */
+const portraitModules = import.meta.glob<ImageMetadata>(
+  '../../portraits/*.{png,jpg,jpeg,webp,avif,gif}',
+  { eager: true, import: 'default' },
+);
+
+const portraitsByFilename = new Map(
+  Object.entries(portraitModules).map(([path, image]) => [
+    path.slice(path.lastIndexOf('/') + 1),
+    image,
+  ]),
+);
+
+/** Resolves a portrait filename from site-info.json to its imported asset. */
+export function portraitAsset(filename: string): ImageMetadata {
+  const image = portraitsByFilename.get(filename);
+  if (!image) {
+    throw new Error(`No portrait named "${filename}" in portraits/`);
+  }
+  return image;
+}
+
+/*
  * Footer link icons with no Simple Icon to fall back on, globbed as source
  * text rather than as assets: site-info.json names them as bare filenames,
  * and an SVG is inlined into the page so its glyph can take the link's

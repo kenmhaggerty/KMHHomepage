@@ -25,10 +25,20 @@ function stubDialog(dialog: HTMLDialogElement): void {
  * otherwise still be listening and swallowing clicks. It comes from an iframe
  * rather than createHTMLDocument because that gives it a defaultView.
  */
-function renderPage({ withDialog = true, dialogSupported = true, images = 1 } = {}) {
+function renderPage({
+  withDialog = true,
+  dialogSupported = true,
+  images = 1,
+  captions = [] as (string | undefined)[],
+} = {}) {
   const frame = document.createElement('iframe');
   document.body.appendChild(frame);
   const doc = frame.contentDocument!;
+  // Attribute-escaped the way Astro writes it: only the quote character.
+  const captionAttr = (i: number) =>
+    captions[i] === undefined
+      ? ''
+      : `data-lightbox-caption="${captions[i]!.replaceAll('"', '&quot;')}"`;
   const thumbnails = Array.from(
     { length: images },
     (_, i) => `
@@ -37,6 +47,7 @@ function renderPage({ withDialog = true, dialogSupported = true, images = 1 } = 
         href="${FULL_RES}${i + 1}.png"
         data-lightbox-open
         data-lightbox-alt="Mockup #${i + 1}"
+        ${captionAttr(i)}
         target="_blank"
         rel="noopener noreferrer"
       ><img src="/_astro/preview-${i + 1}.png" alt="Mockup #${i + 1}" /></a>`,
@@ -49,7 +60,10 @@ function renderPage({ withDialog = true, dialogSupported = true, images = 1 } = 
         ? `<dialog class="modal lightbox" data-lightbox aria-label="Image viewer">
              <button type="button" data-lightbox-close aria-label="Close image viewer"></button>
              <div class="lightbox-spinner" data-lightbox-spinner aria-hidden="true"></div>
-             <img class="lightbox-image" data-lightbox-image alt="" />
+             <figure class="lightbox-figure">
+               <img class="lightbox-image" data-lightbox-image alt="" />
+               <figcaption class="lightbox-caption" data-lightbox-figcaption hidden></figcaption>
+             </figure>
            </dialog>`
         : ''
     }
@@ -67,6 +81,7 @@ function renderPage({ withDialog = true, dialogSupported = true, images = 1 } = 
     image: doc.querySelector<HTMLImageElement>('[data-lightbox-image]'),
     closeButton: doc.querySelector<HTMLButtonElement>('[data-lightbox-close]'),
     spinner: doc.querySelector<HTMLElement>('[data-lightbox-spinner]'),
+    caption: doc.querySelector<HTMLElement>('[data-lightbox-figcaption]'),
   };
 }
 
@@ -437,5 +452,74 @@ describe('initImageLightbox', () => {
     // No data-lightbox-alt of its own, so the previous image's alt text must
     // not linger on a picture it does not describe.
     expect(image!.alt).toBe('');
+  });
+});
+
+describe('initImageLightbox captions', () => {
+  const CREDIT =
+    "<p>Portrait taken by <a href='https://example.com/photographer'>A. Photographer</a></p>";
+
+  it('shows the caption the link carries, beneath the picture', () => {
+    const { doc, trigger, caption } = renderPage({ captions: [CREDIT] });
+    initImageLightbox(doc);
+    click(trigger);
+    expect(caption!.hidden).toBe(false);
+    expect(caption!.textContent).toBe('Portrait taken by A. Photographer');
+    expect(caption!.querySelector('p')).not.toBeNull();
+  });
+
+  it('opens caption links in a new tab, so a credit does not navigate away from the viewer', () => {
+    const { doc, trigger, caption } = renderPage({ captions: [CREDIT] });
+    initImageLightbox(doc);
+    click(trigger);
+    const link = caption!.querySelector('a')!;
+    expect(link.getAttribute('href')).toBe('https://example.com/photographer');
+    expect(link.target).toBe('_blank');
+    expect(link.rel).toBe('noopener noreferrer');
+  });
+
+  it('keeps the caption hidden for a picture without one', () => {
+    // Every case study image, at present.
+    const { doc, trigger, caption } = renderPage();
+    initImageLightbox(doc);
+    click(trigger);
+    expect(caption!.hidden).toBe(true);
+    expect(caption!.childNodes).toHaveLength(0);
+  });
+
+  it('swaps the caption as the arrows step, and clears it for a picture without one', () => {
+    const { doc, trigger, dialog, caption } = renderPage({
+      images: 3,
+      captions: [CREDIT, undefined, '<p>Second credit</p>'],
+    });
+    initImageLightbox(doc);
+    click(trigger);
+    expect(caption!.textContent).toBe('Portrait taken by A. Photographer');
+    press(dialog!, 'ArrowRight');
+    // The previous credit must not linger on a photo it does not describe.
+    expect(caption!.hidden).toBe(true);
+    expect(caption!.textContent).toBe('');
+    press(dialog!, 'ArrowRight');
+    expect(caption!.hidden).toBe(false);
+    expect(caption!.textContent).toBe('Second credit');
+  });
+
+  it('clears the caption when the viewer closes', () => {
+    const { doc, trigger, dialog, caption } = renderPage({ captions: [CREDIT] });
+    initImageLightbox(doc);
+    click(trigger);
+    dialog!.close();
+    expect(caption!.hidden).toBe(true);
+    expect(caption!.childNodes).toHaveLength(0);
+  });
+
+  it('still works in a viewer that has no caption element', () => {
+    const { doc, trigger, dialog, image, caption } = renderPage({ captions: [CREDIT] });
+    caption!.remove();
+    initImageLightbox(doc);
+    click(trigger);
+    expect(dialog!.open).toBe(true);
+    // Read back resolved, so compared against the trigger's own resolved href.
+    expect(image!.src).toBe(trigger.href);
   });
 });

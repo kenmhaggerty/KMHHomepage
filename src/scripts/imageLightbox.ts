@@ -22,6 +22,32 @@ export function initImageLightbox(doc: Document): void {
   if (!dialog || !image || typeof dialog.showModal !== 'function') {
     return;
   }
+  /* Where the caption shows. Optional: a viewer without one simply never shows
+     captions. Named apart from the links' data-lightbox-caption, which holds
+     the text: one name for both and a query for one finds the other. */
+  const caption = dialog.querySelector<HTMLElement>('[data-lightbox-figcaption]');
+
+  /* The caption is the opening link's data-lightbox-caption: HTML written in
+     this repo's own JSON, never anything a visitor supplied, which is why it
+     can go in as markup. Its links open in a new tab, as the site's other
+     outbound links do, so following a credit does not navigate away from
+     under the open viewer. */
+  const setCaption = (html: string | undefined) => {
+    if (!caption) {
+      return;
+    }
+    if (!html) {
+      caption.replaceChildren();
+      caption.hidden = true;
+      return;
+    }
+    caption.innerHTML = html;
+    for (const link of caption.querySelectorAll('a[href]')) {
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+    }
+    caption.hidden = false;
+  };
 
   const close = () => {
     if (dialog.open) {
@@ -57,6 +83,7 @@ export function initImageLightbox(doc: Document): void {
     const link = gallery[index];
     image.src = link.href;
     image.alt = link.dataset.lightboxAlt ?? '';
+    setCaption(link.dataset.lightboxCaption);
     /* `complete` is already true for anything served from cache, so stepping
        back to a picture that has been seen shows no spinner at all rather
        than flashing one for a frame. */
@@ -121,5 +148,6 @@ export function initImageLightbox(doc: Document): void {
     setLoading(false);
     // Dropping the source releases what can be a very large decoded image.
     image.removeAttribute('src');
+    setCaption(undefined);
   });
 }

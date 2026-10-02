@@ -22,6 +22,29 @@ function structuredData(html: string): Record<string, unknown>[] {
 }
 
 describe('Work page (index)', () => {
+  it('makes the avatar open the portraits in the image viewer, with the caption', async () => {
+    const html = await render(Index);
+    const [first] = siteInfo.portraits;
+    // The opening tag runs to the photo inside it. Not [^>]*: the caption in
+    // its attribute is HTML, and its own '>' would end the match early.
+    const start = html.indexOf('<a class="avatar-link"');
+    const link = start < 0 ? '' : html.slice(start, html.indexOf('<img', start));
+    expect(link, 'the avatar is not a link').not.toBe('');
+    expect(link).toContain('data-lightbox-open');
+    expect(link).toContain(`data-lightbox-alt="${first.alt_text}"`);
+    // A real link to the full-resolution file, so it still works with no script.
+    expect(link).toMatch(/href="[^"]*portrait[^"]*"/);
+    expect(link).toContain('target="_blank"');
+    if (first.html_caption) {
+      expect(link).toContain('data-lightbox-caption=');
+      expect(link).toContain('John Harder');
+    }
+    // In a gallery of its own, and with the viewer on the page to open in.
+    expect(html).toMatch(/<div class="avatar-frame"[^>]*data-gallery/);
+    expect(html).toContain('data-lightbox-figcaption hidden');
+    expect(html.match(/data-lightbox(?![-\w])/g)).toHaveLength(1);
+  });
+
   it('renders the About Me section and case study panels', async () => {
     const html = await render(Index);
     expect(html).toContain('About Me');
@@ -119,9 +142,17 @@ describe('Case study image viewer', () => {
     expect(html.match(/data-lightbox-open/g)!.length).toBe(caseStudy.gallery.length);
   });
 
-  it('leaves the work page alone, whose panels navigate rather than open images', async () => {
+  it('leaves the work page panels alone, which navigate rather than open images', async () => {
+    // The viewer is on the page now, for the avatar's portraits -- but only the
+    // avatar opens it. A panel that did would trap the click meant to take the
+    // visitor to that case study.
     const html = await render(Index);
-    expect(html).not.toContain('data-lightbox');
+    const triggers = [...html.matchAll(/<a\b[^>]*data-lightbox-open[^>]*>/g)].map(([tag]) => tag);
+    expect(triggers.length).toBe(siteInfo.portraits.length);
+    expect(triggers[0]).toContain('class="avatar-link"');
+    expect(html).not.toMatch(
+      /data-case-study[^>]*data-lightbox-open|data-lightbox-open[^>]*data-case-study/,
+    );
   });
 });
 

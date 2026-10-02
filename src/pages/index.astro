@@ -2,8 +2,9 @@
 import SiteLayout from '../layouts/SiteLayout.astro';
 import CaseStudyPanel from '../components/CaseStudyPanel.astro';
 import CaseStudySelector from '../components/CaseStudySelector.astro';
+import ImageLightbox from '../components/ImageLightbox.astro';
 import { Image } from 'astro:assets';
-import { about, caseStudies, imageAsset } from '../data/site';
+import { about, caseStudies, imageAsset, portraitAsset, siteInfo } from '../data/site';
 import { FILTERS } from '../utils/filters';
 
 /*
@@ -19,6 +20,8 @@ import { FILTERS } from '../utils/filters';
  * discoverable in the HTML.
  */
 const EAGER_PANELS = 3;
+
+const { portraits } = siteInfo;
 ---
 
 <SiteLayout>
@@ -31,15 +34,63 @@ const EAGER_PANELS = 3;
             for 2x and 3x variants below: without those Astro resizes it down to
             a flat 64px and it blurs on any Retina screen. */
         }
-        <Image
-          class="avatar"
-          src={imageAsset(about.avatar)}
-          alt={about.avatar_alt}
-          width={64}
-          height={64}
-          densities={[1, 2, 3]}
-          loading="eager"
-        />
+        {
+          /* The avatar opens the portraits in the same viewer as the case study
+            galleries. It is a real link to the first portrait, so with no
+            script it still opens the photo; the rest ride along as hidden
+            links in the same data-gallery, which is what the viewer's arrow
+            keys step through. With no portraits listed it is a plain photo. */
+        }
+        <div class="avatar-frame" data-gallery={portraits.length > 0 ? '' : undefined}>
+          {
+            portraits.length > 0 ? (
+              <a
+                class="avatar-link"
+                href={portraitAsset(portraits[0].full_res).src}
+                data-lightbox-open
+                data-lightbox-alt={portraits[0].alt_text}
+                data-lightbox-caption={portraits[0].html_caption}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Image
+                  class="avatar"
+                  src={imageAsset(about.avatar)}
+                  alt={about.avatar_alt}
+                  width={64}
+                  height={64}
+                  densities={[1, 2, 3]}
+                  loading="eager"
+                />
+              </a>
+            ) : (
+              <Image
+                class="avatar"
+                src={imageAsset(about.avatar)}
+                alt={about.avatar_alt}
+                width={64}
+                height={64}
+                densities={[1, 2, 3]}
+                loading="eager"
+              />
+            )
+          }
+          {
+            portraits
+              .slice(1)
+              .map((portrait) => (
+                <a
+                  hidden
+                  href={portraitAsset(portrait.full_res).src}
+                  data-lightbox-open
+                  data-lightbox-alt={portrait.alt_text}
+                  data-lightbox-caption={portrait.html_caption}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              ))
+          }
+        </div>
         {about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
       </div>
     </section>
@@ -82,4 +133,5 @@ const EAGER_PANELS = 3;
       </div>
     </section>
   </div>
+  {portraits.length > 0 && <ImageLightbox />}
 </SiteLayout>

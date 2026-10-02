@@ -4,6 +4,7 @@ import {
   caseStudies,
   getCaseStudy,
   imageAsset,
+  portraitAsset,
   siteInfo,
   svgIconSource,
 } from '../src/data/site';
@@ -182,6 +183,25 @@ describe('case study footnotes', () => {
         );
       }
     }
+  });
+});
+
+describe('portraits', () => {
+  it('lists at least one, each with a file in portraits/ and alt text', () => {
+    // The avatar opens the first, so an empty list leaves it a plain photo.
+    expect(siteInfo.portraits.length).toBeGreaterThan(0);
+    for (const portrait of siteInfo.portraits) {
+      const image = portraitAsset(portrait.full_res);
+      expect(image.width).toBeGreaterThan(0);
+      expect(
+        portrait.alt_text.trim().length,
+        `${portrait.full_res} has no alt text`,
+      ).toBeGreaterThan(0);
+    }
+  });
+
+  it('throws on a filename with no matching file, rather than emitting a dead URL', () => {
+    expect(() => portraitAsset('not-a-real-portrait.png')).toThrow(/not-a-real-portrait\.png/);
   });
 });
 

@@ -68,6 +68,8 @@ export interface SiteInfo {
   description: string;
   /** The site owner, as structured data names them. */
   owner: OwnerInfo;
+  /** In viewing order: the avatar opens the first, the arrows step on. */
+  portraits: GalleryItem[];
   footer: FooterInfo;
   /** Production origin, used to make share and canonical URLs absolute. */
   url: string;
@@ -93,9 +95,10 @@ export interface CaseStudyHero {
 }
 
 export interface GalleryItem {
-  preview: string;
+  preview?: string;
   full_res: string;
   alt_text: string;
+  html_caption?: string;
 }
 
 export interface CaseStudyLink {

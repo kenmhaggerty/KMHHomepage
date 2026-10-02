@@ -13,8 +13,15 @@
  * which halates against a dark ground. Shadows go deeper because a faint black
  * shadow is invisible here. Every muted grey keeps at least 4.5:1 against its
  * own background and body text ~14:1, so all of them clear WCAG AA.
+ *
+ * The image viewer takes this palette too, whichever theme the page is in: its
+ * scrim is 85% black either way, so anything inside it that reads a colour
+ * variable -- the caption and its links -- is meant to see the dark values.
+ * Listing it here, rather than copying values into the viewer's own rules,
+ * keeps one set of them to maintain.
  */
-html[data-theme='dark'] {
+html[data-theme='dark'],
+.lightbox {
   color-scheme: dark;
 
   --color-page-bg: #121212;
