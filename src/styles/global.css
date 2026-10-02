@@ -1297,20 +1297,25 @@ html[data-viewport='mobile'] .page-work {
   gap: 32px;
 }
 
+/* The photo floats rather than taking a column of its own, so the text beside
+   it wraps underneath once it runs past the photo's height -- and a paragraph
+   too short to get there simply sits beside it. flow-root keeps the float
+   inside the block, so a short About Me still clears the photo before the
+   next section. */
 .about-content {
-  display: grid;
-  grid-template-columns: 64px 1fr;
-  column-gap: 10px;
-  row-gap: 13px;
+  display: flow-root;
   width: 100%;
   padding-right: 8px;
 }
 
+/* 10px to the text beside it, as the grid's column gap was; 4px under it, so
+   a line that starts just above the photo's bottom edge is not set tight
+   against it. */
 .about-content .avatar {
-  grid-column: 1;
-  grid-row: 1 / span 2;
+  float: left;
   width: 64px;
   height: 64px;
+  margin: 0 10px 4px 0;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -1321,20 +1326,28 @@ html[data-viewport='mobile'] .page-work {
   font-weight: 500;
   line-height: normal;
   text-align: justify;
-  grid-column: 2;
+}
+
+/* Padding rather than margin for the gap between paragraphs: a paragraph that
+   clears the photo (mobile, below) has its top margin absorbed into the
+   clearance, which would leave it 4px under the photo; padding survives. */
+.about-content p + p {
+  padding-top: 13px;
 }
 
 html[data-viewport='mobile'] .about-content {
   padding-right: 0;
-  row-gap: 12px;
 }
 
-html[data-viewport='mobile'] .about-content .avatar {
-  grid-row: 1;
+html[data-viewport='mobile'] .about-content p + p {
+  padding-top: 12px;
 }
 
+/* On mobile the second paragraph runs the full width below the photo, as
+   designed, even on a screen wide enough that the first is too short to
+   reach past it. */
 html[data-viewport='mobile'] .about-content p:last-child {
-  grid-column: 1 / -1;
+  clear: left;
 }
 
 .case-studies {
