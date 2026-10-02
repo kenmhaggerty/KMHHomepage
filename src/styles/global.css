@@ -20,6 +20,15 @@
 :root {
   color-scheme: light;
 
+  /* Turns off mobile Safari's text autosizing, which enlarges long blocks of
+     text on a wide page -- on an iPhone Duo opened in landscape it took the
+     About Me paragraphs from their 13px to 22px while leaving the short text
+     around them alone. The sizes here are deliberate, so they hold as
+     written. 100% rather than none: some Safari versions read none as also
+     refusing pinch-to-zoom, and the visitor's own zoom must keep working. */
+  -webkit-text-size-adjust: 120%;
+  text-size-adjust: 120%;
+
   --color-page-bg: #f8f8f8;
   --color-card-bg: #ffffff;
   /* A well set into the card, in the page's own colour. Its own variable
@@ -99,18 +108,20 @@
 
   --content-max-width: 1024px;
   --mobile-card-width: 420px;
-  --mobile-card-height: 848px;
 }
 
 * {
   box-sizing: border-box;
 }
 
+/* The page itself scrolls, at every size: the column grows past the window
+   with its content rather than being held to it, so there is one scrollbar
+   and it is the browser's. min-height keeps short pages filling the window. */
 html,
 body {
   margin: 0;
   padding: 0;
-  height: 100%;
+  min-height: 100%;
 }
 
 body {
@@ -144,7 +155,9 @@ button {
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  height: 100dvh;
+  /* At least the window, so a short page still fills it and a fill-height
+     card (below) has room to grow into; never held to it. */
+  min-height: 100dvh;
   padding: 12px 8px;
 }
 
@@ -163,17 +176,18 @@ button {
   flex-direction: column;
   width: 100%;
   max-width: var(--content-max-width);
-  /* Hug the content vertically; shrink only when the viewport is too short,
-     at which point .scrollable takes over with an internal scrollbar. */
-  flex: 0 1 auto;
-  min-height: 0;
+  /* Hug the content vertically, however tall: the page scrolls past it. */
+  flex: 0 0 auto;
   background: var(--color-card-bg);
   filter: drop-shadow(var(--shadow-card));
 }
 
+/* The mobile preview is a phone's width but not a phone's height: with the
+   scrolling done by the page, a height cap would only cut the content off.
+   overflow:hidden is for the rounded corners, and clips nothing vertically
+   now that the card grows with its content. */
 html[data-viewport='mobile'] .card {
   max-width: var(--mobile-card-width);
-  max-height: var(--mobile-card-height);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -263,22 +277,7 @@ html[data-viewport='mobile'] .card {
     --color-page-bg: #ffffff;
   }
 
-  /* Elsewhere the layout is a fixed-height column with the card scrolling
-     inside it. Here the page itself scrolls instead, so the footer can sit
-     after the content and be scrolled to: the column grows past the screen,
-     the card grows with its content, and the card's own scroller stands down.
-     Without this the footer could only ever be pinned in view, because
-     nothing outside the card would ever overflow. The card's own scroller
-     needs no change: unconstrained, it never has anything to scroll. */
-  html,
-  body {
-    height: auto;
-    min-height: 100%;
-  }
-
   .viewport {
-    height: auto;
-    min-height: 100dvh;
     padding: 0;
     gap: 0;
   }
@@ -295,8 +294,6 @@ html[data-viewport='mobile'] .card {
      shadow with it. */
   html[data-viewport='mobile'] .card {
     max-width: none;
-    /* Uncapped so it grows with its content and the page scrolls past it. */
-    max-height: none;
     border-radius: 0;
     filter: none;
   }
@@ -374,12 +371,12 @@ html[data-viewport='mobile'] .card {
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
-  /* Sized by its content so the card can hug it, but shrinkable (and then
-     scrollable) when the card is squeezed to fit the viewport. */
-  flex: 0 1 auto;
-  min-height: 0;
+  /* Sized by its content, however tall -- the page does the scrolling, not
+     this. The class name is from when it scrolled itself. overflow-x: clip
+     still trims the carousels' sideways bleed at the card's edges, and unlike
+     hidden or auto it makes no scroll container of its own. */
+  flex: 0 0 auto;
   width: 100%;
-  overflow-y: auto;
   overflow-x: clip;
   padding: 16px;
 }
@@ -1510,9 +1507,14 @@ html[data-viewport='mobile'] .page-project .hscroll {
 
 /* The résumé is a PDF that should fill the window rather than scroll inside
    it, so the card opts out of hugging and every element between it and the
-   <embed> passes that height down (and stays shrinkable, so .scrollable never
-   needs a scrollbar of its own). */
-.card.fill-height,
+   <embed> passes that height down. The card grows into whatever the column's
+   window-high minimum leaves it, but never shrinks below its content: on a
+   window too short for even that, the page scrolls rather than the content
+   spilling out over the footer. The 404 and redirect pages fill the same way. */
+.card.fill-height {
+  flex: 1 0 auto;
+}
+
 .card.fill-height .scrollable,
 .page-resume,
 .page-resume .section,
