@@ -113,6 +113,7 @@
 
   --content-max-width: 1024px;
   --mobile-card-width: 420px;
+  --mobile-card-height: 848px;
 }
 
 * {
@@ -187,14 +188,33 @@ button {
   filter: drop-shadow(var(--shadow-card));
 }
 
-/* The mobile preview is a phone's width but not a phone's height: with the
-   scrolling done by the page, a height cap would only cut the content off.
-   overflow:hidden is for the rounded corners, and clips nothing vertically
-   now that the card grows with its content. */
+/* The mobile layout's card, a phone's width. overflow:hidden is for the
+   rounded corners. */
 html[data-viewport='mobile'] .card {
   max-width: var(--mobile-card-width);
   border-radius: 8px;
   overflow: hidden;
+}
+
+/* Previewing the mobile layout on a desktop: the card is a phone's height as
+   well as its width, and scrolls inside like one, rather than running down
+   the page. Only on screens wide enough to show the preview at all -- below
+   768px the mobile layout is forced, full-bleed, and the page itself
+   scrolls, as everywhere else on the site.
+
+   The scroller has to be allowed to shrink (it otherwise holds its content's
+   height) so it can fit the capped card and overflow inside it. Fill-height
+   pages keep their own sizing, which outranks this and fills the card. */
+@media (min-width: 768px) {
+  html[data-viewport='mobile'] .card {
+    max-height: var(--mobile-card-height);
+  }
+
+  html[data-viewport='mobile'] .scrollable {
+    flex: 0 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+  }
 }
 
 /* Toggling modes swaps max-width between two lengths, so the card eases
@@ -376,10 +396,11 @@ html[data-viewport='mobile'] .card {
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
-  /* Sized by its content, however tall -- the page does the scrolling, not
-     this. The class name is from when it scrolled itself. overflow-x: clip
-     still trims the carousels' sideways bleed at the card's edges, and unlike
-     hidden or auto it makes no scroll container of its own. */
+  /* Sized by its content, however tall -- the page does the scrolling, except
+     in the mobile preview on a desktop, where this scrolls inside the
+     phone-height card (see .card). overflow-x: clip trims the carousels'
+     sideways bleed at the card's edges, and unlike hidden or auto it makes no
+     scroll container of its own. */
   flex: 0 0 auto;
   width: 100%;
   overflow-x: clip;
@@ -1369,10 +1390,11 @@ html[data-viewport='mobile'] .cs-header .chips {
 }
 
 /* ...and with room, the title drops onto the chips' row and the label moves
-   up over the chips. The title and the four chips measure about 504px side by
-   side (with these fonts, at the mobile chip size), so 520px leaves a little
-   slack for rendering differences. An iPhone Duo opened in portrait gives the
-   header 637px; a phone gives it under 410px. A container query rather than a
+   up over the chips. The title and the four chips measure about 454px side by
+   side (with these fonts, at the mobile sizes), so 520px leaves ample slack
+   for rendering differences -- it was set when the text was larger and the row
+   needed 504px. An iPhone Duo opened in portrait gives the header 637px; a
+   phone gives it under 410px. A container query rather than a
    media query, so it is the header's own width that decides. If a filter is
    ever added or renamed the row grows, and this needs re-measuring; until
    then, a squeeze wraps the pair below the title rather than overlapping. */
@@ -1418,6 +1440,16 @@ html[data-viewport='mobile'] .cs-header .chips {
 
 html[data-viewport='mobile'] .cs-header .chip {
   padding: 0 10px;
+}
+
+/* A little tighter in the mobile preview on a desktop. Below 768px the
+   mobile layout is a real phone's, which keeps the 10px above. */
+@media (min-width: 768px) {
+  html[data-viewport='mobile'] .cs-header .chip {
+    height: 24px;
+    border-radius: 8px;
+    padding: 0 8px;
+  }
 }
 
 /* ---------------------------------------------------- case study selector */
