@@ -713,6 +713,10 @@ html[data-viewport='desktop'] .hscroll-track {
   width: 100%;
 }
 
+.section:last-child {
+  margin-bottom: 8px;
+}
+
 .section-title {
   margin: 0;
   font-size: 16px;
