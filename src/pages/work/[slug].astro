@@ -52,8 +52,11 @@ const { caseStudy } = Astro.props;
               rel="noopener noreferrer"
             >
               <Skeleton />
+              {/* A preview is optional: without one the full-resolution file
+                  stands in as the thumbnail. Astro resizes it like any other
+                  image, so it is not shipped at full size. */}
               <Image
-                src={imageAsset(item.preview)}
+                src={imageAsset(item.preview ?? item.full_res)}
                 alt={item.alt_text}
                 loading={index < EAGER_GALLERY_IMAGES ? 'eager' : 'lazy'}
               />

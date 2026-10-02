@@ -223,7 +223,9 @@ describe('imageAsset', () => {
       expect(() => imageAsset(caseStudy.hero.desktop)).not.toThrow();
       expect(() => imageAsset(caseStudy.hero.mobile)).not.toThrow();
       for (const item of caseStudy.gallery) {
-        expect(() => imageAsset(item.preview)).not.toThrow();
+        // The thumbnail the page shows: the preview, or the full file when the
+        // item leaves it out (see work/[slug].astro).
+        expect(() => imageAsset(item.preview ?? item.full_res)).not.toThrow();
         expect(() => imageAsset(item.full_res)).not.toThrow();
       }
     }
