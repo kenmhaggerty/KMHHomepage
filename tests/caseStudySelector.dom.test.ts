@@ -43,8 +43,21 @@ function press(target: Element, key: string): boolean {
   );
 }
 
-function pointerDown(target: Element): void {
-  target.dispatchEvent(new Event('pointerdown', { bubbles: true }));
+/**
+ * A pointer event of the given kind from the given sort of pointer. jsdom has no
+ * PointerEvent, so it is a plain event carrying the one field the script reads;
+ * left out, as an old browser might, the pointer is not a mouse.
+ */
+function pointer(
+  type: 'pointerdown' | 'pointerup' | 'pointercancel',
+  target: Element,
+  pointerType?: 'mouse' | 'touch' | 'pen',
+): void {
+  const event = new Event(type, { bubbles: true });
+  if (pointerType !== undefined) {
+    Object.defineProperty(event, 'pointerType', { value: pointerType });
+  }
+  target.dispatchEvent(event);
 }
 
 function focusLeaves(from: Element, to: Element | null): void {
@@ -85,15 +98,75 @@ describe('initCaseStudySelector', () => {
     expect(document.activeElement).toBe(trigger());
   });
 
-  it('closes on a press anywhere outside it', () => {
+  it('closes on a mouse press anywhere outside it, as soon as the button goes down', () => {
     trigger().click();
-    pointerDown(document.querySelector('.panel')!);
+    pointer('pointerdown', document.querySelector('.panel')!, 'mouse');
+    // Before release, so whatever was pressed does not need pressing twice.
     expect(isOpen()).toBe(false);
   });
 
-  it('stays open on a press inside it, on a row', () => {
+  it('stays open on a mouse press inside it, on a row', () => {
     trigger().click();
-    pointerDown(rows()[0]);
+    pointer('pointerdown', rows()[0], 'mouse');
+    expect(isOpen()).toBe(true);
+  });
+
+  describe('with a finger, where putting one down is also how a scroll starts', () => {
+    it('stays open when a touch lands outside it', () => {
+      trigger().click();
+      pointer('pointerdown', document.querySelector('.panel')!, 'touch');
+      expect(isOpen()).toBe(true);
+    });
+
+    it('stays open through a scroll, which ends in pointercancel rather than pointerup', () => {
+      /* The browser takes the gesture over once the page starts to move and
+         cancels the pointer: the visitor scrolled past the list and meant to
+         leave it open. Closing on the touch itself shut it as the page moved. */
+      trigger().click();
+      const page = document.querySelector('.panel')!;
+      pointer('pointerdown', page, 'touch');
+      pointer('pointercancel', page, 'touch');
+      expect(isOpen()).toBe(true);
+    });
+
+    it('closes on a tap outside it, which ends in pointerup', () => {
+      trigger().click();
+      const page = document.querySelector('.panel')!;
+      pointer('pointerdown', page, 'touch');
+      pointer('pointerup', page, 'touch');
+      expect(isOpen()).toBe(false);
+    });
+
+    it('closes on a pen tap the same way', () => {
+      trigger().click();
+      const page = document.querySelector('.panel')!;
+      pointer('pointerdown', page, 'pen');
+      expect(isOpen()).toBe(true);
+      pointer('pointerup', page, 'pen');
+      expect(isOpen()).toBe(false);
+    });
+
+    it('treats a pointer that does not say what it is as a finger', () => {
+      trigger().click();
+      const page = document.querySelector('.panel')!;
+      pointer('pointerdown', page);
+      expect(isOpen()).toBe(true);
+      pointer('pointerup', page);
+      expect(isOpen()).toBe(false);
+    });
+
+    it('stays open on a tap inside it, on a row', () => {
+      trigger().click();
+      pointer('pointerdown', rows()[0], 'touch');
+      pointer('pointerup', rows()[0], 'touch');
+      expect(isOpen()).toBe(true);
+    });
+  });
+
+  it('does not close on a mouse release outside it, only on the press', () => {
+    // The mouse closes on the way down; a release has nothing more to do.
+    trigger().click();
+    pointer('pointerup', document.querySelector('.panel')!, 'mouse');
     expect(isOpen()).toBe(true);
   });
 

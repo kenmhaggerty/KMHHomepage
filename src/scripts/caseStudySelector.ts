@@ -5,8 +5,9 @@
  * The list is links, so nothing here is needed to navigate -- this only
  * decides when the list is on screen. It closes the way a menu is expected
  * to: on the trigger again, on Escape (handing focus back to the trigger, so
- * the keyboard is not left on a hidden link), on a press anywhere outside it,
- * and when the focus tabs out of it.
+ * the keyboard is not left on a hidden link), on a press anywhere outside it --
+ * a tap, for a finger: starting a scroll leaves it open -- and when the focus
+ * tabs out of it.
  *
  * Not loaded as a module: CaseStudySelector.astro writes this function's own
  * source into the page right after the selector, so it works before the
@@ -40,12 +41,31 @@ export function initCaseStudySelector(doc: Document): void {
     }
   });
 
-  // pointerdown rather than click, so the list is gone before whatever was
-  // pressed instead gets to act -- a chip or a panel under it should not have
-  // to be pressed twice.
-  doc.addEventListener('pointerdown', (event) => {
+  /* A press outside closes it, but what counts as a press depends on the
+     pointer. A mouse closes it on the way down, so the list is gone before
+     whatever was pressed gets to act -- a chip or a panel under it should not
+     have to be pressed twice. A finger cannot: putting one down is also how a
+     scroll begins, so closing then shut the list the instant the page started
+     to move, when the visitor only meant to scroll past it. The browser tells
+     the two apart: a tap ends in pointerup, while a scroll takes the gesture
+     over and ends it in pointercancel, which never reaches here. So touch and
+     pen close on pointerup, and anything that does not call itself a mouse is
+     treated as touch. */
+  const closeIfOutside = (event: Event) => {
     if (isOpen() && !root.contains(event.target as Node)) {
       setOpen(false);
+    }
+  };
+
+  doc.addEventListener('pointerdown', (event) => {
+    if (event.pointerType === 'mouse') {
+      closeIfOutside(event);
+    }
+  });
+
+  doc.addEventListener('pointerup', (event) => {
+    if (event.pointerType !== 'mouse') {
+      closeIfOutside(event);
     }
   });
 
