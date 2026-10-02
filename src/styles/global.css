@@ -731,8 +731,9 @@ html[data-viewport='desktop'] .hscroll-track {
   white-space: nowrap;
 }
 
+/* 80% of the 20px the design gives these, which read too large on the page. */
 html[data-viewport='mobile'] .page-work .section-title {
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .section-body {
@@ -1247,7 +1248,9 @@ html[data-viewport='mobile'] .chip {
   padding: 0 14px;
   border-radius: 10px;
   border-width: 0.66px;
-  font-size: 15px;
+  /* 80% of the design's 15px, to match the smaller headings; the chip keeps
+     its full height and padding, so it stays as easy to tap. */
+  font-size: 12px;
   color: var(--color-text-soft);
 }
 
@@ -1255,8 +1258,9 @@ html[data-viewport='mobile'] .chip[aria-pressed='true'] {
   color: var(--color-chip-selected-text);
 }
 
+/* 80% of the design's 14px, with the chips and headings. */
 html[data-viewport='mobile'] .filter-label {
-  font-size: 14px;
+  font-size: 11.2px;
 }
 
 /* -------------------------------------------------------------- work page */
