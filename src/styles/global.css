@@ -1400,17 +1400,20 @@ html[data-viewport='mobile'] .cs-header .filters {
 html[data-viewport='mobile'] .cs-header .chips {
   width: 100%;
   justify-content: space-between;
+  gap: 8px;
 }
 
 /* ...and with room, the title drops onto the chips' row and the label moves
-   up over the chips. The title and the four chips measure about 454px side by
-   side (with these fonts, at the mobile sizes), so 520px leaves ample slack
-   for rendering differences -- it was set when the text was larger and the row
+   up over the chips, right-aligned, with the chips at their natural widths:
+   stretched across a header this wide they would stop reading as one control.
+   The title and the four chips measure about 466px side by side (with these
+   fonts, at the mobile sizes and 8px gaps), so 520px leaves ample slack for
+   rendering differences -- it was set when the text was larger and the row
    needed 504px. An iPhone Duo opened in portrait gives the header 637px; a
-   phone gives it under 410px. A container query rather than a
-   media query, so it is the header's own width that decides. If a filter is
-   ever added or renamed the row grows, and this needs re-measuring; until
-   then, a squeeze wraps the pair below the title rather than overlapping. */
+   phone gives it under 410px. A container query rather than a media query, so
+   it is the header's own width that decides. If a filter is ever added or
+   renamed the row grows, and this needs re-measuring; until then, a squeeze
+   wraps the pair below the title rather than overlapping. */
 @container (min-width: 520px) {
   html[data-viewport='mobile'] .cs-header .filters {
     display: flex;
@@ -1438,20 +1441,15 @@ html[data-viewport='mobile'] .cs-header .chips {
   }
 }
 
-/* Spreading the chips suits a phone, where they nearly fill the row anyway. A
-   wider screen still in the mobile layout -- an iPhone Duo opened in portrait
-   gives the page 669px -- spreads them so far apart they stop reading as one
-   control, so past the widest phone in portrait (the Duo's own 466px outer
-   display) they gather on the right instead, under the label that names them.
-   Capped at the desktop breakpoint because above it the mobile layout is the
-   420px preview card, which is phone-sized and keeps the spread. */
-@media (min-width: 500px) and (max-width: 767px) {
-  html[data-viewport='mobile'] .cs-header .chips {
-    justify-content: flex-end;
-  }
-}
-
+/* The chips grow to fill their row, leaving only the 8px gap between them
+   (set on .chips above). Each starts from the width its own text needs and
+   takes the same share of what is left over, so a longer label gets a wider
+   chip and every chip keeps the same room either side of its text -- the
+   padding here is the least it will have. Where the chips do not have a row to
+   themselves (see the container query above) there is nothing to grow into
+   and they stay at their natural widths. */
 html[data-viewport='mobile'] .cs-header .chip {
+  flex: 1 1 auto;
   padding: 0 10px;
 }
 
