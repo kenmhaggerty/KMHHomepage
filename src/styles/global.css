@@ -1335,6 +1335,19 @@ html[data-viewport='mobile'] .cs-header .chips {
   justify-content: space-between;
 }
 
+/* Spreading the chips suits a phone, where they nearly fill the row anyway. A
+   wider screen still in the mobile layout -- an iPhone Duo opened in portrait
+   gives the page 669px -- spreads them so far apart they stop reading as one
+   control, so past the widest phone in portrait (the Duo's own 466px outer
+   display) they gather on the right instead, under the label that names them.
+   Capped at the desktop breakpoint because above it the mobile layout is the
+   420px preview card, which is phone-sized and keeps the spread. */
+@media (min-width: 500px) and (max-width: 767px) {
+  html[data-viewport='mobile'] .cs-header .chips {
+    justify-content: flex-end;
+  }
+}
+
 html[data-viewport='mobile'] .cs-header .chip {
   padding: 0 10px;
 }
