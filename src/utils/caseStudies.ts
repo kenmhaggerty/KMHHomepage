@@ -38,6 +38,16 @@ export function parseCaseStudy(data: unknown, source = 'case study'): CaseStudy 
 }
 
 /**
+ * A case study's year as the selector lists it: in parentheses, unless the
+ * data already supplied its own. The field is free text, and "(In Progress)"
+ * arrives with brackets of its own; wrapping it again would read "((In
+ * Progress))".
+ */
+export function displayYear(year: string): string {
+  return year.startsWith('(') ? year : `(${year})`;
+}
+
+/**
  * Turns the result of `import.meta.glob(..., { eager: true })` over the
  * case-studies directory into a validated, stably-ordered list.
  */

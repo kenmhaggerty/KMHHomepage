@@ -12,7 +12,9 @@ import Section from '../src/components/Section.astro';
 import ImageLightbox from '../src/components/ImageLightbox.astro';
 import ChangelogModal from '../src/components/ChangelogModal.astro';
 import CaseStudyPanel from '../src/components/CaseStudyPanel.astro';
-import { getCaseStudy, siteInfo, svgIconSource } from '../src/data/site';
+import CaseStudySelector from '../src/components/CaseStudySelector.astro';
+import { caseStudies, getCaseStudy, siteInfo, svgIconSource } from '../src/data/site';
+import { displayYear } from '../src/utils/caseStudies';
 import { inlineSvg } from '../src/utils/svgIcon';
 
 /** The `d` of the first path in some inlined markup, to match against. */
@@ -368,6 +370,48 @@ describe('Section', () => {
       },
     });
     expect(html.match(/class="link-url"/g)).toHaveLength(2);
+  });
+});
+
+describe('CaseStudySelector', () => {
+  it('keeps the heading, with the trigger inside it wired to the list it opens', async () => {
+    const html = await render(CaseStudySelector);
+    // A heading still, so the page outline keeps its Case Studies section.
+    expect(html).toMatch(/<h2 class="section-title"[^>]*>[\s\S]*?data-cs-selector-trigger/);
+    const trigger = html.match(/<button[^>]*data-cs-selector-trigger[^>]*>/)?.[0] ?? '';
+    expect(trigger).toContain('type="button"');
+    expect(trigger).toContain('aria-expanded="false"');
+    // aria-controls names the list, which starts hidden.
+    const controls = trigger.match(/aria-controls="([^"]+)"/)?.[1];
+    expect(controls).toBeTruthy();
+    expect(html).toMatch(new RegExp(`<ul[^>]*id="${controls}"[^>]*hidden`));
+    expect(html).toContain('class="icon cs-selector-chevron"');
+  });
+
+  it('lists every case study in order, each row a link to its page', async () => {
+    const html = await render(CaseStudySelector);
+    const hrefs = [...html.matchAll(/class="cs-selector-row"[^>]*href="([^"]+)"/g)].map(
+      (m) => m[1],
+    );
+    expect(hrefs).toEqual(caseStudies.map((caseStudy) => `/work/${caseStudy.key}`));
+  });
+
+  it('fills each row from the JSON: title, company and year', async () => {
+    const html = await render(CaseStudySelector);
+    for (const caseStudy of caseStudies) {
+      const row = html.match(new RegExp(`href="/work/${caseStudy.key}"[\\s\\S]*?</a>`))?.[0] ?? '';
+      expect(row, `no row for ${caseStudy.key}`).not.toBe('');
+      expect(row).toContain(caseStudy.title);
+      expect(row).toContain(caseStudy.company);
+      expect(row).toContain(displayYear(caseStudy.year));
+    }
+  });
+
+  it('brackets the year once, whether or not the data already had', async () => {
+    const html = await render(CaseStudySelector);
+    expect(html).toContain('(2026)');
+    expect(html).toContain('(In Progress)');
+    expect(html).not.toContain('((');
   });
 });
 

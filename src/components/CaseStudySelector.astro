@@ -1,0 +1,52 @@
+---
+/**
+ * The Case Studies heading on the Work page, doubling as a menu of every case
+ * study: the title opens a list of them, one row each, and a row is a link to
+ * that case study's page. Designed as "Case Studies (Selector)" in Figma.
+ *
+ * The heading stays a heading. The trigger is a button inside the <h2>, so the
+ * page outline still has a Case Studies section and the control is reachable
+ * by keyboard, and the list is plain links, so it works as navigation with or
+ * without the script that opens and closes it (see scripts/caseStudySelector).
+ */
+import Icon from './Icon.astro';
+import { caseStudies } from '../data/site';
+import { displayYear } from '../utils/caseStudies';
+
+const MENU_ID = 'case-study-selector-menu';
+---
+
+<div class="cs-selector" data-cs-selector>
+  <h2 class="section-title">
+    {
+      /* aria-expanded is the open/closed state, which the CSS also keys the
+        chevron's direction off, so the two can never disagree. */
+    }
+    <button
+      type="button"
+      class="cs-selector-trigger"
+      data-cs-selector-trigger
+      aria-expanded="false"
+      aria-controls={MENU_ID}
+    >
+      <span class="cs-selector-label">Case Studies</span>
+      <Icon name="chevron-down" size={15} class="cs-selector-chevron" />
+    </button>
+  </h2>
+  <ul id={MENU_ID} class="cs-selector-menu" data-cs-selector-menu hidden>
+    {
+      caseStudies.map((caseStudy) => (
+        <li>
+          <a class="cs-selector-row" href={`/work/${caseStudy.key}`}>
+            <span class="cs-selector-row-title">{caseStudy.title}</span>
+            <span class="cs-selector-row-title" aria-hidden="true">
+              •
+            </span>
+            <span>{caseStudy.company}</span>
+            <span>{displayYear(caseStudy.year)}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>

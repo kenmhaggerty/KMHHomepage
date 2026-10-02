@@ -6,7 +6,7 @@ import Resume from '../src/pages/resume.astro';
 import NotFound from '../src/pages/404.astro';
 import ProjectPage, { getStaticPaths } from '../src/pages/work/[slug].astro';
 import WorkRedirect from '../src/pages/work/index.astro';
-import { getCaseStudy, siteInfo } from '../src/data/site';
+import { caseStudies, getCaseStudy, siteInfo } from '../src/data/site';
 import htaccess from '../public/.htaccess?raw';
 
 async function render(component: Parameters<AstroContainer['renderToString']>[0], options = {}) {
@@ -35,6 +35,12 @@ describe('Work page (index)', () => {
     for (const key of ['zero_to_one', 'consumer', 'gov_dod', 'mobile']) {
       expect(html).toContain(`data-filter-chip="${key}"`);
     }
+  });
+
+  it('makes the Case Studies heading the selector, with a row per case study', async () => {
+    const html = await render(Index);
+    expect(html).toMatch(/<h2 class="section-title"[^>]*>[\s\S]*?data-cs-selector-trigger/);
+    expect(html.match(/class="cs-selector-row"/g)).toHaveLength(caseStudies.length);
   });
 
   it('prioritises exactly one panel, the one that paints largest first', async () => {

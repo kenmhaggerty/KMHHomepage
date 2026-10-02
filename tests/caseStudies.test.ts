@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadCaseStudies, parseCaseStudy } from '../src/utils/caseStudies';
+import { displayYear, loadCaseStudies, parseCaseStudy } from '../src/utils/caseStudies';
 import gfm from '../case-studies/gfm.json';
 
 const valid = {
@@ -12,6 +12,21 @@ const valid = {
   gallery: [],
   sections: [],
 };
+
+describe('displayYear', () => {
+  it('puts a year in parentheses', () => {
+    expect(displayYear('2026')).toBe('(2026)');
+  });
+
+  it('puts a range in them the same way', () => {
+    expect(displayYear('2011 – 2012')).toBe('(2011 – 2012)');
+  });
+
+  it('leaves a year the data already bracketed alone', () => {
+    // The field is free text, and "(In Progress)" is one of its values.
+    expect(displayYear('(In Progress)')).toBe('(In Progress)');
+  });
+});
 
 describe('parseCaseStudy', () => {
   it('accepts the real gfm.json content', () => {

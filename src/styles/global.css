@@ -60,6 +60,9 @@
   --color-chip-selected-text: #ffffff;
 
   --color-nav-hover-bg: #eeeeee;
+  /* A row of the Case Studies selector under the pointer: a tint of the
+     surface rather than a colour, as designed. */
+  --color-menu-row-hover-bg: rgba(0, 0, 0, 0.04);
   --color-url-bg: #f4f4f4;
   --color-url-bg-hover: #ececec;
 
@@ -96,6 +99,8 @@
   --shadow-icon: 0px 1px 2px rgba(0, 0, 0, 0.12);
   --shadow-card: 0px 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-panel: 0px 0px 12px rgba(0, 0, 0, 0.12);
+  /* The Case Studies selector's list, floating over the gallery. */
+  --shadow-menu: 0px 2px 8px rgba(0, 0, 0, 0.22);
   --shadow-toggle: 0px 1px 3px rgba(0, 0, 0, 0.25);
   --shadow-overlay-text: 0px 2px 8px rgba(200, 200, 200, 0.66);
 
@@ -1327,9 +1332,17 @@ html[data-viewport='mobile'] .about-content p:last-child {
   /* Measured by the container query below, which decides whether the title
      has room beside the chips. */
   container-type: inline-size;
+  /* That containment makes the header a stacking context of its own, painted
+     in order with the gallery that follows it -- which has positioned pieces
+     (the skeletons) that would then paint over the selector's open list. The
+     z-index lifts the whole header above them. */
+  position: relative;
+  z-index: 1;
 }
 
-.cs-header .section-title {
+/* The title is the Case Studies selector (its own section below); it is the
+   selector that takes the title's place in the row. */
+.cs-header .cs-selector {
   margin-right: auto;
 }
 
@@ -1373,8 +1386,11 @@ html[data-viewport='mobile'] .cs-header .chips {
      above the chips. Instead it takes the bottom of the row, on a line as
      tall as a chip (28px, the mobile chip height -- keep the two in step),
      so its text is centred in the same band as the chips' own labels. */
-  html[data-viewport='mobile'] .cs-header .section-title {
+  html[data-viewport='mobile'] .cs-header .cs-selector {
     align-self: flex-end;
+  }
+
+  html[data-viewport='mobile'] .cs-header .section-title {
     line-height: 28px;
   }
 
@@ -1398,6 +1414,98 @@ html[data-viewport='mobile'] .cs-header .chips {
 
 html[data-viewport='mobile'] .cs-header .chip {
   padding: 0 10px;
+}
+
+/* ---------------------------------------------------- case study selector */
+
+/* The Case Studies heading opens a list of the case studies, one row each,
+   every row a link to its page. The design builds the trigger from the
+   navigation link component, so it has the nav's 3px side padding and hover
+   fill, and the whole control sits 3px left so the title's letters stay on
+   the column everything else aligns to. */
+.cs-selector {
+  position: relative;
+  margin-left: -3px;
+}
+
+.cs-selector-trigger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  /* The heading's capitals. Browsers give <button> text-transform: none in
+     their own stylesheet, and the site's button reset inherits font and
+     colour but not this, so without it the title would be the one heading on
+     the page in mixed case. */
+  text-transform: inherit;
+}
+
+.cs-selector-label {
+  display: flex;
+  align-items: center;
+  padding: 0 3px;
+}
+
+/* The fill is on the label, as in the nav, but the whole button is the
+   control: hovering the chevron lights the label too. */
+.cs-selector-trigger:hover .cs-selector-label {
+  background: var(--color-nav-hover-bg);
+}
+
+/* Drawn in the design at #999999, which is 2.9:1 against the card and short
+   of the 3:1 a control's mark needs; muted-2 is the nearest grey here that
+   clears it, the same trade the text greys made (see :root). The 2px lifts
+   it off the baseline to sit against the title's letters, as drawn. */
+.cs-selector-chevron {
+  flex-shrink: 0;
+  margin-bottom: 2px;
+  color: var(--color-text-muted-2);
+}
+
+/* Points up while the list is out. Keyed to aria-expanded, which the script
+   sets, so the arrow and the announced state cannot disagree. */
+.cs-selector-trigger[aria-expanded='true'] .cs-selector-chevron {
+  transform: rotate(180deg);
+}
+
+/* 11px below the trigger: the design sets the list 30px from the top of a
+   19px trigger, and it is the gap that should hold when the trigger is taller
+   -- mobile's 20px title, or the 28px line the container query above gives
+   it -- not the offset. No display here, so the hidden attribute still hides
+   it. */
+.cs-selector-menu {
+  position: absolute;
+  top: calc(100% + 11px);
+  left: 0;
+  z-index: 1;
+  min-width: 141px;
+  margin: 0;
+  padding: 1px 0;
+  list-style: none;
+  background: var(--color-card-bg);
+  box-shadow: var(--shadow-menu);
+}
+
+.cs-selector-row {
+  display: flex;
+  gap: 2px;
+  padding: 6px 8px 6px 4px;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: normal;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+.cs-selector-row:hover,
+.cs-selector-row:focus-visible {
+  background: var(--color-menu-row-hover-bg);
+}
+
+/* The title and the bullet after it carry the weight; company and year are
+   set regular. */
+.cs-selector-row-title {
+  font-weight: 600;
 }
 
 .cs-list-empty {
