@@ -1516,9 +1516,19 @@ html[data-viewport='mobile'] .cs-header .chip {
 }
 
 /* Points up while the list is out. Keyed to aria-expanded, which the script
-   sets, so the arrow and the announced state cannot disagree. */
+   sets, so the arrow and the announced state cannot disagree. Mirrored top to
+   bottom rather than turned: animated, scaleY folds the arrow flat and opens
+   it the other way up -- a flip -- where a rotation would spin it round. */
 .cs-selector-trigger[aria-expanded='true'] .cs-selector-chevron {
   transform: rotate(180deg);
+}
+
+/* The flip, both ways. Quick, since it answers a click; skipped for anyone who
+   has asked for less motion, who gets the old instant change instead. */
+@media (prefers-reduced-motion: no-preference) {
+  .cs-selector-chevron {
+    transition: transform 180ms ease-in-out;
+  }
 }
 
 /* 11px below the trigger: the design sets the list 30px from the top of a
