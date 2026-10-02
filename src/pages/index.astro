@@ -45,15 +45,22 @@ const EAGER_PANELS = 3;
     <section class="case-studies">
       <div class="cs-header">
         <h2 class="section-title">Case Studies</h2>
-        <span class="filter-label">Filter by</span>
-        <div class="chips">
-          {
-            FILTERS.map((filter) => (
-              <button type="button" class="chip" data-filter-chip={filter.key} aria-pressed="false">
-                {filter.label}
-              </button>
-            ))
-          }
+        <div class="filters">
+          <span class="filter-label">Filter by</span>
+          <div class="chips">
+            {
+              FILTERS.map((filter) => (
+                <button
+                  type="button"
+                  class="chip"
+                  data-filter-chip={filter.key}
+                  aria-pressed="false"
+                >
+                  {filter.label}
+                </button>
+              ))
+            }
+          </div>
         </div>
       </div>
       <div class="hscroll" data-gallery>

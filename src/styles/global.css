@@ -1314,25 +1314,72 @@ html[data-viewport='mobile'] .about-content p:last-child {
   padding-bottom: 4px;
 }
 
+/* Wherever the title shares a row with the chips, it is centred against them.
+   The label and chips are wrapped in .filters, which keeps the label centred
+   against the chips too, and lets the pair move as one in the mobile layout
+   below. */
 .cs-header {
   display: flex;
   align-items: center;
   gap: 6px;
   width: 100%;
+  /* Measured by the container query below, which decides whether the title
+     has room beside the chips. */
+  container-type: inline-size;
 }
 
 .cs-header .section-title {
   margin-right: auto;
 }
 
+/* The mobile layout, by default: not enough room for the title beside the
+   chips. The .filters wrapper dissolves, so the title and label share the
+   first row, centred, and the chips take a full-width row of their own. */
 html[data-viewport='mobile'] .cs-header {
   flex-wrap: wrap;
+  align-items: center;
   row-gap: 6px;
+}
+
+html[data-viewport='mobile'] .cs-header .filters {
+  display: contents;
 }
 
 html[data-viewport='mobile'] .cs-header .chips {
   width: 100%;
   justify-content: space-between;
+}
+
+/* ...and with room, the title drops onto the chips' row and the label moves
+   up over the chips. The title and the four chips measure about 504px side by
+   side (with these fonts, at the mobile chip size), so 520px leaves a little
+   slack for rendering differences. An iPhone Duo opened in portrait gives the
+   header 637px; a phone gives it under 410px. A container query rather than a
+   media query, so it is the header's own width that decides. If a filter is
+   ever added or renamed the row grows, and this needs re-measuring; until
+   then, a squeeze wraps the pair below the title rather than overlapping. */
+@container (min-width: 520px) {
+  html[data-viewport='mobile'] .cs-header .filters {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    align-self: flex-end;
+    margin-left: auto;
+  }
+
+  /* Centred against the chips, not against the row: the row also holds the
+     label, so plain centring would split the difference and sit the title
+     above the chips. Instead it takes the bottom of the row, on a line as
+     tall as a chip (28px, the mobile chip height -- keep the two in step),
+     so its text is centred in the same band as the chips' own labels. */
+  html[data-viewport='mobile'] .cs-header .section-title {
+    align-self: flex-end;
+    line-height: 28px;
+  }
+
+  html[data-viewport='mobile'] .cs-header .chips {
+    width: auto;
+  }
 }
 
 /* Spreading the chips suits a phone, where they nearly fill the row anyway. A
