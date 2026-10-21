@@ -198,6 +198,10 @@ button {
   flex: 0 0 auto;
   background: var(--color-card-bg);
   filter: drop-shadow(var(--shadow-card));
+  /* Named, so content can query the card's width rather than the nearest
+     container's (About Me's hyphenation). The containment adds no stacking
+     context or containing block the filter has not already made. */
+  container: card / inline-size;
 }
 
 /* The mobile layout's card, a phone's width. overflow:hidden is for the
@@ -1462,6 +1466,17 @@ html[data-viewport='mobile'] .page-work {
   font-weight: 500;
   line-height: normal;
   text-align: justify;
+}
+
+/* Justified text in a card this narrow leaves wide gaps around a long word
+   pushed whole to the next line; hyphenating it closes them. Wider, the gaps
+   are small enough to leave the words whole. Relies on the page's lang="en"
+   for the hyphenation dictionary; the prefix covers Safari before 17. */
+@container card (width < 383px) {
+  .about-content p {
+    -webkit-hyphens: auto;
+    hyphens: auto;
+  }
 }
 
 /* Padding rather than margin for the gap between paragraphs: a paragraph that
