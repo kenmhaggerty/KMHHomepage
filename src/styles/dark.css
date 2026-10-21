@@ -52,6 +52,7 @@ html[data-theme='dark'],
   --color-menu-row-hover-bg: rgba(255, 255, 255, 0.06);
   --color-url-bg: #262626;
   --color-url-bg-hover: #303030;
+  --color-star: #ffcc00;
 
   /* The footer's link discs sit on the page, so they step up from it the way
      the card does rather than staying white, which would read as six lamps

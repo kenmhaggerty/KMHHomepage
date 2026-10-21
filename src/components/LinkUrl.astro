@@ -1,15 +1,28 @@
 ---
 import type { CaseStudyLink } from '../types';
-import Icon from './Icon.astro';
+import Icon, { type IconName } from './Icon.astro';
 
 interface Props {
   link: CaseStudyLink;
+  /** The glyph before the title: a link by default, a star for Recent Updates. */
+  icon?: IconName;
+  /** Wrap a long title onto further lines rather than cut it off with an ellipsis. */
+  wrap?: boolean;
 }
 
-const { link } = Astro.props;
+const { link, icon = 'link', wrap = false } = Astro.props;
 ---
 
-<a class="link-url" href={link.url} target="_blank" rel="noopener noreferrer">
-  <Icon name="link" size={15} />
-  <p class="link-title">{link.title}</p>
+<a
+  class:list={['link-url', { 'is-wrapped': wrap }]}
+  href={link.url}
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <Icon name={icon} size={15} />
+  {
+    /* HTML, so a title can carry emphasis. It sits inside the row's own link,
+      so it must not contain another <a>. */
+  }
+  <p class="link-title" set:html={link.title} />
 </a>

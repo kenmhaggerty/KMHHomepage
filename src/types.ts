@@ -63,6 +63,13 @@ export interface SiteIcons {
   appleTouch: string;
 }
 
+/** One entry in the home page's Recent Updates. */
+export interface RecentUpdate {
+  /** HTML, without links of its own: the whole row is already one. */
+  text: string;
+  url: string;
+}
+
 export interface SiteInfo {
   title: string;
   description: string;
@@ -70,6 +77,8 @@ export interface SiteInfo {
   owner: OwnerInfo;
   /** In viewing order: the avatar opens the first, the arrows step on. */
   portraits: GalleryItem[];
+  /** Shown under About Me, each as a starred link row. */
+  recent_updates: RecentUpdate[];
   footer: FooterInfo;
   /** Production origin, used to make share and canonical URLs absolute. */
   url: string;
@@ -102,6 +111,7 @@ export interface GalleryItem {
 }
 
 export interface CaseStudyLink {
+  /** HTML, without links of its own: the whole row is already one. */
   title: string;
   url: string;
 }

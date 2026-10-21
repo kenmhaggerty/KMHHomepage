@@ -199,7 +199,7 @@ describe('ViewportToggle', () => {
 
 describe('Icon', () => {
   it('renders an inline SVG for each icon name', async () => {
-    for (const name of ['chevron-back', 'link', 'iphone', 'macbook'] as const) {
+    for (const name of ['chevron-back', 'link', 'star', 'iphone', 'macbook'] as const) {
       const html = await render(Icon, { props: { name } });
       expect(html).toContain('<svg');
       expect(html).toContain('aria-hidden="true"');
@@ -216,6 +216,34 @@ describe('LinkUrl', () => {
     expect(html).toContain('target="_blank"');
     expect(html).toContain('rel="noopener noreferrer"');
     expect(html).toContain('DecisionPoint Corporation');
+  });
+
+  it('renders HTML in the title rather than escaping it', async () => {
+    const html = await render(LinkUrl, {
+      props: { link: { title: 'My post <em>"Using Claude"</em>', url: 'https://a.example' } },
+    });
+    expect(html).toContain('<em>"Using Claude"</em>');
+    expect(html).not.toContain('&lt;em&gt;');
+  });
+
+  it('truncates by default and wraps only when asked', async () => {
+    const link = { title: 'Using Claude', url: 'https://www.kenmhaggerty.com/blog/using-claude/' };
+    const plain = await render(LinkUrl, { props: { link } });
+    const wrapped = await render(LinkUrl, { props: { link, wrap: true } });
+    expect(plain).toMatch(/<a class="link-url"/);
+    expect(plain).not.toContain('is-wrapped');
+    expect(wrapped).toMatch(/<a class="link-url is-wrapped"/);
+  });
+
+  it('shows the link glyph by default and another when one is named', async () => {
+    const link = { title: 'Using Claude', url: 'https://www.kenmhaggerty.com/blog/using-claude/' };
+    const linkPath = firstPathData(await render(Icon, { props: { name: 'link' } }));
+    const starPath = firstPathData(await render(Icon, { props: { name: 'star' } }));
+    const plain = await render(LinkUrl, { props: { link } });
+    const starred = await render(LinkUrl, { props: { link, icon: 'star' } });
+    expect(plain).toContain(linkPath);
+    expect(starred).toContain(starPath);
+    expect(starred).not.toContain(linkPath);
   });
 });
 

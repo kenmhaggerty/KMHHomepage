@@ -6,6 +6,7 @@ import Resume from '../src/pages/resume.astro';
 import NotFound from '../src/pages/404.astro';
 import ProjectPage, { getStaticPaths } from '../src/pages/work/[slug].astro';
 import WorkRedirect from '../src/pages/work/index.astro';
+import Icon from '../src/components/Icon.astro';
 import { caseStudies, getCaseStudy, siteInfo } from '../src/data/site';
 import htaccess from '../public/.htaccess?raw';
 
@@ -64,6 +65,38 @@ describe('Work page (index)', () => {
     expect(html).toContain('intersectional thinking');
     expect(html).toContain('Case Studies');
     expect(html).toContain('data-case-study="gfm"');
+  });
+
+  it('renders Recent Updates between About Me and Case Studies', async () => {
+    const html = await render(Index);
+    const about = html.indexOf('class="section about"');
+    const updates = html.indexOf('class="section recent-updates"');
+    const caseStudiesSection = html.indexOf('class="case-studies"');
+    expect(updates, 'no Recent Updates section').toBeGreaterThan(-1);
+    expect(about).toBeLessThan(updates);
+    expect(updates).toBeLessThan(caseStudiesSection);
+    expect(html.slice(updates, caseStudiesSection)).toContain('Recent Updates');
+  });
+
+  it('sets each recent update as a starred link row', async () => {
+    const html = await render(Index);
+    const start = html.indexOf('class="section recent-updates"');
+    const section = html.slice(start, html.indexOf('</section>', start));
+    // Wrapped, so a long update is read in full rather than cut off.
+    const rows = section.match(/<a class="link-url is-wrapped"[^>]*>/g) ?? [];
+    expect(rows).toHaveLength(siteInfo.recent_updates.length);
+    siteInfo.recent_updates.forEach((update, index) => {
+      expect(rows[index]).toContain(`href="${update.url}"`);
+      // The text is HTML, set into the row as written.
+      expect(section).toContain(update.text);
+    });
+    // The star, not the link glyph the case studies use.
+    const starHtml = await render(Icon, { props: { name: 'star' } });
+    const linkHtml = await render(Icon, { props: { name: 'link' } });
+    const starPath = starHtml.match(/d="[^"]+"/)?.[0] ?? '';
+    const linkPath = linkHtml.match(/d="[^"]+"/)?.[0] ?? '';
+    expect(section.split(starPath)).toHaveLength(siteInfo.recent_updates.length + 1);
+    expect(section).not.toContain(linkPath);
   });
 
   it('renders all four filter chips', async () => {

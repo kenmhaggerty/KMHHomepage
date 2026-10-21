@@ -205,6 +205,18 @@ describe('portraits', () => {
   });
 });
 
+describe('siteInfo.recent_updates', () => {
+  it('gives every update some text and an absolute, secure URL', () => {
+    expect(Array.isArray(siteInfo.recent_updates)).toBe(true);
+    for (const update of siteInfo.recent_updates) {
+      expect(update.text.trim().length, 'an update is blank').toBeGreaterThan(0);
+      // The row is already a link, and links cannot nest.
+      expect(update.text, 'an update has a link inside its link').not.toMatch(/<a[\s>]/i);
+      expect(update.url, `${update.text} has no secure URL`).toMatch(/^https:\/\//);
+    }
+  });
+});
+
 describe('imageAsset', () => {
   it('resolves a data filename to the imported asset', () => {
     const image = imageAsset('gfm-1.png');

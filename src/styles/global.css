@@ -65,6 +65,9 @@
   --color-menu-row-hover-bg: rgba(0, 0, 0, 0.04);
   --color-url-bg: #f4f4f4;
   --color-url-bg-hover: #ececec;
+  /* The Recent Updates star: amber rather than pure yellow, which washes out
+     against the light link row. */
+  --color-star: #f5b400;
 
   /* The footer's external links: a disc, and the mark sitting on it. Its own
      colours rather than the card's because the disc sits on the page, outside
@@ -134,6 +137,15 @@ body {
   font-family: var(--font-sans);
   color: var(--color-text);
   background: var(--color-page-bg);
+}
+
+/* A true bold. Left to the browser, `bolder` on the 500 body text asks for
+   700, and without that face loaded it falls back to the 600 -- barely apart
+   from the text around it. */
+strong,
+b {
+  font-weight: 700;
+  color: var(--color-text-soft);
 }
 
 img {
@@ -784,7 +796,8 @@ html[data-viewport='mobile'] .page-work .section-title {
 .section sup {
   color: var(--color-text-muted-2);
   font-size: 9px;
-  font-weight: bolder;
+  /* What `bolder` rendered as before 700 was loaded, held there. */
+  font-weight: 600;
   margin-right: 1px;
 }
 
@@ -1292,6 +1305,34 @@ a[data-lightbox-open] {
   white-space: nowrap;
   font-size: 13px;
   font-weight: 500;
+}
+
+/* A wrapped row grows with its title instead of holding one line. The icon
+   sits level with the first line, not centred on the whole block: the
+   line height is pinned so the icon can be pushed down to its middle. */
+.link-url.is-wrapped {
+  --link-line-height: calc(13px * 1.4);
+  height: auto;
+  min-height: 29px;
+  align-items: flex-start;
+}
+
+.link-url.is-wrapped .icon {
+  margin-top: calc((var(--link-line-height) - 15px) / 2);
+}
+
+.link-url.is-wrapped .link-title {
+  overflow: visible;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: var(--link-line-height);
+}
+
+/* A solid star: the outline glyph filled in, edge and all, so it reads as one
+   shape at 15px. */
+.recent-updates .link-url .icon {
+  color: var(--color-star);
+  fill: currentColor;
 }
 
 /* ----------------------------------------------------------------- chips */

@@ -3,6 +3,7 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import CaseStudyPanel from '../components/CaseStudyPanel.astro';
 import CaseStudySelector from '../components/CaseStudySelector.astro';
 import ImageLightbox from '../components/ImageLightbox.astro';
+import LinkUrl from '../components/LinkUrl.astro';
 import { Image } from 'astro:assets';
 import { about, caseStudies, imageAsset, portraitAsset, siteInfo } from '../data/site';
 import { FILTERS } from '../utils/filters';
@@ -21,7 +22,7 @@ import { FILTERS } from '../utils/filters';
  */
 const EAGER_PANELS = 3;
 
-const { portraits } = siteInfo;
+const { portraits, recent_updates: recentUpdates } = siteInfo;
 ---
 
 <SiteLayout>
@@ -94,6 +95,20 @@ const { portraits } = siteInfo;
         {about.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
       </div>
     </section>
+    {
+      /* Set as the case studies' link rows, with a star in place of the link.
+        With none listed the section is left out rather than shown empty. */
+    }
+    {
+      recentUpdates.length > 0 && (
+        <section class="section recent-updates">
+          <h2 class="section-title">Recent Updates</h2>
+          {recentUpdates.map((update) => (
+            <LinkUrl link={{ title: update.text, url: update.url }} icon="star" wrap />
+          ))}
+        </section>
+      )
+    }
     <section class="case-studies">
       <div class="cs-header">
         <CaseStudySelector />
