@@ -8,16 +8,18 @@ interface Props {
   icon?: IconName;
   /** Wrap a long title onto further lines rather than cut it off with an ellipsis. */
   wrap?: boolean;
+  /** Open the link in a new tab (the default) rather than in this one. */
+  newTab?: boolean;
 }
 
-const { link, icon = 'link', wrap = false } = Astro.props;
+const { link, icon = 'link', wrap = false, newTab = true } = Astro.props;
 ---
 
 <a
   class:list={['link-url', { 'is-wrapped': wrap }]}
   href={link.url}
-  target="_blank"
-  rel="noopener noreferrer"
+  target={newTab ? '_blank' : undefined}
+  rel={newTab ? 'noopener noreferrer' : undefined}
 >
   <Icon name={icon} size={15} />
   {
